@@ -1,0 +1,59 @@
+.app {
+  text-align: center;
+}
+
+body {
+  background: #333;
+}
+
+.inputs {
+  text-align: left;
+  margin-left: 20px;
+}
+
+.inputGroupRow {
+  display: table-row;
+  margin-top: 10px;
+  position: relative;
+  padding: 0;
+}
+
+.inputGroupCell {
+  display: table-cell;
+  padding: 10px;
+}
+
+.studPlateSwitch {
+  display: inline;
+  clear: right;
+  margin: 0;
+}
+
+.helpMessage {
+  margin-top: 10px;
+  color: #aaa;
+}
+
+.angleControls {
+  display: table;
+}
+
+.angleControls > div {
+  display: table-row;
+}
+
+.angleControlGroup {
+  display: table-cell;
+}
+
+fieldset {
+  border-color: #505055;
+  border-width: 2px;
+  color: white;
+  border-radius: 10px;
+}
+
+legend {
+  font-size: 8pt;
+  font-weight: bold;
+}
