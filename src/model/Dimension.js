@@ -13,6 +13,10 @@ class Dimension {
      this.isInteger = this._isInteger();
   }
 
+  lengthIn(unit) {
+    return unit.from(this.length, this.unit);
+  }
+
   _isInteger() {
     return this.length % 1 == 0;
   }
