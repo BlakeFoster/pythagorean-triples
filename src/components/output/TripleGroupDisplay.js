@@ -9,18 +9,27 @@ import { INTERNAL, STUDS } from "../../model/Unit"
 const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
 const DRAWING_MARGIN = 70;
+const STROKE_WIDTH = 0.1;
 
 class Side extends React.Component {
   render() {
+    const outerPadding = STROKE_WIDTH / 2;
+    const radius = outerPadding * Math.sqrt(2);
+    const radians = (45 + this.props.angle) * Math.PI / 180;
+
     return (
-      <Rect
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.length}
-        height={1}
-        rotation={this.props.rotation}
-        fill="red"
-      />
+      <>
+        <Rect
+          x={this.props.x + Math.cos(radians) * radius}
+          y={this.props.y + Math.sin(radians) * radius}
+          width={this.props.length - STROKE_WIDTH}
+          height={1 - STROKE_WIDTH}
+          rotation={this.props.angle}
+          stroke="black"
+          strokeWidth={STROKE_WIDTH}
+          fill="red"
+        />
+      </>
     )
   }
 }
@@ -84,11 +93,11 @@ class TripleGroupDisplay extends React.Component {
           <Stage width={DRAWING_WIDTH} height={DRAWING_HEIGHT}>
             <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
               {/* side A */}
-              <Side x={0} y={-1} length={aLength} rotation={0}/>
+              <Side x={0} y={-1} length={aLength} angle={0}/>
               {/* side B */}
-              <Side x={aLength + 1} y={0} length={bLength} rotation={90} />
+              <Side x={aLength + 1} y={0} length={bLength} angle={90} />
               {/* side C */}
-              <Side x={0} y={0} length={cLength} rotation={angle}/>
+              <Side x={0} y={0} length={cLength} angle={angle}/>
             </Layer>
           </Stage>
         </div>
