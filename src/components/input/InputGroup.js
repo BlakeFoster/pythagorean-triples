@@ -1,6 +1,5 @@
 import React from "react";
 
-
 function InputGroup(props) {
   var innerContent = (
     <div className="fieldSetContent">

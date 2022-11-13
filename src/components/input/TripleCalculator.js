@@ -2,11 +2,11 @@ import React from "react";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch"
 import Typography from "@mui/material/Typography";
-import SideInput from "./SideInput.js";
-import InputGroup from "./InputGroup.js";
-import NumericTextField from "./NumericTextField.js";
-import Triple from "../../model/Triple.js";
-import { STUDS } from "../../model/Unit.js"
+import SideInput from "./SideInput";
+import InputGroup from "./InputGroup";
+import NumericTextField from "./NumericTextField";
+import Triple from "../../model/Triple";
+import { STUDS } from "../../model/Unit"
 
 function OverUnderSwitch(props) {
   return (<><Switch size="small" checked={props.isAllowed} onChange={() => {props.callback(!props.isAllowed)}}/> {props.label}</>);
@@ -34,14 +34,13 @@ class TripleCalculator extends React.Component {
   }
 
   setMaxLength(sideIndex, maxLength) {
-
     this.setState({maxLengths: this.updateItem(this.state.maxLengths, sideIndex, maxLength)})
     console.log("Max side " + sideIndex + " set to " + maxLength);
   }
 
-  setUnits(sideIndex, units) {
-    this.setState({units: this.updateItem(this.state.units, sideIndex, units)});
-    console.log("Units for side " + sideIndex + " set to " + units);
+  setUnits(sideIndex, unit) {
+    this.setState({units: this.updateItem(this.state.units, sideIndex, unit)});
+    console.log("Units for side " + sideIndex + " set to " + unit.toString());
   }
 
   setAllowOver(allowOver) {
@@ -67,9 +66,9 @@ class TripleCalculator extends React.Component {
       <SideInput
         sideName={sideName}
         maxLength={this.state.maxLengths[index]}
-        units={this.state.units[index]}
+        unit={this.state.units[index]}
         maxLengthCallback={this.setMaxLength.bind(this, index)}
-        unitsCallback={this.setUnits.bind(this, index)}
+        unitCallback={this.setUnits.bind(this, index)}
       />);
   }
 
@@ -123,38 +122,63 @@ class TripleCalculator extends React.Component {
     const l2Unit = this.state.units[l2Index];
     const l3Unit = this.state.units[l3Index];
 
-    var triples = new Map()
+    var tripleGroups = new Map()
 
     for (var l1=1; l1<=l1Max; l1++) {
       for (var l2=1; l2<=l2Max; l2++) {
-        var triple = new Triple(l1Index, l1, l1Unit, l2Index, l2, l2Unit, l3Index, l3Unit);
+
+        var triple = Triple.from2Sides(l1Index, l1, l1Unit, l2Index, l2, l2Unit, l3Index, l3Unit);
+
         const l3 = triple.getValue(l3Index).length;
 
-        if (l3 > 0 && l3 <= l3Max && triple.isPythagorean) {
+        if (l3 > 0 && l3 <= l3Max && triple.isPythagorean()) {
           const angleDifference = triple.angle - this.state.desiredAngle;
           if ((angleDifference >= 0 || this.state.allowUnder) && (angleDifference <= 0 || this.state.allowOver)) {
-            if (!triples.get(triple.key)) {
-              triples.set(triple.key, triple);
+            const key = triple.hashKey();
+            var tripleGroup = tripleGroups.get(key);
+            if (tripleGroup == null) {
+              tripleGroup = new Map();
+              tripleGroups.set(key, tripleGroup);
             }
+            tripleGroup.set(triple.getGCD(), triple);
           }
         }
       }
     }
-    return this.sortTriples(Array.from(triples.values()));
+    return this.sortTriples(tripleGroups);
   }
 
-  sortTriples(triples) {
-    triples.sort(
-      (a, b) => a.compareTo(b, this.state.desiredAngle)
+  sortTriples(tripleGroups) {
+    tripleGroups = Array.from(tripleGroups.values());
+    tripleGroups.sort(
+      (a, b) => {
+        return a.get(1).compareTo(b.get(1), this.state.desiredAngle)
+      }
     );
-    if (triples.length > 10) {
+    if (tripleGroups.length > 10) {
       console.log("Truncating to top 10")
-      triples = triples.slice(0, 10);
+      tripleGroups = tripleGroups.slice(0, 10);
     }
-    for (var i=0; i<triples.length; i++) {
-      console.log("Found triple " + triples[i].toString() + " (angle = " + triples[i].angle + ")");
-    }
-    return triples;
+    tripleGroups = tripleGroups.map(
+      (tripleGroup) => {
+        var keys = Array.from(tripleGroup.keys());
+        keys.sort();
+        return keys.map(
+          (key) => {
+            return tripleGroup.get(key)
+          }
+        );
+      }
+    )
+    tripleGroups.forEach(
+      (tripleGroup) => {
+        console.log("Found triple group with angle " + tripleGroup[0].getAngle())
+        tripleGroup.forEach(
+          (triple) => {console.log("  Found triple " + triple.toString())}
+        )
+      }
+    )
+    this.props.setTripleGroups(tripleGroups);
   }
 
   render() {

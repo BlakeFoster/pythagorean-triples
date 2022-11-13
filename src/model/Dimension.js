@@ -1,17 +1,15 @@
-import { PLATES, STUDS } from "./Unit.js"
+import { INTERNAL } from "./Unit"
 
 class Dimension {
   constructor(length, unit) {
     this.unit = unit;
-    this.length = length;
-    this._multiplier = (unit === PLATES ? 4 : 10);
-    this.normalizedLength = this.length * this._multiplier;
+    this.setLength(length, unit);;
     this.isInteger = this._isInteger();
   }
 
-  setNormalizedLength(length) {
-     this.length = length / this._multiplier;
-     this.normalizedLength = length;
+  setLength(length, unit) {
+     this.length = this.unit.from(length, unit);
+     this._internalLength = INTERNAL.from(length, unit);
      this.isInteger = this._isInteger();
   }
 
@@ -19,13 +17,12 @@ class Dimension {
     return this.length % 1 == 0;
   }
 
-  divideOut(divisor) {
-    this.length /= divisor;
-    this.normalizedLength /= divisor;
-  }
-
   toString() {
     return this.length.toString() + " " + this.unit;
+  }
+
+  valueOf() {
+    return this._internalLength;
   }
 }
 

@@ -1,14 +1,20 @@
 .app {
   text-align: center;
+  width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #333;
+  min-height: 100vh;
+  padding: 10px;
+  color: white;
 }
 
 body {
-  background: #333;
+  background: #222;
 }
 
 .inputs {
   text-align: left;
-  margin-left: 20px;
 }
 
 .inputGroupRow {
@@ -31,7 +37,7 @@ body {
 
 .helpMessage {
   margin-top: 10px;
-  color: #aaa;
+  opacity: 50%;
 }
 
 .angleControls {
@@ -49,11 +55,49 @@ body {
 fieldset {
   border-color: #505055;
   border-width: 2px;
-  color: white;
   border-radius: 10px;
 }
 
 legend {
   font-size: 8pt;
   font-weight: bold;
+}
+
+.tripleGroupDisplay {
+  color: black;
+  width: 480px;
+  height: 480px;
+  border-radius: 20px;
+  border: 2px solid #111;
+  background: #ddd;
+  display: inline-block;
+  margin: 12px;
+  position: relative;
+}
+
+.tripleGroupNumber {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.variantSelector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.drawingWrapper {
+   width: 450px;
+   height: 400px;
+   margin-left: auto;
+   margin-right: auto;
+   position: absolute;
+   bottom: 15px;
+   left: 15px;
+   border: 1px solid black;
 }
