@@ -107,6 +107,80 @@ class Side extends React.Component {
 }
 
 
+class TriangleDrawing extends React.Component {
+  render() {
+    const aLength = this.props.triple.getA().lengthIn(STUDS);
+    const bLength = this.props.triple.getB().lengthIn(STUDS);
+    const cLength = this.props.triple.getC().lengthIn(STUDS);
+
+    const angle = this.props.triple.getAngle();
+    const leftOverhangLength = Math.sin(angle * Math.PI / 180);
+    const topOverhangeHeight = Math.cos(angle * Math.PI / 180);
+    const diagramWidthStuds = aLength + 1 + leftOverhangLength;
+    const diagramHeightStuds = bLength + 1 + topOverhangeHeight;
+
+    const maxHorizontalScale = (this.props.width - 2 * this.props.padding) / diagramWidthStuds;
+    const maxVerticalScale = (this.props.height - 2 * this.props.padding) / diagramHeightStuds;
+    const scale = Math.min(maxHorizontalScale, maxVerticalScale);
+
+    const vertexX = (this.props.width - diagramWidthStuds * scale) / 2 + leftOverhangLength * scale;
+    const vertexY = this.props.height - (this.props.height - diagramHeightStuds * scale) / 2 - scale;
+
+    const arcRadius = aLength * scale / 4;
+    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
+
+    return (
+      <div className="drawingWrapper">
+        <Stage width={this.props.width} height={this.props.height}>
+          <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
+            <Text
+              text={this.props.angleLabel}
+              x={angleLabelRadius * Math.cos(angle * Math.PI / 360)}
+              y={-angleLabelRadius * Math.sin(angle * Math.PI / 360) - this.props.fontSize / 2}
+              fontSize={this.props.fontSize}
+              fill="lightgrey"
+            />
+          </Layer>
+          <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={-1}>
+            <Arc
+              x={0}
+              y={0}
+              innerRadius={arcRadius}
+              outerRadius={arcRadius + ARC_WIDTH}
+              angle={this.props.triple.getAngle()}
+              fill="lightgrey"
+            />
+          </Layer>
+          <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
+            {/* side A */}
+            <Side
+              x={0}
+              y={-1}
+              angle={0}
+              dimension={this.props.triple.getA()}
+            />
+            {/* side B */}
+            <Side
+              x={aLength + 1}
+              y={0}
+              angle={90}
+              dimension={this.props.triple.getB()}
+            />
+            {/* side C */}
+            <Side
+              x={0}
+              y={0}
+              angle={angle}
+              dimension={this.props.triple.getC()}
+            />
+          </Layer>
+        </Stage>
+      </div>
+    )
+  }
+}
+
+
 class TripleGroupDisplay extends React.Component {
   constructor(props) {
     super(props);
@@ -155,26 +229,6 @@ class TripleGroupDisplay extends React.Component {
     const variantLabelId = "variantLabel" + this.props.index;
     const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
 
-    const aLength = triple.getA().lengthIn(STUDS);
-    const bLength = triple.getB().lengthIn(STUDS);
-    const cLength = triple.getC().lengthIn(STUDS);
-
-    const angle = triple.getAngle();
-    const leftOverhangLength = Math.sin(angle * Math.PI / 180);
-    const topOverhangeHeight = Math.cos(angle * Math.PI / 180);
-    const diagramWidthStuds = aLength + 1 + leftOverhangLength;
-    const diagramHeightStuds = bLength + 1 + topOverhangeHeight;
-
-    const maxHorizontalScale = (drawingWidth - 2 * drawingMargin) / diagramWidthStuds;
-    const maxVerticalScale = (drawingHeight - 2 * drawingMargin) / diagramHeightStuds;
-    const scale = Math.min(maxHorizontalScale, maxVerticalScale);
-
-    const vertexX = (drawingWidth - diagramWidthStuds * scale) / 2 + leftOverhangLength * scale;
-    const vertexY = drawingHeight - (drawingHeight - diagramHeightStuds * scale) / 2 - scale;
-
-    const arcRadius = aLength * scale / 4;
-    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
-
     const angleLabelFontSize = ANGLE_LABEL_FONT_SIZE * zoomScale;
 
     return (
@@ -201,52 +255,14 @@ class TripleGroupDisplay extends React.Component {
           </Select>
           </FormControl>
         </div>
-        <div className="drawingWrapper">
-          <Stage width={drawingWidth} height={drawingHeight}>
-            <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
-              <Text
-                text={Math.round(triple.getAngle() * 100) / 100 + String.fromCharCode(176)}
-                x={angleLabelRadius * Math.cos(triple.getAngle() * Math.PI / 360)}
-                y={-angleLabelRadius * Math.sin(triple.getAngle() * Math.PI / 360) - angleLabelFontSize / 2}
-                fontSize={angleLabelFontSize}
-                fill="lightgrey"
-              />
-            </Layer>
-            <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={-1}>
-              <Arc
-                x={0}
-                y={0}
-                innerRadius={arcRadius}
-                outerRadius={arcRadius + ARC_WIDTH}
-                angle={triple.getAngle()}
-                fill="lightgrey"
-              />
-            </Layer>
-            <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
-              {/* side A */}
-              <Side
-                x={0}
-                y={-1}
-                angle={0}
-                dimension={triple.getA()}
-              />
-              {/* side B */}
-              <Side
-                x={aLength + 1}
-                y={0}
-                angle={90}
-                dimension={triple.getB()}
-              />
-              {/* side C */}
-              <Side
-                x={0}
-                y={0}
-                angle={angle}
-                dimension={triple.getC()}
-              />
-            </Layer>
-          </Stage>
-        </div>
+        <TriangleDrawing
+          triple={triple}
+          width={drawingWidth}
+          height={drawingHeight}
+          padding={drawingMargin}
+          fontSize={angleLabelFontSize}
+          angleLabel={Math.round(triple.getAngle() * 100) / 100 + String.fromCharCode(176)}
+        />
       </div>
     );
   }
