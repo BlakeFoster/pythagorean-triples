@@ -6,11 +6,18 @@ import SideInput from "./SideInput";
 import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import Triple from "../../model/Triple";
+import Dimension from "../../model/Dimension";
 import { STUDS } from "../../model/Unit"
+import TriangleGraphic from "../graphics/TriangleGraphic"
 
 function OverUnderSwitch(props) {
   return (<><Switch size="small" checked={props.isAllowed} onChange={() => {props.callback(!props.isAllowed)}}/> {props.label}</>);
 }
+
+const DIAGRAM_WIDTH = 480;
+const DIAGRAM_HEIGHT = 480;
+const DIAGRAM_MARGIN = 50;
+const DIAGRAM_TRIPLE = new Triple([new Dimension(4, STUDS), new Dimension(3, STUDS), new Dimension(5, STUDS)])
 
 class TripleCalculator extends React.Component {
 
@@ -222,6 +229,16 @@ class TripleCalculator extends React.Component {
           >Calculate</Button>
           <div className="helpMessage">{this.getHelpMessage()}</div>
         </InputGroup>
+        <div id="diagram">
+          <TriangleGraphic
+            triple={DIAGRAM_TRIPLE}
+            width={DIAGRAM_WIDTH}
+            height={DIAGRAM_HEIGHT}
+            padding={DIAGRAM_MARGIN}
+            fontSize={12}
+            angleLabel="angle"
+          />
+        </div>
         <hr/>
       </div>
     );

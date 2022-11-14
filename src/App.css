@@ -18,6 +18,7 @@ body {
 
 .inputs {
   text-align: left;
+  position: relative;
 }
 
 .inputGroupRow {
@@ -66,6 +67,13 @@ legend {
   font-weight: bold;
 }
 
+#diagram {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  display: block;
+}
+
 .tripleGroupDisplay {
   color: black;
   border-radius: 20px;
@@ -79,7 +87,7 @@ legend {
   position: relative;
 }
 
-.tripleGroupDisplay.normal {
+.tripleGroupDisplay.normal, #diagram {
   width: 480px;
   height: 480px;
 }
@@ -127,17 +135,7 @@ legend {
   padding: 0;
 }
 
-tripleGroupDisplay.normal .drawingWrapper {
-  width: 450px;
-  height: 400px;
-}
-
-tripleGroupDisplay.normal .drawingWrapper {
-  width: 1170px;
-  height: 1120px;
-}
-
-.drawingWrapper {
+.tripleGroupDisplay .drawingWrapper {
   margin-left: auto;
   margin-right: auto;
   position: absolute;
