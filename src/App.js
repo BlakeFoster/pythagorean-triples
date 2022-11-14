@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
 import TripleCalculator from "./components/input/TripleCalculator";
 import TripleGroupDisplay from "./components/output/TripleGroupDisplay";
+import ZoomedTripleGroupDisplay from "./components/output/ZoomedTripleGroupDisplay";
 
 const darkTheme = createTheme({
   palette: {
@@ -29,14 +30,13 @@ class App extends React.Component {
     );
   }
 
-  renderTripleGroup(zoomed, tripleGroup, index) {
+  renderTripleGroup(tripleGroup, index) {
     return (
       <TripleGroupDisplay
-        tripleGroups={tripleGroup}
+        tripleGroup={tripleGroup}
         key={"group" + index + 1}
-        number={index + 1}
-        zoomed={zoomed}
-        toggleZoomed={this.setZoomedGroupIndex.bind(this, zoomed ? null : index)}
+        index={index}
+        toggleZoomed={this.setZoomedGroupIndex.bind(this)}
       />);
   }
 
@@ -49,21 +49,22 @@ class App extends React.Component {
     if (this.state.zoomedGroupIndex == null) {
       return null;
     }
-    return this.renderTripleGroup(
-      true,
-      this.state.tripleGroups[this.state.zoomedGroupIndex],
-      this.state.zoomedGroupIndex
-    )
+    console.log("Rendering zoomed group " + this.state.zoomedGroupIndex)
+    return (
+      <ZoomedTripleGroupDisplay
+        tripleGroup={this.state.tripleGroups[this.state.zoomedGroupIndex]}
+        index={this.state.zoomedGroupIndex}
+        toggleZoomed={this.setZoomedGroupIndex.bind(this)}
+     />);
   }
 
   render() {
-    console.log("render"); 
     return (
       <div className="app">
         <h1 id="title">Pythagorean Triple Calculator</h1>
         <ThemeProvider theme={darkTheme}>
           <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
-          {this.state.tripleGroups.map(this.renderTripleGroup.bind(this, false))}
+          {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
           {this.renderZoomedGroup()}
         </ThemeProvider>
       </div>

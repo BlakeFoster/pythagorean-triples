@@ -3,16 +3,12 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from '@mui/icons-material/Close';
 
 import { Stage, Layer, Rect, Text, Circle, Line, Arc } from 'react-konva';
 import { INTERNAL, STUDS } from "../../model/Unit"
 
 const DRAWING_WIDTH = 450;
-const ZOOMED_DRAWING_WIDTH = 1170;
 const DRAWING_HEIGHT = 400;
-const ZOOMED_DRAWING_HEIGHT = 1120;
 const DRAWING_MARGIN = 10;
 const STROKE_WIDTH = 0.05;
 const ARC_RADIUS = 100;
@@ -110,13 +106,11 @@ class Side extends React.Component {
   }
 }
 
+
 class TripleGroupDisplay extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedTripleIndex: 0,
-      zoomed: false
-    }
+    this.state = {selectedTripleIndex: 0}
   }
 
   renderTripleGroupMenuItem(item, index) {
@@ -132,35 +126,34 @@ class TripleGroupDisplay extends React.Component {
     this.setState({selectedTripleIndex: parseInt(event.target.value)})
   }
 
-  renderNormal() {
-    return this.renderDisplay(false);
-  }
-
-  renderZoomed() {
-    return (
-      <div className="zoomWrapper">
-        {this.renderDisplay(true)}
-      </div>
-    );
-  }
-
   renderHeading() {
-    if (this.props.zoomed) {
-      return <IconButton onClick={this.props.toggleZoomed}><CloseIcon/></IconButton>
-    } else {
-      return <>{this.props.number}.</>
-    }
+    return <>{this.props.index + 1}.</>
   }
 
-  renderDisplay(zoomed) {
-    const drawingWidth = zoomed ? ZOOMED_DRAWING_WIDTH : DRAWING_WIDTH;
-    const drawingHeight = zoomed ? ZOOMED_DRAWING_HEIGHT : DRAWING_HEIGHT;
+  cssClass() {
+    return "normal";
+  }
+
+  onClick() {
+    return this.props.toggleZoomed(this.props.index);
+  }
+
+  getDrawingWidth() {
+    return DRAWING_WIDTH;
+  }
+
+  getDrawingHeight() {
+    return DRAWING_HEIGHT;
+  }
+
+  render() {
+    const drawingWidth = this.getDrawingWidth();
+    const drawingHeight = this.getDrawingHeight();
     const zoomScale = drawingWidth / DRAWING_WIDTH;
     const drawingMargin = DRAWING_MARGIN * zoomScale;
 
     const variantLabelId = "variantLabel" + this.props.index;
-    const triple = this.props.tripleGroups[this.state.selectedTripleIndex];
-    console.log("Drawing triple " + triple)
+    const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
 
     const aLength = triple.getA().lengthIn(STUDS);
     const bLength = triple.getB().lengthIn(STUDS);
@@ -186,8 +179,8 @@ class TripleGroupDisplay extends React.Component {
 
     return (
       <div
-        className={"tripleGroupDisplay " + (zoomed ? "zoomed" : "normal") + " parity" + this.props.number % 2}
-        onClick={zoomed ? null : this.props.toggleZoomed}
+        className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}
+        onClick={this.onClick.bind(this)}
       >
         <h1 className="tripleGroupHeading">
           {this.renderHeading()}
@@ -202,9 +195,9 @@ class TripleGroupDisplay extends React.Component {
             labelId={variantLabelId}
             value={this.state.selectedTripleIndex}
             onChange={this.setTripleIndex.bind(this)}
-            disabled={this.props.tripleGroups.length <= 1}
+            disabled={this.props.tripleGroup.length <= 1}
           >
-            {this.props.tripleGroups.map(this.renderTripleGroupMenuItem.bind(this))}
+            {this.props.tripleGroup.map(this.renderTripleGroupMenuItem.bind(this))}
           </Select>
           </FormControl>
         </div>
@@ -256,10 +249,6 @@ class TripleGroupDisplay extends React.Component {
         </div>
       </div>
     );
-  }
-
-  render() {
-    return this.props.zoomed ?  this.renderZoomed() : this.renderNormal();
   }
 }
 
