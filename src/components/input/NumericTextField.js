@@ -14,7 +14,6 @@ class NumericTextField extends React.Component {
        }
     }
     this.props.onChange(newValue);
-
   }
 
   render() {

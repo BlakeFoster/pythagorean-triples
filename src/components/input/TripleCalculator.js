@@ -69,7 +69,8 @@ class TripleCalculator extends React.Component {
         unit={this.state.units[index]}
         maxLengthCallback={this.setMaxLength.bind(this, index)}
         unitCallback={this.setUnits.bind(this, index)}
-      />);
+      />
+    );
   }
 
   setDesiredAngle(desiredAngle) {
@@ -78,7 +79,7 @@ class TripleCalculator extends React.Component {
 
   clampAngle() {
     if (this.state.desiredAngle != null) {
-      this.setDesiredAngle(this.state.desiredAngle % 360);
+      this.setDesiredAngle(this.state.desiredAngle % 90);
     }
   }
 
@@ -132,7 +133,7 @@ class TripleCalculator extends React.Component {
         const l3 = triple.getValue(l3Index).length;
 
         if (l3 > 0 && l3 <= l3Max && triple.isPythagorean()) {
-          const angleDifference = triple.angle - this.state.desiredAngle;
+          const angleDifference = triple.getAngle() - this.state.desiredAngle;
           if ((angleDifference >= 0 || this.state.allowUnder) && (angleDifference <= 0 || this.state.allowOver)) {
             const key = triple.hashKey();
             var tripleGroup = tripleGroups.get(key);
@@ -191,17 +192,34 @@ class TripleCalculator extends React.Component {
           <div className="angleControls">
             <div>
               <div className="angleControlGroup">
-                <NumericTextField label="Angle" value={this.state.desiredAngle} onChange={this.setDesiredAngle.bind(this)} onBlur={this.clampAngle.bind(this)}/>
+                <NumericTextField
+                  label="Angle"
+                  value={this.state.desiredAngle}
+                  onChange={this.setDesiredAngle.bind(this)}
+                  onBlur={this.clampAngle.bind(this)}
+                />
               </div>
               <div className="angleControlGroup">
-                <OverUnderSwitch isAllowed={this.state.allowOver} label="Alow Over" callback={this.setAllowOver.bind(this)}/><br/>
-                <OverUnderSwitch isAllowed={this.state.allowUnder} label="Allow Under" callback={this.setAllowUnder.bind(this)}/>
+                <OverUnderSwitch
+                  isAllowed={this.state.allowOver}
+                  label="Alow Over" callback={this.setAllowOver.bind(this)}
+                /><br/>
+                <OverUnderSwitch
+                  isAllowed={this.state.allowUnder}
+                  label="Allow Under"
+                  callback={this.setAllowUnder.bind(this)}
+                />
               </div>
             </div>
           </div>
         </InputGroup>
         <InputGroup>
-          <Button variant="contained" color="warning" disabled={!this.canCalculate()} onClick={this.calculateTriples.bind(this)}>Calculate</Button>
+          <Button
+            variant="contained"
+            color="warning"
+            disabled={!this.canCalculate()}
+            onClick={this.calculateTriples.bind(this)}
+          >Calculate</Button>
           <div className="helpMessage">{this.getHelpMessage()}</div>
         </InputGroup>
         <hr/>

@@ -5,8 +5,9 @@ import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import { STUDS, PLATES } from "../../model/Unit";
 
-class SideInput extends React.Component {
+const MAX_LENGTH = 100;
 
+class SideInput extends React.Component {
   renderUnitButton(unit) {
     return (
       <ToggleButton
@@ -17,10 +18,21 @@ class SideInput extends React.Component {
     );
   }
 
+  clampLength() {
+    if (this.props.maxLength != null && this.props.maxLength > MAX_LENGTH) {
+      this.props.maxLengthCallback(MAX_LENGTH);
+    }
+  }
+
   render() {
     return (
       <InputGroup label={"Side " + this.props.sideName}>
-        <NumericTextField value={this.props.maxLength} onChange={this.props.maxLengthCallback} label="Max length"/>
+        <NumericTextField
+          value={this.props.maxLength}
+          onChange={this.props.maxLengthCallback}
+          onBlur={this.clampLength.bind(this)}
+          label="Max length"
+        />
         &nbsp;&nbsp;
         <ToggleButtonGroup exlusive="true" color="warning">
           {this.renderUnitButton(STUDS)}
