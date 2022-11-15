@@ -2,12 +2,11 @@ import React from "react";
 import Side from "./Side";
 import { Stage, Layer, Text, Arc } from 'react-konva';
 
-import { STUDS } from "../../model/Unit"
+import { PlateSide, PlateTop } from "./SideElement"
+import { STUDS, PLATES } from "../../model/Unit"
 
 const ANGLE_LABEL_DISTANCE = 10;
 const ARC_WIDTH = 2;
-
-const Alias = Side;
 
 
 class TriangleGraphic extends React.Component {
@@ -56,25 +55,28 @@ class TriangleGraphic extends React.Component {
           </Layer>
           <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
             {/* side A */}
-            <Alias
+            <Side
               x={aLength}
               y={0}
               angle={180}
-              dimension={this.props.triple.getA()}
+              length={this.props.triple.getA().length}
+              displayElement={this.props.triple.getA().unit == STUDS ? PlateTop : PlateSide}
             />
             {/* side B */}
-            <Alias
+            <Side
               x={aLength}
               y={bLength}
               angle={-90}
-              dimension={this.props.triple.getB()}
+              length={this.props.triple.getB().length}
+              displayElement={this.props.triple.getB().unit == STUDS ? PlateTop : PlateSide}
             />
             {/* side C */}
-            <Alias
+            <Side
               x={0}
               y={0}
               angle={angle}
-              dimension={this.props.triple.getC()}
+              length={this.props.triple.getC().length}
+              displayElement={this.props.triple.getC().unit == STUDS ? PlateTop : PlateSide}
             />
           </Layer>
         </Stage>
