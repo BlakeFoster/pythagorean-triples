@@ -1,21 +1,6 @@
 import Dimension from "./Dimension"
 import { INTERNAL } from "./Unit"
-
-function gcd(x, y) {
-  x = Math.abs(x);
-  y = Math.abs(y);
-  while(y) {
-    var t = y;
-    y = x % y;
-    x = t;
-  }
-  return x;
-}
-
-function almostEqual(a, b) {
-  const tolerance = 0.0001;
-  return a > b - tolerance && a < b + tolerance;
-}
+import { getAngle, gcd, almostEqual } from "../lib/math"
 
 const SIDE_A = 0;
 const SIDE_B = 1;
@@ -43,7 +28,7 @@ class Triple {
 
   getAngle() {
     if (this._angle == null) {
-      this._angle = Math.atan(this.getB() / this.getA()) * 180 / Math.PI;
+      this._angle = getAngle(this.getA(), this.getB());
     }
     return this._angle;
   }
