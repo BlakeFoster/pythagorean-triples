@@ -57,16 +57,16 @@ class TriangleGraphic extends React.Component {
           <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
             {/* side A */}
             <Alias
-              x={0}
-              y={-1}
-              angle={0}
+              x={aLength}
+              y={0}
+              angle={180}
               dimension={this.props.triple.getA()}
             />
             {/* side B */}
             <Alias
-              x={aLength + 1}
-              y={0}
-              angle={90}
+              x={aLength}
+              y={bLength}
+              angle={-90}
               dimension={this.props.triple.getB()}
             />
             {/* side C */}

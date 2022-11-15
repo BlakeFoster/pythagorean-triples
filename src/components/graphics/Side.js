@@ -38,7 +38,7 @@ class Plate extends _LegoElement {
   renderDetail() {
     return (
       <BorderedRect
-        x={this.props.x + PLATE_WIDTH - STROKE_WIDTH}
+        x={this.props.x - STUD_HEIGHT}
         y={this.props.y + 0.5 - STUD_RADIUS}
         width={STUD_HEIGHT + STROKE_WIDTH}
         height={2 * STUD_RADIUS}
@@ -83,7 +83,7 @@ class Side extends React.Component {
     for (var i=0; i<numSegments; i+=1) {
       const Segment = this.props.dimension.unit == STUDS ? Stud : Plate;
 
-      segments[i] = (
+      segments[numSegments - i - 1] = (
         <Segment
           x={this.props.dimension.unit.to(i, STUDS)}
           y={0}
