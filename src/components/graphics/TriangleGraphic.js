@@ -7,6 +7,8 @@ import { STUDS } from "../../model/Unit"
 const ANGLE_LABEL_DISTANCE = 10;
 const ARC_WIDTH = 2;
 
+const Alias = Side;
+
 
 class TriangleGraphic extends React.Component {
   render() {
@@ -54,21 +56,21 @@ class TriangleGraphic extends React.Component {
           </Layer>
           <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
             {/* side A */}
-            <Side
+            <Alias
               x={0}
               y={-1}
               angle={0}
               dimension={this.props.triple.getA()}
             />
             {/* side B */}
-            <Side
+            <Alias
               x={aLength + 1}
               y={0}
               angle={90}
               dimension={this.props.triple.getB()}
             />
             {/* side C */}
-            <Side
+            <Alias
               x={0}
               y={0}
               angle={angle}

@@ -1,97 +1,107 @@
 import React from "react";
+import { Circle, Line, Group } from 'react-konva';
 
-import { STUDS } from "../../model/Unit"
-import { Rect, Circle, Line } from 'react-konva';
+import { STUDS, PLATES } from "../../model/Unit"
+import BorderedRect from "./BorderedRect"
+
+const BRICK_WIDTH_MM = 7.91;
+const STUD_WIDTH_MM = 4.91;
+const STUD_HEIGHT_MM = 1.75;
 
 const STROKE_WIDTH = 0.05;
+const STUD_RADIUS = STUD_WIDTH_MM / (2 * BRICK_WIDTH_MM) ;
+const STUD_HEIGHT = STUD_HEIGHT_MM / BRICK_WIDTH_MM;
 
+const PLATE_WIDTH = PLATES.to(1, STUDS);
 
-class Side extends React.Component {
-  renderRectangle() {
-    const outerPadding = STROKE_WIDTH / 2;
-    const offsetRadius = outerPadding * Math.sqrt(2);
-    const offsetAngle = (this.props.angle + 45) * Math.PI / 180;
-    const length = this.props.dimension.lengthIn(STUDS) - STROKE_WIDTH;
-    const height = 1 - STROKE_WIDTH;
-    const x = this.props.x + Math.cos(offsetAngle) * offsetRadius;
-    const y = this.props.y + Math.sin(offsetAngle) * offsetRadius;
-
+class _LegoElement extends React.Component {
+  render() {
     return (
-      <Rect
-        x={x}
-        y={y}
-        width={length}
-        height={height}
-        rotation={this.props.angle}
+      <>
+        <BorderedRect
+          x={this.props.x}
+          y={this.props.y}
+          width={this.getWidth()}
+          height={1}
+          rotation={this.props.angle}
+          stroke="black"
+          strokeWidth={STROKE_WIDTH}
+          fill="orange"
+        />
+        {this.renderDetail()}
+      </>
+    )
+  }
+}
+
+class Plate extends _LegoElement {
+  renderDetail() {
+    return (
+      <BorderedRect
+        x={this.props.x + PLATE_WIDTH - STROKE_WIDTH}
+        y={this.props.y + 0.5 - STUD_RADIUS}
+        width={STUD_HEIGHT + STROKE_WIDTH}
+        height={2 * STUD_RADIUS}
+        stroke="black"
+        fill="orange"
+        strokeWidth={STROKE_WIDTH}
+      />
+    )
+  }
+
+  getWidth() {
+    return PLATE_WIDTH;
+  }
+}
+
+
+class Stud extends _LegoElement {
+  renderDetail() {
+    return (
+      <Circle
+        x={this.props.x + 0.5}
+        y={this.props.y + 0.5}
         stroke="black"
         strokeWidth={STROKE_WIDTH}
-        fill="orange"
+        radius={STUD_RADIUS}
       />
     );
   }
 
+  getWidth() {
+    return 1;
+  }
+}
+
+
+class Side extends React.Component {
+
   renderSegments() {
     var numSegments = this.props.dimension.length;
-    const angle = this.props.angle * Math.PI / 180;
-    const length = this.props.dimension.lengthIn(STUDS);
+    var segments = new Array(numSegments);
 
-    const x0 = this.props.x;
-    const y0 = this.props.y;
+    for (var i=0; i<numSegments; i+=1) {
+      const Segment = this.props.dimension.unit == STUDS ? Stud : Plate;
 
-    const x1 = this.props.x + length * Math.cos(angle);
-    const y1 = this.props.y + length * Math.sin(angle);
-
-    const segmentAngle = angle + Math.PI / 2;
-    const segmentXOffset = Math.cos(segmentAngle);
-    const segmentYOffset = Math.sin(segmentAngle);
-
-    const dx = x1 - x0;
-    const dy = y1 - y0;
-
-    var segments = [];
-
-    for (var i=1; i<numSegments; i+=1) {
-      var lineX0 = this.props.x + (dx * i) / numSegments;
-      var lineY0 = this.props.y + (dy * i) / numSegments;
-      var lineX1 = lineX0 + segmentXOffset;
-      var lineY1 = lineY0 + segmentYOffset;
-      segments.push(
-        <Line
-          stroke="black"
-          strokeWidth={STROKE_WIDTH * 2}
-          points={[lineX0, lineY0, lineX1, lineY1]}
-          key={"line" + lineX0 + "." + lineY0}
+      segments[i] = (
+        <Segment
+          x={this.props.dimension.unit.to(i, STUDS)}
+          y={0}
         />
       );
     }
-
-    if (this.props.dimension.unit == STUDS) {
-      for (var i=0; i<numSegments; i+=1) {
-        var studX = x0 + segmentXOffset / 2 + (dx * (i + 0.5)) / numSegments;
-        var studY = y0 + segmentYOffset / 2 + (dy * (i + 0.5)) / numSegments;
-        segments.push(
-          <Circle
-            x={studX}
-            y={studY}
-            stroke="black"
-            strokeWidth={STROKE_WIDTH}
-            radius={0.3}
-            key={"stud" + studX + "." + studY}
-          />
-        )
-      }
-    }
-
     return segments;
   }
 
   render() {
     return (
-      <>
-        {this.renderRectangle()}
+      <Group
+        rotation={this.props.angle}
+        x={this.props.x}
+        y={this.props.y}
+      >
         {this.renderSegments()}
-
-      </>
+      </Group>
     )
   }
 }
