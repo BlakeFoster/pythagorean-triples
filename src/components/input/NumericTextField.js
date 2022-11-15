@@ -9,7 +9,7 @@ class NumericTextField extends React.Component {
       newValue = null;
     } else if (/^[0-9]*$/.test(value)) {
        const numericValue = parseInt(value);
-       if (numericValue != 0) {
+       if (numericValue !== 0) {
          newValue = numericValue;
        }
     }

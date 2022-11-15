@@ -18,7 +18,7 @@ class Dimension {
   }
 
   _isInteger() {
-    return this.length % 1 == 0;
+    return this.length % 1 === 0;
   }
 
   toString() {

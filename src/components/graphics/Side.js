@@ -1,7 +1,6 @@
 import React from "react";
 import { Group } from "react-konva";
 
-import { STUDS, PLATES } from "../../model/Unit"
 
 class Side extends React.Component {
 

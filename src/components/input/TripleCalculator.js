@@ -1,7 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch"
-import Typography from "@mui/material/Typography";
 import SideInput from "./SideInput";
 import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
@@ -35,7 +34,7 @@ class TripleCalculator extends React.Component {
   updateItem(array, index, value) {
     var newArray = new Array(array.length);
     for (var i=0; i<array.length; i++) {
-      newArray[i] = i == index ? value : array[i];
+      newArray[i] = i === index ? value : array[i];
     }
     return newArray;
   }
@@ -108,18 +107,15 @@ class TripleCalculator extends React.Component {
     var l1Index = 0;
     var l2Index = 1;
     var l3Index = 2;
-    var l1Sign = 1;
 
     if (maxLengths[0] == null) {
       l1Index = 1;
       l2Index = 2;
       l3Index = 0;
-      l1Sign = -1;
     } else if (maxLengths[1] == null) {
       l1Index = 0;
       l2Index = 2;
       l3Index = 1;
-      l1Sign = -1;
     }
 
     const l1Max = maxLengths[l1Index];

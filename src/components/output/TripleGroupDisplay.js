@@ -9,7 +9,6 @@ import TriangleGraphic from "../graphics/TriangleGraphic"
 const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
 const DRAWING_MARGIN = 10;
-const ARC_RADIUS = 100;
 const ANGLE_LABEL_FONT_SIZE = 15;
 
 

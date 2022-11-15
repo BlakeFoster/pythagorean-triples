@@ -50,7 +50,7 @@ class Triple {
 
   getMinimized() {
     if (this._minimized == null) {
-      if (this.getGCD() == 1) {
+      if (this.getGCD() === 1) {
         this._minimized = this;
       } else {
         this._minimized = new Triple(

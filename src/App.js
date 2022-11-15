@@ -24,7 +24,7 @@ class App extends React.Component {
   setTripleGroups(tripleGroups) {
     this.setState(
       {
-        tripleGroups, tripleGroups,
+        tripleGroups: tripleGroups,
         zoomedGroupIndex: null
       }
     );
