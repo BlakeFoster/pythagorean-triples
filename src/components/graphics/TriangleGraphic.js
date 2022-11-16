@@ -4,6 +4,7 @@ import { Stage, Layer, Text, Arc } from 'react-konva';
 
 import { PlateSide, PlateTop } from "./SideElement"
 import { STUDS } from "../../model/Unit"
+import { sind, cosd } from "../../lib/math"
 
 const ANGLE_LABEL_DISTANCE = 10;
 const ARC_WIDTH = 2;
@@ -15,8 +16,8 @@ class TriangleGraphic extends React.Component {
     const bLength = this.props.triple.getB().lengthIn(STUDS);
 
     const angle = this.props.triple.getAngle();
-    const leftOverhangLength = Math.sin(angle * Math.PI / 180);
-    const topOverhangeHeight = Math.cos(angle * Math.PI / 180);
+    const leftOverhangLength = sind(angle);
+    const topOverhangeHeight = cosd(angle);
     const diagramWidthStuds = aLength + 1 + leftOverhangLength;
     const diagramHeightStuds = bLength + 1 + topOverhangeHeight;
 
@@ -36,8 +37,8 @@ class TriangleGraphic extends React.Component {
           <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
             <Text
               text={this.props.angleLabel}
-              x={angleLabelRadius * Math.cos(angle * Math.PI / 360)}
-              y={-angleLabelRadius * Math.sin(angle * Math.PI / 360) - this.props.fontSize / 2}
+              x={angleLabelRadius * cosd(angle / 2)}
+              y={-angleLabelRadius * sind(angle / 2) - this.props.fontSize / 2}
               fontSize={this.props.fontSize}
               fill="lightgrey"
             />
