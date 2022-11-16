@@ -1,6 +1,7 @@
 const _DEG_TO_RAD = Math.PI / 180;
 
 export function gcd(a, ...rest) {
+  /* gcd of n numbers */
   if (rest.length) {
     var b = gcd(...rest)
     a = Math.abs(a);
