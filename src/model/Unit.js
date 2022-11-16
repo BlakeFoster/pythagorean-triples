@@ -19,4 +19,4 @@ class Unit {
 
 export const PLATES = new Unit("Plates", 2);
 export const STUDS = new Unit("Studs", 5);
-export const INTERNAL = new Unit("Internal", 1);
+export const INTERNAL = new Unit("Half Plates", 1);
