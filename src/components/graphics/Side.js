@@ -13,6 +13,7 @@ class Side extends React.Component {
         <this.props.displayElement
           x={i * this.props.displayElement.LENGTH}
           y={0}
+          key={i}
         />
       );
     }
