@@ -1,6 +1,6 @@
 import Dimension from "./Dimension"
 import { INTERNAL } from "./Unit"
-import { getAngle, gcd, almostEqual } from "../lib/math"
+import { atan2d, gcd, almostEqual } from "../lib/math"
 
 const SIDE_A = 0;
 const SIDE_B = 1;
@@ -28,7 +28,7 @@ class Triple {
 
   getAngle() {
     if (this._angle == null) {
-      this._angle = getAngle(this.getA(), this.getB());
+      this._angle = atan2d(this.getB(), this.getA());
     }
     return this._angle;
   }
@@ -50,7 +50,7 @@ class Triple {
 
   getGCD() {
     if (this._gcd == null) {
-      this._gcd = this.isPythagorean() ? gcd(gcd(this.getA().length, this.getB().length), this.getC().length) : 1;
+      this._gcd = this.isPythagorean() ? gcd(this.getA().length, this.getB().length, this.getC().length) : 1;
     }
     return this._gcd;
   }
