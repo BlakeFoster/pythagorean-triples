@@ -23,8 +23,8 @@ const DIAGRAM_B_UNIT = new Unit("B", 3)
 const DIAGRAM_C_UNIT = new Unit("C", 5)
 const DIAGRAM_SIDE_LENGTH = 1
 
-const DIAGRAM_HOVER_COLOR = "orange"
-const DIAGRAM_NORMAL_COLOR = "white"
+const DIAGRAM_HOVER_COLOR = "rgb(255, 230, 150)"
+const DIAGRAM_NORMAL_COLOR = "lightgrey"
 
 const A = 0;
 const B = 1;
@@ -312,7 +312,7 @@ class TripleCalculator extends React.Component {
             width={DIAGRAM_WIDTH}
             height={DIAGRAM_HEIGHT}
             padding={DIAGRAM_MARGIN}
-            fontSize={20}
+            angleFontSize={20}
             angleColor={this.state.angleColor}
             angleLabel={THETA}
             aElement={this.state.aElement}

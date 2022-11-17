@@ -13,7 +13,7 @@ const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
 const DRAWING_MARGIN = 10;
 const ANGLE_LABEL_FONT_SIZE = 15;
-
+const ANGLE_COLOR = "lightgrey";
 
 class TripleGroupDisplay extends React.Component {
   constructor(props) {
@@ -67,7 +67,7 @@ class TripleGroupDisplay extends React.Component {
     const variantLabelId = "variantLabel" + this.props.index;
     const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
 
-    const angleLabelFontSize = ANGLE_LABEL_FONT_SIZE * zoomScale;
+    const angleFontSize = ANGLE_LABEL_FONT_SIZE * zoomScale;
 
     return (
       <div
@@ -103,7 +103,8 @@ class TripleGroupDisplay extends React.Component {
           width={drawingWidth}
           height={drawingHeight}
           padding={drawingMargin}
-          fontSize={angleLabelFontSize}
+          angleFontSize={angleFontSize}
+          angleColor={ANGLE_COLOR}
           angleLabel={Math.round(triple.getAngle() * 100) / 100 + DEGREES}
         />
       </div>

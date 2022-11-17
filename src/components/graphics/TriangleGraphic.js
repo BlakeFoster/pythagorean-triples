@@ -45,8 +45,8 @@ class TriangleGraphic extends React.Component {
             <Text
               text={this.props.angleLabel}
               x={angleLabelRadius * cosd(angle / 2)}
-              y={-angleLabelRadius * sind(angle / 2) - this.props.fontSize / 2}
-              fontSize={this.props.fontSize}
+              y={-angleLabelRadius * sind(angle / 2) - this.props.angleFontSize / 2}
+              fontSize={this.props.angleFontSize}
               fill={this.props.angleColor}
             />
           </Layer>
