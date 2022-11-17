@@ -5,7 +5,6 @@ import SideInput from "./SideInput";
 import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import Triple from "../../model/Triple";
-import Dimension from "../../model/Dimension";
 import { STUDS, Unit } from "../../model/Unit"
 import TriangleGraphic from "../graphics/TriangleGraphic"
 import { DEGREES, THETA } from "../../constants"
@@ -18,21 +17,18 @@ function OverUnderSwitch(props) {
 const DIAGRAM_WIDTH = 480;
 const DIAGRAM_HEIGHT = 480;
 const DIAGRAM_MARGIN = 50;
-//const DIAGRAM_TRIPLE = new Triple(
-//  [
-//    new Dimension(1, new Unit("A", 4)),
-//    new Dimension(1, new Unit("B", 3)),
-//    new Dimension(1, new Unit("C", 5))
-//  ]
-//)
 
-const DIAGRAM_TRIPLE = new Triple(
-  [
-    new Dimension(1, new Unit("A", 4)),
-    new Dimension(1, new Unit("B", 3)),
-    new Dimension(1, new Unit("C", 5))
-  ]
-)
+const DIAGRAM_A_UNIT = new Unit("A", 4)
+const DIAGRAM_B_UNIT = new Unit("B", 3)
+const DIAGRAM_C_UNIT = new Unit("C", 5)
+const DIAGRAM_SIDE_LENGTH = 1
+
+const DIAGRAM_HOVER_COLOR = "orange"
+const DIAGRAM_NORMAL_COLOR = "white"
+
+const A = 0;
+const B = 1;
+const C = 2;
 
 class TripleCalculator extends React.Component {
 
@@ -45,7 +41,11 @@ class TripleCalculator extends React.Component {
       allowOver: true,
       allowUnder: true,
       angleInputLength: 0,
-      angleInputTop: 0
+      angleInputTop: 0,
+      aElement: this.sideElement(DIAGRAM_A_UNIT),
+      bElement: this.sideElement(DIAGRAM_B_UNIT),
+      cElement: this.sideElement(DIAGRAM_C_UNIT),
+      angleColor: DIAGRAM_NORMAL_COLOR
     };
     this.angleInputRef = React.createRef();
     this.angleControlGroupRef = React.createRef();
@@ -69,6 +69,35 @@ class TripleCalculator extends React.Component {
     console.log("Units for side " + sideIndex + " set to " + unit.toString());
   }
 
+  getDiagramColor(highlight) {
+    return highlight ? DIAGRAM_HOVER_COLOR : DIAGRAM_NORMAL_COLOR;
+  }
+
+  sideElement(unit, highlight = false) {
+    return plain(unit, this.getDiagramColor(highlight));
+  }
+
+  setAElement(highlight) {
+    console.log("Side A highlight set to " + highlight)
+    this.setState({aElement: this.sideElement(DIAGRAM_A_UNIT, highlight)})
+  }
+
+  setBElement(highlight) {
+    console.log("Side B highlight set to " + highlight)
+    this.setState({bElement: this.sideElement(DIAGRAM_B_UNIT, highlight)}
+    )
+  }
+
+  setCElement(highlight) {
+    console.log("Side C highlight set to " + highlight)
+    this.setState({cElement: this.sideElement(DIAGRAM_C_UNIT, highlight)})
+  }
+
+  setAngleColor(highlight) {
+    console.log("Angle highlight set to " + highlight)
+    this.setState({angleColor: this.getDiagramColor(highlight)})
+  }
+
   setAllowOver(allowOver) {
     this.setState(
       {
@@ -87,7 +116,7 @@ class TripleCalculator extends React.Component {
     );
   }
 
-  renderSideInput(index, sideName) {
+  renderSideInput(index, sideName, hoverCallback) {
     return (
       <SideInput
         sideName={sideName}
@@ -95,6 +124,7 @@ class TripleCalculator extends React.Component {
         unit={this.state.units[index]}
         maxLengthCallback={this.setMaxLength.bind(this, index)}
         unitCallback={this.setUnits.bind(this, index)}
+        hoverCallback={hoverCallback}
       />
     );
   }
@@ -227,10 +257,10 @@ class TripleCalculator extends React.Component {
   render() {
     return (
       <div className="inputs">
-        {this.renderSideInput(0, "A")}
-        {this.renderSideInput(1, "B")}
-        {this.renderSideInput(2, "C")}
-        <InputGroup label="Desired Angle">
+        {this.renderSideInput(A, "A", this.setAElement.bind(this))}
+        {this.renderSideInput(B, "B", this.setBElement.bind(this))}
+        {this.renderSideInput(C, "C", this.setCElement.bind(this))}
+        <InputGroup label="Desired Angle" hoverCallback={this.setAngleColor.bind(this)}>
           <div className="angleControls">
             <div>
               <div className="angleControlGroup" ref={this.angleControlGroupRef}>
@@ -276,16 +306,18 @@ class TripleCalculator extends React.Component {
         </InputGroup>
         <div id="diagram">
           <TriangleGraphic
-            triple={DIAGRAM_TRIPLE}
+            aLength={DIAGRAM_SIDE_LENGTH}
+            bLength={DIAGRAM_SIDE_LENGTH}
+            cLength={DIAGRAM_SIDE_LENGTH}
             width={DIAGRAM_WIDTH}
             height={DIAGRAM_HEIGHT}
             padding={DIAGRAM_MARGIN}
             fontSize={20}
-            angleLabelFontStyle="italic"
+            angleColor={this.state.angleColor}
             angleLabel={THETA}
-            aElement={plain(DIAGRAM_TRIPLE.getA().unit)}
-            bElement={plain(DIAGRAM_TRIPLE.getB().unit)}
-            cElement={plain(DIAGRAM_TRIPLE.getC().unit)}
+            aElement={this.state.aElement}
+            bElement={this.state.bElement}
+            cElement={this.state.cElement}
           />
         </div>
         <hr/>

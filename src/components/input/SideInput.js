@@ -26,7 +26,7 @@ class SideInput extends React.Component {
 
   render() {
     return (
-      <InputGroup label={"Side " + this.props.sideName}>
+      <InputGroup label={"Side " + this.props.sideName} hoverCallback={this.props.hoverCallback}>
         <NumericTextField
           value={this.props.maxLength}
           onChange={this.props.maxLengthCallback}

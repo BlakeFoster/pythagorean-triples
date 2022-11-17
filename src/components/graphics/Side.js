@@ -20,7 +20,6 @@ class Side extends React.Component {
   }
 
   render() {
-    console.log("Side with length " + this.props.length + " side at (" + this.props.x + ", " + this.props.y + ") " + this.props.angle)
     return (
       <Group
         rotation={this.props.angle}

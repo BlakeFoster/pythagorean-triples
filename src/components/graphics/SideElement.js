@@ -99,7 +99,7 @@ export class PlateTop extends _LegoElement {
 }
 
 
-export function plain (unit) {
+export function plain (unit, color) {
   class Plain extends _SideElment {
     render() {
       return (
@@ -112,7 +112,7 @@ export function plain (unit) {
               this.props.y
             ]
           }
-          stroke="white"
+          stroke={color}
           strokeWidth={this.getStrokeWidth()}
         />
       )

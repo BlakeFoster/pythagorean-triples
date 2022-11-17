@@ -94,7 +94,9 @@ class TripleGroupDisplay extends React.Component {
           </FormControl>
         </div>
         <TriangleGraphic
-          triple={triple}
+          aLength={triple.getA().length}
+          bLength={triple.getB().length}
+          cLength={triple.getC().length}
           aElement={this.getElement(triple.getA())}
           bElement={this.getElement(triple.getB())}
           cElement={this.getElement(triple.getC())}
