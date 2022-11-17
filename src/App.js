@@ -61,7 +61,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <h1 id="title">Pythagorean Triple Calculator</h1>
+        <h1 id="title">Lego Right Triangle Calculator</h1>
         <ThemeProvider theme={darkTheme}>
           <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
           {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
