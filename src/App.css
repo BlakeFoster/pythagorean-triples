@@ -161,7 +161,7 @@ legend {
   padding: 0;
 }
 
-.variantSelector {
+.tripleGroupControls {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -175,4 +175,9 @@ legend {
   position: absolute;
   bottom: 15px;
   left: 15px;
+}
+
+.zoomCloseButton {
+  display: inline;
+  margin-left: 0.5em;
 }

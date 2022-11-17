@@ -3,6 +3,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton"
+import ZoomInTwoTone from "@mui/icons-material/ZoomInTwoTone";
 
 import TriangleGraphic from "../graphics/TriangleGraphic"
 import { DEGREES } from "../../constants"
@@ -34,16 +36,8 @@ class TripleGroupDisplay extends React.Component {
     this.setState({selectedTripleIndex: parseInt(event.target.value)})
   }
 
-  renderHeading() {
-    return <>{this.props.index + 1}.</>
-  }
-
   cssClass() {
     return "normal";
-  }
-
-  onClick() {
-    return this.props.toggleZoomed(this.props.index);
   }
 
   getDrawingWidth() {
@@ -56,6 +50,14 @@ class TripleGroupDisplay extends React.Component {
 
   getElement(side) {
       return side.unit === STUDS ? PlateTop : PlateSide;
+  }
+
+  renderIcon() {
+    return <ZoomInTwoTone/>
+  }
+
+  buttonAction() {
+    this.props.toggleZoomed(this.props.index);
   }
 
   render() {
@@ -72,12 +74,11 @@ class TripleGroupDisplay extends React.Component {
     return (
       <div
         className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}
-        onClick={this.onClick.bind(this)}
       >
         <h1 className="tripleGroupHeading">
-          {this.renderHeading()}
+          {this.props.index + 1}.
         </h1>
-        <div className="variantSelector">
+        <div className="tripleGroupControls">
           <FormControl size="small">
           <InputLabel id={variantLabelId}>Variant</InputLabel>
           <Select
@@ -92,6 +93,9 @@ class TripleGroupDisplay extends React.Component {
             {this.props.tripleGroup.map(this.renderTripleGroupMenuItem.bind(this))}
           </Select>
           </FormControl>
+          <div className="zoomCloseButton">
+            <IconButton onClick={this.buttonAction.bind(this)}>{this.renderIcon()}</IconButton>
+          </div>
         </div>
         <TriangleGraphic
           aLength={triple.getA().length}
