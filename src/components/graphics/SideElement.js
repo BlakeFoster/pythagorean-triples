@@ -24,8 +24,11 @@ class _SideElment extends React.Component {
   static getWidth() {
     return this.WIDTH_UNIT.to(1, RENDER_UNIT);
   }
-}
 
+  getStrokeWidth() {
+    return this.constructor.STROKE_WIDTH_RATIO * this.constructor.getWidth();
+  }
+}
 
 
 class _LegoElement extends _SideElment {
@@ -38,7 +41,7 @@ class _LegoElement extends _SideElment {
           width={this.constructor.getLength()}
           height={this.constructor.getWidth()}
           stroke="black"
-          strokeWidth={STROKE_WIDTH}
+          strokeWidth={this.getStrokeWidth()}
           fill="orange"
         />
         {this.renderDetail()}
@@ -53,6 +56,8 @@ class _LegoElement extends _SideElment {
   getStudHeight() {
     return this.constructor.getWidth() * STUD_HEIGHT_RATIO;
   }
+
+  static STROKE_WIDTH_RATIO = STROKE_WIDTH;
 }
 
 
@@ -62,11 +67,11 @@ export class PlateSide extends _LegoElement {
       <BorderedRect
         x={this.props.x - this.getStudHeight()}
         y={this.props.y + 0.5 * this.constructor.getWidth() - this.getStudRadius()}
-        width={this.getStudHeight() + STROKE_WIDTH}
+        width={this.getStudHeight() + this.getStrokeWidth()}
         height={2 * this.getStudRadius()}
         stroke="black"
         fill="orange"
-        strokeWidth={STROKE_WIDTH}
+        strokeWidth={this.getStrokeWidth()}
       />
     )
   }
@@ -83,7 +88,7 @@ export class PlateTop extends _LegoElement {
         x={this.props.x + 0.5 * this.constructor.getWidth()}
         y={this.props.y + 0.5 * this.constructor.getWidth()}
         stroke="black"
-        strokeWidth={STROKE_WIDTH}
+        strokeWidth={this.getStrokeWidth()}
         radius={this.getStudRadius()}
       />
     );
@@ -108,13 +113,14 @@ export function plain (unit) {
             ]
           }
           stroke="white"
-          strokeWidth={STROKE_WIDTH}
+          strokeWidth={this.getStrokeWidth()}
         />
       )
     }
 
     static LENGTH_UNIT = unit;
     static WIDTH_UNIT = new Unit("line", STROKE_WIDTH);
+    static STROKE_WIDTH_RATIO = 1;
   }
 
   return Plain;

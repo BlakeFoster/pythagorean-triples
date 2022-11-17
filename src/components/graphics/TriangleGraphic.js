@@ -11,18 +11,14 @@ const ARC_WIDTH = 2;
 
 class TriangleGraphic extends React.Component {
   render() {
-    const aElementWidth = this.props.aElement.getWidth()
-    const bElementWidth = this.props.bElement.getWidth();
-    const cElementWidth = this.props.cElement.getWidth();
-
     const aLength = this.props.triple.getA().lengthIn(RENDER_UNIT);
     const bLength = this.props.triple.getB().lengthIn(RENDER_UNIT);
 
     const angle = this.props.triple.getAngle();
-    const leftOverhangLengthStuds = sind(angle) * cElementWidth;
-    const rightOverhangLengthStuds = bElementWidth;
-    const topOverhangeHeightStuds = cosd(angle) * cElementWidth;
-    const bottomOverhangHeightStuds = aElementWidth;
+    const leftOverhangLengthStuds = sind(angle) * this.props.cElement.getWidth();
+    const rightOverhangLengthStuds = this.props.bElement.getWidth();
+    const topOverhangeHeightStuds = cosd(angle) * this.props.cElement.getWidth();
+    const bottomOverhangHeightStuds = this.props.aElement.getWidth();
 
     const diagramWidthStuds = aLength + rightOverhangLengthStuds + leftOverhangLengthStuds;
     const diagramHeightStuds = bLength + bottomOverhangHeightStuds + topOverhangeHeightStuds;
