@@ -54,6 +54,13 @@ body {
 
 .angleControlGroup {
   display: table-cell;
+  position: relative;
+}
+
+.degreeOverlay {
+  padding: 0;
+  position: absolute;
+  bottom: 0;
 }
 
 fieldset {

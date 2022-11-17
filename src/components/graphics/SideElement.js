@@ -54,6 +54,7 @@ export class PlateSide extends _LegoElement {
   }
 
   static LENGTH = PLATE_HEIGHT;
+  static WIDTH = PLATE_WIDTH;
 }
 
 
@@ -71,4 +72,5 @@ export class PlateTop extends _LegoElement {
   }
 
   static LENGTH = PLATE_WIDTH;
+  static WIDTH = PLATE_WIDTH;
 }

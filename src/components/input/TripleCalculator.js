@@ -8,6 +8,7 @@ import Triple from "../../model/Triple";
 import Dimension from "../../model/Dimension";
 import { STUDS } from "../../model/Unit"
 import TriangleGraphic from "../graphics/TriangleGraphic"
+import { DEGREES, THETA } from "../../constants"
 
 function OverUnderSwitch(props) {
   return (<><Switch size="small" checked={props.isAllowed} onChange={() => {props.callback(!props.isAllowed)}}/> {props.label}</>);
@@ -27,8 +28,12 @@ class TripleCalculator extends React.Component {
       units: new Array(3).fill(STUDS),
       desiredAngle: null,
       allowOver: true,
-      allowUnder: true
+      allowUnder: true,
+      angleInputLength: 0,
+      angleInputTop: 0
     };
+    this.angleInputRef = React.createRef();
+    this.angleControlGroupRef = React.createRef();
   }
 
   updateItem(array, index, value) {
@@ -80,7 +85,26 @@ class TripleCalculator extends React.Component {
   }
 
   setDesiredAngle(desiredAngle) {
-    this.setState({desiredAngle: desiredAngle});
+    const input = this.angleInputRef.current;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const inputStyle = getComputedStyle(input);
+    context.font = inputStyle.font;
+    const width = desiredAngle ? context.measureText(desiredAngle.toString()).width : 0;
+    const padding = inputStyle.getPropertyValue("padding-top")
+
+    const angleInputRect = input.getBoundingClientRect();
+    const angleControlGroupRect = this.angleControlGroupRef.current.getBoundingClientRect();
+    console.log(input.style.padding)
+    this.setState(
+      {
+        desiredAngle: desiredAngle,
+        angleInputLength: width,
+        angleInputTop: angleInputRect.top - angleControlGroupRect.top,
+        angleInputPadding: padding
+      }
+    );
   }
 
   clampAngle() {
@@ -194,12 +218,22 @@ class TripleCalculator extends React.Component {
         <InputGroup label="Desired Angle">
           <div className="angleControls">
             <div>
-              <div className="angleControlGroup">
+              <div className="angleControlGroup" ref={this.angleControlGroupRef}>
+                <div
+                  className="degreeOverlay"
+                  style={
+                    this.state.angleInputLength ? {
+                      left: this.state.angleInputLength + "px",
+                      top: this.state.angleInputTop + "px",
+                      paddingTop: this.state.angleInputPadding
+                    } : {display: "none"}}
+                >{DEGREES}</div>
                 <NumericTextField
-                  label="Angle"
+                  label={THETA}
                   value={this.state.desiredAngle}
                   onChange={this.setDesiredAngle.bind(this)}
                   onBlur={this.clampAngle.bind(this)}
+                  inputRef={this.angleInputRef}
                 />
               </div>
               <div className="angleControlGroup">
@@ -231,8 +265,9 @@ class TripleCalculator extends React.Component {
             width={DIAGRAM_WIDTH}
             height={DIAGRAM_HEIGHT}
             padding={DIAGRAM_MARGIN}
-            fontSize={12}
-            angleLabel="angle"
+            fontSize={20}
+            angleLabelFontStyle="italic"
+            angleLabel={THETA}
           />
         </div>
         <hr/>

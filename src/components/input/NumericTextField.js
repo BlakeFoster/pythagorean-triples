@@ -23,6 +23,7 @@ class NumericTextField extends React.Component {
         onBlur={this.props.onBlur}
         value={this.props.value == null ? "" : this.props.value}
         label={this.props.label}
+        inputRef={this.props.inputRef}
         variant="standard"
       />);
   }

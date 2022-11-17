@@ -14,12 +14,15 @@ class TriangleGraphic extends React.Component {
   render() {
     const aLength = this.props.triple.getA().lengthIn(STUDS);
     const bLength = this.props.triple.getB().lengthIn(STUDS);
+    const aElement = this.props.triple.getA().unit === STUDS ? PlateTop : PlateSide;
+    const bElement = this.props.triple.getB().unit === STUDS ? PlateTop : PlateSide;
+    const cElement = this.props.triple.getC().unit === STUDS ? PlateTop : PlateSide;
 
     const angle = this.props.triple.getAngle();
-    const leftOverhangLength = sind(angle);
-    const topOverhangeHeight = cosd(angle);
-    const diagramWidthStuds = aLength + 1 + leftOverhangLength;
-    const diagramHeightStuds = bLength + 1 + topOverhangeHeight;
+    const leftOverhangLength = sind(angle) * cElement.WIDTH;
+    const topOverhangeHeight = cosd(angle) * cElement.WIDTH;
+    const diagramWidthStuds = aLength + bElement.WIDTH + leftOverhangLength;
+    const diagramHeightStuds = bLength + aElement.WIDTH + topOverhangeHeight;
 
     const maxHorizontalScale = (this.props.width - 2 * this.props.padding) / diagramWidthStuds;
     const maxVerticalScale = (this.props.height - 2 * this.props.padding) / diagramHeightStuds;
@@ -60,7 +63,7 @@ class TriangleGraphic extends React.Component {
               y={0}
               angle={180}
               length={this.props.triple.getA().length}
-              displayElement={this.props.triple.getA().unit === STUDS ? PlateTop : PlateSide}
+              displayElement={aElement}
             />
             {/* side B */}
             <Side
@@ -68,7 +71,7 @@ class TriangleGraphic extends React.Component {
               y={bLength}
               angle={-90}
               length={this.props.triple.getB().length}
-              displayElement={this.props.triple.getB().unit === STUDS ? PlateTop : PlateSide}
+              displayElement={bElement}
             />
             {/* side C */}
             <Side
@@ -76,7 +79,7 @@ class TriangleGraphic extends React.Component {
               y={0}
               angle={angle}
               length={this.props.triple.getC().length}
-              displayElement={this.props.triple.getC().unit === STUDS ? PlateTop : PlateSide}
+              displayElement={cElement}
             />
           </Layer>
         </Stage>

@@ -5,6 +5,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
 import TriangleGraphic from "../graphics/TriangleGraphic"
+import { DEGREES } from "../../constants"
 
 const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
@@ -92,7 +93,7 @@ class TripleGroupDisplay extends React.Component {
           height={drawingHeight}
           padding={drawingMargin}
           fontSize={angleLabelFontSize}
-          angleLabel={Math.round(triple.getAngle() * 100) / 100 + String.fromCharCode(176)}
+          angleLabel={Math.round(triple.getAngle() * 100) / 100 + DEGREES}
         />
       </div>
     );
