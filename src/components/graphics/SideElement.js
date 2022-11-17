@@ -99,7 +99,7 @@ export class PlateTop extends _LegoElement {
 }
 
 
-export function plain (unit, color) {
+export function plain (unit, color, label) {
   class Plain extends _SideElment {
     render() {
       return (

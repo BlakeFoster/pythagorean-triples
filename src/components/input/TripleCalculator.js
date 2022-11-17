@@ -23,8 +23,10 @@ const DIAGRAM_B_UNIT = new Unit("B", 3)
 const DIAGRAM_C_UNIT = new Unit("C", 5)
 const DIAGRAM_SIDE_LENGTH = 1
 
-const DIAGRAM_HOVER_COLOR = "rgb(255, 230, 150)"
+const DIAGRAM_HOVER_COLOR = "rgb(255, 190, 70)"
 const DIAGRAM_NORMAL_COLOR = "lightgrey"
+
+const ANGLE_FONT_SIZE = "30"
 
 const A = 0;
 const B = 1;
@@ -45,7 +47,10 @@ class TripleCalculator extends React.Component {
       aElement: this.sideElement(DIAGRAM_A_UNIT),
       bElement: this.sideElement(DIAGRAM_B_UNIT),
       cElement: this.sideElement(DIAGRAM_C_UNIT),
-      angleColor: DIAGRAM_NORMAL_COLOR
+      angleColor: DIAGRAM_NORMAL_COLOR,
+      aLabelColor: DIAGRAM_NORMAL_COLOR,
+      bLabelColor: DIAGRAM_NORMAL_COLOR,
+      cLabelColor: DIAGRAM_NORMAL_COLOR
     };
     this.angleInputRef = React.createRef();
     this.angleControlGroupRef = React.createRef();
@@ -79,18 +84,32 @@ class TripleCalculator extends React.Component {
 
   setAElement(highlight) {
     console.log("Side A highlight set to " + highlight)
-    this.setState({aElement: this.sideElement(DIAGRAM_A_UNIT, highlight)})
+    this.setState(
+      {
+        aElement: this.sideElement(DIAGRAM_A_UNIT, highlight),
+        aLabelColor: this.getDiagramColor(highlight)
+      }
+    )
   }
 
   setBElement(highlight) {
     console.log("Side B highlight set to " + highlight)
-    this.setState({bElement: this.sideElement(DIAGRAM_B_UNIT, highlight)}
+    this.setState(
+      {
+        bElement: this.sideElement(DIAGRAM_B_UNIT, highlight),
+        bLabelColor: this.getDiagramColor(highlight)
+      }
     )
   }
 
   setCElement(highlight) {
     console.log("Side C highlight set to " + highlight)
-    this.setState({cElement: this.sideElement(DIAGRAM_C_UNIT, highlight)})
+    this.setState(
+      {
+        cElement: this.sideElement(DIAGRAM_C_UNIT, highlight),
+        cLabelColor: this.getDiagramColor(highlight)
+      }
+    )
   }
 
   setAngleColor(highlight) {
@@ -305,6 +324,9 @@ class TripleCalculator extends React.Component {
           <div className="helpMessage">{this.getHelpMessage()}</div>
         </InputGroup>
         <div id="diagram">
+          <div className="label a" style={{color: this.state.aLabelColor}}>A</div>
+          <div className="label b" style={{color: this.state.bLabelColor}}>B</div>
+          <div className="label c" style={{color: this.state.cLabelColor}}>C</div>
           <TriangleGraphic
             aLength={DIAGRAM_SIDE_LENGTH}
             bLength={DIAGRAM_SIDE_LENGTH}
@@ -312,7 +334,7 @@ class TripleCalculator extends React.Component {
             width={DIAGRAM_WIDTH}
             height={DIAGRAM_HEIGHT}
             padding={DIAGRAM_MARGIN}
-            angleFontSize={20}
+            angleFontSize={ANGLE_FONT_SIZE}
             angleColor={this.state.angleColor}
             angleLabel={THETA}
             aElement={this.state.aElement}

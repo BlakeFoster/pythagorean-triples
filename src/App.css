@@ -85,6 +85,29 @@ legend {
   display: block;
 }
 
+#diagram .label {
+  position: absolute;
+  font-size: 30px;
+}
+
+.label.a {
+  bottom: 50px;
+  left: 50%;
+  text-align: center;
+}
+
+.label.b {
+  right: 15px;
+  top: 50%;
+  height: 100%;
+  line-height: 0;
+}
+
+.label.c {
+  top: 170px;
+  left: 50%;
+}
+
 .tripleGroupDisplay {
   color: black;
   border-radius: 20px;

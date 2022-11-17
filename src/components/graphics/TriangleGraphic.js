@@ -5,7 +5,7 @@ import { Stage, Layer, Text, Arc } from 'react-konva';
 import { RENDER_UNIT } from "./SideElement"
 import { sind, cosd, atan2d } from "../../lib/math"
 
-const ANGLE_LABEL_DISTANCE = 10;
+const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
 
 
@@ -35,7 +35,7 @@ class TriangleGraphic extends React.Component {
     const vertexX = (this.props.width - diagramWidth) / 2 + leftOverhangLength;
     const vertexY = this.props.height - (this.props.height - diagramHeight) / 2 - bottomOverhangHeight;
 
-    const arcRadius = aRelativeLength * scale / 4;
+    const arcRadius = aRelativeLength * scale / 5;
     const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
 
     return (
