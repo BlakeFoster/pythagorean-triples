@@ -69,6 +69,10 @@ fieldset {
   border-radius: 10px;
 }
 
+.hover fieldset {
+  border-color: white;
+}
+
 legend {
   font-size: 8pt;
   font-weight: bold;
