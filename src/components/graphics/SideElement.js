@@ -1,7 +1,7 @@
 import React from "react";
 import { Circle, Line } from "react-konva";
 
-import { STUDS, PLATES, INTERNAL } from "../../model/Unit"
+import { STUDS, PLATES, INTERNAL, Unit } from "../../model/Unit"
 import BorderedRect from "./BorderedRect"
 
 const BRICK_WIDTH_MM = 7.91;
@@ -13,7 +13,7 @@ export const RENDER_UNIT = INTERNAL;
 const STUD_RADIUS_RATIO = STUD_WIDTH_MM / (2 * BRICK_WIDTH_MM) ;
 const STUD_HEIGHT_RATIO = STUD_HEIGHT_MM / BRICK_WIDTH_MM;
 
-const STROKE_WIDTH_RATIO = 1 / 20;
+const STROKE_WIDTH = 1 / 20;
 
 
 class _SideElment extends React.Component {
@@ -23,10 +23,6 @@ class _SideElment extends React.Component {
 
   static getWidth() {
     return this.WIDTH_UNIT.to(1, RENDER_UNIT);
-  }
-
-  getStrokeWidth () {
-    return this.constructor.getWidth() * STROKE_WIDTH_RATIO;
   }
 }
 
@@ -42,7 +38,7 @@ class _LegoElement extends _SideElment {
           width={this.constructor.getLength()}
           height={this.constructor.getWidth()}
           stroke="black"
-          strokeWidth={this.getStrokeWidth()}
+          strokeWidth={STROKE_WIDTH}
           fill="orange"
         />
         {this.renderDetail()}
@@ -66,11 +62,11 @@ export class PlateSide extends _LegoElement {
       <BorderedRect
         x={this.props.x - this.getStudHeight()}
         y={this.props.y + 0.5 * this.constructor.getWidth() - this.getStudRadius()}
-        width={this.getStudHeight() + this.getStrokeWidth()}
+        width={this.getStudHeight() + STROKE_WIDTH}
         height={2 * this.getStudRadius()}
         stroke="black"
         fill="orange"
-        strokeWidth={this.getStrokeWidth()}
+        strokeWidth={STROKE_WIDTH}
       />
     )
   }
@@ -87,7 +83,7 @@ export class PlateTop extends _LegoElement {
         x={this.props.x + 0.5 * this.constructor.getWidth()}
         y={this.props.y + 0.5 * this.constructor.getWidth()}
         stroke="black"
-        strokeWidth={this.getStrokeWidth()}
+        strokeWidth={STROKE_WIDTH}
         radius={this.getStudRadius()}
       />
     );
@@ -112,13 +108,13 @@ export function plain (unit) {
             ]
           }
           stroke="white"
-          strokeWidth={this.getStrokeWidth()}
+          strokeWidth={STROKE_WIDTH}
         />
       )
     }
 
     static LENGTH_UNIT = unit;
-    static WIDTH_UNIT = INTERNAL;
+    static WIDTH_UNIT = new Unit("line", STROKE_WIDTH);
   }
 
   return Plain;
