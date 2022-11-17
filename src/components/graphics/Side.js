@@ -8,10 +8,9 @@ class Side extends React.Component {
     var segments = new Array(this.props.length);
 
     for (var i=0; i<this.props.length; i+=1) {
-
       segments[this.props.length - i - 1] = (
         <this.props.displayElement
-          x={i * this.props.displayElement.LENGTH}
+          x={i * this.props.displayElement.getLength()}
           y={0}
           key={i}
         />
@@ -21,6 +20,7 @@ class Side extends React.Component {
   }
 
   render() {
+    console.log("Side with length " + this.props.length + " side at (" + this.props.x + ", " + this.props.y + ") " + this.props.angle)
     return (
       <Group
         rotation={this.props.angle}

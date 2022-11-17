@@ -2,8 +2,7 @@ import React from "react";
 import Side from "./Side";
 import { Stage, Layer, Text, Arc } from 'react-konva';
 
-import { PlateSide, PlateTop } from "./SideElement"
-import { STUDS } from "../../model/Unit"
+import { RENDER_UNIT } from "./SideElement"
 import { sind, cosd } from "../../lib/math"
 
 const ANGLE_LABEL_DISTANCE = 10;
@@ -12,24 +11,33 @@ const ARC_WIDTH = 2;
 
 class TriangleGraphic extends React.Component {
   render() {
-    const aLength = this.props.triple.getA().lengthIn(STUDS);
-    const bLength = this.props.triple.getB().lengthIn(STUDS);
-    const aElement = this.props.triple.getA().unit === STUDS ? PlateTop : PlateSide;
-    const bElement = this.props.triple.getB().unit === STUDS ? PlateTop : PlateSide;
-    const cElement = this.props.triple.getC().unit === STUDS ? PlateTop : PlateSide;
+    const aElementWidth = this.props.aElement.getWidth()
+    const bElementWidth = this.props.bElement.getWidth();
+    const cElementWidth = this.props.cElement.getWidth();
+
+    const aLength = this.props.triple.getA().lengthIn(RENDER_UNIT);
+    const bLength = this.props.triple.getB().lengthIn(RENDER_UNIT);
 
     const angle = this.props.triple.getAngle();
-    const leftOverhangLength = sind(angle) * cElement.WIDTH;
-    const topOverhangeHeight = cosd(angle) * cElement.WIDTH;
-    const diagramWidthStuds = aLength + bElement.WIDTH + leftOverhangLength;
-    const diagramHeightStuds = bLength + aElement.WIDTH + topOverhangeHeight;
+    const leftOverhangLengthStuds = sind(angle) * cElementWidth;
+    const rightOverhangLengthStuds = bElementWidth;
+    const topOverhangeHeightStuds = cosd(angle) * cElementWidth;
+    const bottomOverhangHeightStuds = aElementWidth;
+
+    const diagramWidthStuds = aLength + rightOverhangLengthStuds + leftOverhangLengthStuds;
+    const diagramHeightStuds = bLength + bottomOverhangHeightStuds + topOverhangeHeightStuds;
 
     const maxHorizontalScale = (this.props.width - 2 * this.props.padding) / diagramWidthStuds;
     const maxVerticalScale = (this.props.height - 2 * this.props.padding) / diagramHeightStuds;
     const scale = Math.min(maxHorizontalScale, maxVerticalScale);
 
-    const vertexX = (this.props.width - diagramWidthStuds * scale) / 2 + leftOverhangLength * scale;
-    const vertexY = this.props.height - (this.props.height - diagramHeightStuds * scale) / 2 - scale;
+    const diagramWidth = diagramWidthStuds * scale;
+    const diagramHeight = diagramHeightStuds * scale;
+    const leftOverhangLength = leftOverhangLengthStuds * scale;
+    const bottomOverhangHeight = bottomOverhangHeightStuds * scale
+
+    const vertexX = (this.props.width - diagramWidth) / 2 + leftOverhangLength;
+    const vertexY = this.props.height - (this.props.height - diagramHeight) / 2 - bottomOverhangHeight;
 
     const arcRadius = aLength * scale / 4;
     const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
@@ -63,7 +71,7 @@ class TriangleGraphic extends React.Component {
               y={0}
               angle={180}
               length={this.props.triple.getA().length}
-              displayElement={aElement}
+              displayElement={this.props.aElement}
             />
             {/* side B */}
             <Side
@@ -71,7 +79,7 @@ class TriangleGraphic extends React.Component {
               y={bLength}
               angle={-90}
               length={this.props.triple.getB().length}
-              displayElement={bElement}
+              displayElement={this.props.bElement}
             />
             {/* side C */}
             <Side
@@ -79,7 +87,7 @@ class TriangleGraphic extends React.Component {
               y={0}
               angle={angle}
               length={this.props.triple.getC().length}
-              displayElement={cElement}
+              displayElement={this.props.cElement}
             />
           </Layer>
         </Stage>

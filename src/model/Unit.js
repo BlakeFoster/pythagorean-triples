@@ -1,4 +1,4 @@
-class Unit {
+export class Unit {
   constructor(name, numInternalUnits) {
     this.name = name;
     this._numInternalUnits = numInternalUnits;

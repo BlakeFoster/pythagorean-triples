@@ -6,6 +6,8 @@ import FormControl from "@mui/material/FormControl";
 
 import TriangleGraphic from "../graphics/TriangleGraphic"
 import { DEGREES } from "../../constants"
+import { PlateSide, PlateTop } from "../graphics/SideElement"
+import { STUDS } from "../../model/Unit"
 
 const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
@@ -52,6 +54,10 @@ class TripleGroupDisplay extends React.Component {
     return DRAWING_HEIGHT;
   }
 
+  getElement(side) {
+      return side.unit === STUDS ? PlateTop : PlateSide;
+  }
+
   render() {
     const drawingWidth = this.getDrawingWidth();
     const drawingHeight = this.getDrawingHeight();
@@ -89,6 +95,9 @@ class TripleGroupDisplay extends React.Component {
         </div>
         <TriangleGraphic
           triple={triple}
+          aElement={this.getElement(triple.getA())}
+          bElement={this.getElement(triple.getB())}
+          cElement={this.getElement(triple.getC())}
           width={drawingWidth}
           height={drawingHeight}
           padding={drawingMargin}

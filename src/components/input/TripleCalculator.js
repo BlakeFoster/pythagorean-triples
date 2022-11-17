@@ -6,9 +6,10 @@ import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import Triple from "../../model/Triple";
 import Dimension from "../../model/Dimension";
-import { STUDS } from "../../model/Unit"
+import { STUDS, Unit } from "../../model/Unit"
 import TriangleGraphic from "../graphics/TriangleGraphic"
 import { DEGREES, THETA } from "../../constants"
+import { plain } from "../graphics/SideElement"
 
 function OverUnderSwitch(props) {
   return (<><Switch size="small" checked={props.isAllowed} onChange={() => {props.callback(!props.isAllowed)}}/> {props.label}</>);
@@ -17,7 +18,21 @@ function OverUnderSwitch(props) {
 const DIAGRAM_WIDTH = 480;
 const DIAGRAM_HEIGHT = 480;
 const DIAGRAM_MARGIN = 50;
-const DIAGRAM_TRIPLE = new Triple([new Dimension(4, STUDS), new Dimension(3, STUDS), new Dimension(5, STUDS)])
+//const DIAGRAM_TRIPLE = new Triple(
+//  [
+//    new Dimension(1, new Unit("A", 4)),
+//    new Dimension(1, new Unit("B", 3)),
+//    new Dimension(1, new Unit("C", 5))
+//  ]
+//)
+
+const DIAGRAM_TRIPLE = new Triple(
+  [
+    new Dimension(1, new Unit("A", 4)),
+    new Dimension(1, new Unit("B", 3)),
+    new Dimension(1, new Unit("C", 5))
+  ]
+)
 
 class TripleCalculator extends React.Component {
 
@@ -239,7 +254,7 @@ class TripleCalculator extends React.Component {
               <div className="angleControlGroup">
                 <OverUnderSwitch
                   isAllowed={this.state.allowOver}
-                  label="Alow Over" callback={this.setAllowOver.bind(this)}
+                  label="Allow Over" callback={this.setAllowOver.bind(this)}
                 /><br/>
                 <OverUnderSwitch
                   isAllowed={this.state.allowUnder}
@@ -268,6 +283,9 @@ class TripleCalculator extends React.Component {
             fontSize={20}
             angleLabelFontStyle="italic"
             angleLabel={THETA}
+            aElement={plain(DIAGRAM_TRIPLE.getA().unit)}
+            bElement={plain(DIAGRAM_TRIPLE.getB().unit)}
+            cElement={plain(DIAGRAM_TRIPLE.getC().unit)}
           />
         </div>
         <hr/>
