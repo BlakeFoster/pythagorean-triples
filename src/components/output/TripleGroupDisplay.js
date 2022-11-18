@@ -18,11 +18,16 @@ const DRAWING_MARGIN = 10;
 const ANGLE_LABEL_FONT_SIZE = 15;
 const ANGLE_COLOR = "lightgrey";
 const BOX_PADDING = 15;
+const ZOOM_MINIMUM_WIDTH = 600;
 
 class TripleGroupDisplay extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {selectedTripleIndex: 0}
+    this.state = {
+      selectedTripleIndex: 0,
+      canZoom: this.isWideEnoughForZoom()
+    }
+    this.onResize = this.setCanZoom.bind(this);
   }
 
   renderTripleGroupMenuItem(item, index) {
@@ -58,6 +63,38 @@ class TripleGroupDisplay extends React.Component {
     this.props.toggleZoomed(this.props.index);
   }
 
+  renderButton() {
+    return this.state.canZoom ? (
+      <div className="zoomCloseButton">
+        <IconButton onClick={this.buttonAction.bind(this)}>{this.renderIcon()}</IconButton>
+      </div>
+    ) : null;
+  }
+
+  isWideEnoughForZoom() {
+    return window.innerWidth >= ZOOM_MINIMUM_WIDTH;
+  }
+
+  setCanZoom() {
+    const canZoom = this.isWideEnoughForZoom();
+    if (!canZoom) {
+      console.log("Width " + window.innerWidth + " too small for zoom")
+      this.props.toggleZoomed(null);
+    }
+    if (canZoom != this.state.canZoom) {
+      this.setState({canZoom: canZoom});
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.onResize);
+    this.setCanZoom();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.onResize);
+  }
+
   render() {
     const variantLabelId = "variantLabel" + this.props.index;
     const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
@@ -82,9 +119,7 @@ class TripleGroupDisplay extends React.Component {
             {this.props.tripleGroup.map(this.renderTripleGroupMenuItem.bind(this))}
           </Select>
           </FormControl>
-          <div className="zoomCloseButton">
-            <IconButton onClick={this.buttonAction.bind(this)}>{this.renderIcon()}</IconButton>
-          </div>
+          {this.renderButton()}
         </div>
         <TriangleGraphic
           aLength={triple.getA().length}

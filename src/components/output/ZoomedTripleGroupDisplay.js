@@ -14,14 +14,6 @@ class ZoomedTripleGroupDisplay extends TripleGroupDisplay {
     return "zoomed";
   }
 
-  getDrawingWidth() {
-    return DRAWING_WIDTH;
-  }
-
-  getDrawingHeight() {
-    return DRAWING_HEIGHT;
-  }
-
   renderIcon() {
     return <CloseIcon/>
   }
