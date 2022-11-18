@@ -32,6 +32,50 @@ const A = 0;
 const B = 1;
 const C = 2;
 
+class Diagram extends React.Component {
+
+  sideElement(unit, highlight = false) {
+    return plain(unit, this.getDiagramColor(highlight));
+  }
+
+  getDiagramColor(highlight) {
+    return highlight ? DIAGRAM_HOVER_COLOR : DIAGRAM_NORMAL_COLOR;
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    return (
+      nextProps.aHighlight !== this.props.aHighlight ||
+      nextProps.bHighlight !== this.props.bHighlight ||
+      nextProps.cHighlight !== this.props.cHighlight ||
+      nextProps.angleHighlight !== this.props.angleHighlight
+    )
+  }
+
+  render() {
+    return (
+      <div id="diagram">
+        <div className="label a" style={{color: this.getDiagramColor(this.props.aHighlight)}}>A</div>
+        <div className="label b" style={{color: this.getDiagramColor(this.props.bHighlight)}}>B</div>
+        <div className="label c" style={{color: this.getDiagramColor(this.props.cHighlight)}}>C</div>
+        <TriangleGraphic
+          aLength={DIAGRAM_SIDE_LENGTH}
+          bLength={DIAGRAM_SIDE_LENGTH}
+          cLength={DIAGRAM_SIDE_LENGTH}
+          width={DIAGRAM_WIDTH}
+          height={DIAGRAM_HEIGHT}
+          padding={DIAGRAM_MARGIN}
+          angleFontSize={ANGLE_FONT_SIZE}
+          angleColor={this.getDiagramColor(this.props.angleHighlight)}
+          angleLabel={THETA}
+          aElement={this.sideElement(DIAGRAM_A_UNIT, this.props.aHighlight)}
+          bElement={this.sideElement(DIAGRAM_B_UNIT, this.props.bHighlight)}
+          cElement={this.sideElement(DIAGRAM_C_UNIT, this.props.cHighlight)}
+        />
+      </div>
+    );
+  }
+}
+
 class TripleCalculator extends React.Component {
 
   constructor(props) {
@@ -44,13 +88,10 @@ class TripleCalculator extends React.Component {
       allowUnder: true,
       angleInputLength: 0,
       angleInputTop: 0,
-      aElement: this.sideElement(DIAGRAM_A_UNIT),
-      bElement: this.sideElement(DIAGRAM_B_UNIT),
-      cElement: this.sideElement(DIAGRAM_C_UNIT),
-      angleColor: DIAGRAM_NORMAL_COLOR,
-      aLabelColor: DIAGRAM_NORMAL_COLOR,
-      bLabelColor: DIAGRAM_NORMAL_COLOR,
-      cLabelColor: DIAGRAM_NORMAL_COLOR
+      aHighlight: false,
+      bHighlight: false,
+      cHighlight: false,
+      angleHighlight: false
     };
     this.angleInputRef = React.createRef();
     this.angleControlGroupRef = React.createRef();
@@ -74,43 +115,20 @@ class TripleCalculator extends React.Component {
     console.log("Units for side " + sideIndex + " set to " + unit.toString());
   }
 
-  getDiagramColor(highlight) {
-    return highlight ? DIAGRAM_HOVER_COLOR : DIAGRAM_NORMAL_COLOR;
+  setAHighlight(highlight) {
+    this.setState({aHighlight: highlight})
   }
 
-  sideElement(unit, highlight = false) {
-    return plain(unit, this.getDiagramColor(highlight));
+  setBHighlight(highlight) {
+    this.setState({bHighlight: highlight})
   }
 
-  setAElement(highlight) {
-    this.setState(
-      {
-        aElement: this.sideElement(DIAGRAM_A_UNIT, highlight),
-        aLabelColor: this.getDiagramColor(highlight)
-      }
-    )
+  setCHighlight(highlight) {
+    this.setState({cHighlight: highlight})
   }
 
-  setBElement(highlight) {
-    this.setState(
-      {
-        bElement: this.sideElement(DIAGRAM_B_UNIT, highlight),
-        bLabelColor: this.getDiagramColor(highlight)
-      }
-    )
-  }
-
-  setCElement(highlight) {
-    this.setState(
-      {
-        cElement: this.sideElement(DIAGRAM_C_UNIT, highlight),
-        cLabelColor: this.getDiagramColor(highlight)
-      }
-    )
-  }
-
-  setAngleColor(highlight) {
-    this.setState({angleColor: this.getDiagramColor(highlight)})
+  setAngleHighlight(highlight) {
+    this.setState({angleHighlight: highlight})
   }
 
   setAllowOver(allowOver) {
@@ -272,10 +290,10 @@ class TripleCalculator extends React.Component {
   render() {
     return (
       <div className="inputs">
-        {this.renderSideInput(A, "A", this.setAElement.bind(this))}
-        {this.renderSideInput(B, "B", this.setBElement.bind(this))}
-        {this.renderSideInput(C, "C", this.setCElement.bind(this))}
-        <InputGroup label="Desired Angle" hoverCallback={this.setAngleColor.bind(this)}>
+        {this.renderSideInput(A, "A", this.setAHighlight.bind(this))}
+        {this.renderSideInput(B, "B", this.setBHighlight.bind(this))}
+        {this.renderSideInput(C, "C", this.setCHighlight.bind(this))}
+        <InputGroup label="Desired Angle" hoverCallback={this.setAngleHighlight.bind(this)}>
           <div className="inputValue" ref={this.angleControlGroupRef}>
             <div
               className="degreeOverlay"
@@ -317,25 +335,12 @@ class TripleCalculator extends React.Component {
             <div className="helpMessage">{this.getHelpMessage()}</div>
           </div>
         </InputGroup>
-        <div id="diagram">
-          <div className="label a" style={{color: this.state.aLabelColor}}>A</div>
-          <div className="label b" style={{color: this.state.bLabelColor}}>B</div>
-          <div className="label c" style={{color: this.state.cLabelColor}}>C</div>
-          <TriangleGraphic
-            aLength={DIAGRAM_SIDE_LENGTH}
-            bLength={DIAGRAM_SIDE_LENGTH}
-            cLength={DIAGRAM_SIDE_LENGTH}
-            width={DIAGRAM_WIDTH}
-            height={DIAGRAM_HEIGHT}
-            padding={DIAGRAM_MARGIN}
-            angleFontSize={ANGLE_FONT_SIZE}
-            angleColor={this.state.angleColor}
-            angleLabel={THETA}
-            aElement={this.state.aElement}
-            bElement={this.state.bElement}
-            cElement={this.state.cElement}
-          />
-        </div>
+        <Diagram
+          aHighlight={this.state.aHighlight}
+          bHighlight={this.state.bHighlight}
+          cHighlight={this.state.cHighlight}
+          angleHighlight={this.state.angleHighlight}
+        />
         <hr/>
       </div>
     );

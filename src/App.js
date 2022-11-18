@@ -79,15 +79,6 @@ class App extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    /*
-      tripleGroups: [],
-      zoomedGroupIndex: null,
-      drawing1Width: 0,
-      drawing1Height: 0,
-      drawingZoomedWidth: 0,
-      drawingZoomedHeight: 0,
-      canZoom: this.isWideEnoughForZoom()
-    */
     if (this.state.tripleGroups !== nextState.tripleGroups) {
       console.log("Triple groups changed");
       return true

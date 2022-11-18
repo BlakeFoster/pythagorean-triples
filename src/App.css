@@ -63,7 +63,7 @@ body {
   position: relative;
   padding: 0;
   max-width: calc(100vw - (100vw - 100%));
-  min-width: 300px;
+  min-width: 330px;
   width: 490px;
 }
 
