@@ -8,10 +8,7 @@ import { sind, cosd, atan2d } from "../../lib/math"
 const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
 const DRAWING_WIDTH = 450;
-const DRAWING_HEIGHT = 400;
 const DRAWING_MARGIN = 10;
-const ANGLE_LABEL_FONT_SIZE = 15;
-const BOX_PADDING = 15;
 
 
 class TriangleGraphic extends React.Component {
@@ -27,13 +24,15 @@ class TriangleGraphic extends React.Component {
 
     if (this.wrapperRef.current) {
       const boundingRect = this.wrapperRef.current.getBoundingClientRect();
-      this.setState(
-        {
-          width: boundingRect.width,
-          height: boundingRect.height
-        }
-      )
-      console.log("Updating dimensions to (" + boundingRect.width + ", " + boundingRect.height + ")");
+      if (boundingRect.width !== this.state.width || boundingRect.height !== this.state.height) {
+        this.setState(
+          {
+            width: boundingRect.width,
+            height: boundingRect.height
+          }
+        );
+        console.log("Updating dimensions to (" + boundingRect.width + ", " + boundingRect.height + ")");
+      }
     } else {
       console.log("Cannot update dimensions")
     }
@@ -94,7 +93,7 @@ class TriangleGraphic extends React.Component {
             text={this.props.angleLabel}
             x={angleLabelRadius * cosd(angle / 2)}
             y={-angleLabelRadius * sind(angle / 2) - this.props.angleFontSize / 2}
-            fontSize={this.props.angleFontSize}
+            fontSize={angleFontSize}
             fill={this.props.angleColor}
           />
         </Layer>

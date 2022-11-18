@@ -11,13 +11,8 @@ import { DEGREES } from "../../constants"
 import { PlateSide, PlateTop } from "../graphics/SideElement"
 import { STUDS } from "../../model/Unit"
 
-const DRAWING_WIDTH = 450;
-const DRAWING_HEIGHT = 400;
-const ASPECT_RATIO = DRAWING_WIDTH / DRAWING_HEIGHT;
-const DRAWING_MARGIN = 10;
 const ANGLE_LABEL_FONT_SIZE = 15;
 const ANGLE_COLOR = "lightgrey";
-const BOX_PADDING = 15;
 const ZOOM_MINIMUM_WIDTH = 600;
 
 class TripleGroupDisplay extends React.Component {
@@ -45,10 +40,6 @@ class TripleGroupDisplay extends React.Component {
 
   cssClass() {
     return "normal";
-  }
-
-  getDrawingHeight() {
-    return DRAWING_HEIGHT;
   }
 
   getElement(side) {
@@ -81,8 +72,8 @@ class TripleGroupDisplay extends React.Component {
       console.log("Width " + window.innerWidth + " too small for zoom")
       this.props.toggleZoomed(null);
     }
-    if (canZoom != this.state.canZoom) {
-      this.setState({canZoom: canZoom});
+    if (canZoom !== this.state.canZoom) {
+      // this.setState({canZoom: canZoom});
     }
   }
 

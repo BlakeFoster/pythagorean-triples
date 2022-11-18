@@ -1,8 +1,6 @@
 import TripleGroupDisplay from "./TripleGroupDisplay"
 import CloseIcon from "@mui/icons-material/Close";
 
-const DRAWING_WIDTH = 1170;
-const DRAWING_HEIGHT = 1120;
 
 class ZoomedTripleGroupDisplay extends TripleGroupDisplay {
 
