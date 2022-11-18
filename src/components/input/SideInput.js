@@ -31,17 +31,20 @@ class SideInput extends React.Component {
         hoverCallback={this.props.hoverCallback}
         className={this.props.className}
       >
-        <NumericTextField
-          value={this.props.maxLength}
-          onChange={this.props.maxLengthCallback}
-          onBlur={this.clampLength.bind(this)}
-          label="Max length"
-        />
-        &nbsp;&nbsp;
-        <ToggleButtonGroup exlusive="true" color="warning">
-          {this.renderUnitButton(STUDS)}
-          {this.renderUnitButton(PLATES)}
-        </ToggleButtonGroup>
+        <div className="inputValue">
+          <NumericTextField
+            value={this.props.maxLength}
+            onChange={this.props.maxLengthCallback}
+            onBlur={this.clampLength.bind(this)}
+            label="Max length"
+          />
+        </div>
+        <div className="inputSettings">
+          <ToggleButtonGroup exlusive="true" color="warning">
+            {this.renderUnitButton(STUDS)}
+            {this.renderUnitButton(PLATES)}
+          </ToggleButtonGroup>
+        </div>
       </InputGroup>
     );
   }

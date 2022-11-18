@@ -26,7 +26,7 @@ const DIAGRAM_SIDE_LENGTH = 1
 const DIAGRAM_HOVER_COLOR = "rgb(255, 190, 70)"
 const DIAGRAM_NORMAL_COLOR = "lightgrey"
 
-const ANGLE_FONT_SIZE = "30"
+const ANGLE_FONT_SIZE = 30;
 
 const A = 0;
 const B = 1;
@@ -83,7 +83,6 @@ class TripleCalculator extends React.Component {
   }
 
   setAElement(highlight) {
-    console.log("Side A highlight set to " + highlight)
     this.setState(
       {
         aElement: this.sideElement(DIAGRAM_A_UNIT, highlight),
@@ -93,7 +92,6 @@ class TripleCalculator extends React.Component {
   }
 
   setBElement(highlight) {
-    console.log("Side B highlight set to " + highlight)
     this.setState(
       {
         bElement: this.sideElement(DIAGRAM_B_UNIT, highlight),
@@ -103,7 +101,6 @@ class TripleCalculator extends React.Component {
   }
 
   setCElement(highlight) {
-    console.log("Side C highlight set to " + highlight)
     this.setState(
       {
         cElement: this.sideElement(DIAGRAM_C_UNIT, highlight),
@@ -113,7 +110,6 @@ class TripleCalculator extends React.Component {
   }
 
   setAngleColor(highlight) {
-    console.log("Angle highlight set to " + highlight)
     this.setState({angleColor: this.getDiagramColor(highlight)})
   }
 
@@ -280,48 +276,46 @@ class TripleCalculator extends React.Component {
         {this.renderSideInput(B, "B", this.setBElement.bind(this))}
         {this.renderSideInput(C, "C", this.setCElement.bind(this))}
         <InputGroup label="Desired Angle" hoverCallback={this.setAngleColor.bind(this)}>
-          <div className="angleControls">
-            <div>
-              <div className="angleControlGroup" ref={this.angleControlGroupRef}>
-                <div
-                  className="degreeOverlay"
-                  style={
-                    this.state.angleInputLength ? {
-                      left: this.state.angleInputLength + "px",
-                      top: this.state.angleInputTop + "px",
-                      paddingTop: this.state.angleInputPadding
-                    } : {display: "none"}}
-                >{DEGREES}</div>
-                <NumericTextField
-                  label={THETA}
-                  value={this.state.desiredAngle}
-                  onChange={this.setDesiredAngle.bind(this)}
-                  onBlur={this.clampAngle.bind(this)}
-                  inputRef={this.angleInputRef}
-                />
-              </div>
-              <div className="angleControlGroup">
-                <OverUnderSwitch
-                  isAllowed={this.state.allowOver}
-                  label="Allow Over" callback={this.setAllowOver.bind(this)}
-                /><br/>
-                <OverUnderSwitch
-                  isAllowed={this.state.allowUnder}
-                  label="Allow Under"
-                  callback={this.setAllowUnder.bind(this)}
-                />
-              </div>
-            </div>
+          <div className="inputValue" ref={this.angleControlGroupRef}>
+            <div
+              className="degreeOverlay"
+              style={
+                this.state.angleInputLength ? {
+                  left: this.state.angleInputLength + "px",
+                  top: this.state.angleInputTop + "px",
+                  paddingTop: this.state.angleInputPadding
+                } : {display: "none"}}
+            >{DEGREES}</div>
+            <NumericTextField
+              label={THETA}
+              value={this.state.desiredAngle}
+              onChange={this.setDesiredAngle.bind(this)}
+              onBlur={this.clampAngle.bind(this)}
+              inputRef={this.angleInputRef}
+            />
+          </div>
+          <div className="inputSettings">
+            <OverUnderSwitch
+              isAllowed={this.state.allowOver}
+              label="Allow Over" callback={this.setAllowOver.bind(this)}
+            /><br/>
+            <OverUnderSwitch
+              isAllowed={this.state.allowUnder}
+              label="Allow Under"
+              callback={this.setAllowUnder.bind(this)}
+            />
           </div>
         </InputGroup>
         <InputGroup>
-          <Button
-            variant="contained"
-            color="warning"
-            disabled={!this.canCalculate()}
-            onClick={this.calculateTriples.bind(this)}
-          >Calculate</Button>
-          <div className="helpMessage">{this.getHelpMessage()}</div>
+          <div className="inputGroupContent">
+            <Button
+              variant="contained"
+              color="warning"
+              disabled={!this.canCalculate()}
+              onClick={this.calculateTriples.bind(this)}
+            >Calculate</Button>
+            <div className="helpMessage">{this.getHelpMessage()}</div>
+          </div>
         </InputGroup>
         <div id="diagram">
           <div className="label a" style={{color: this.state.aLabelColor}}>A</div>

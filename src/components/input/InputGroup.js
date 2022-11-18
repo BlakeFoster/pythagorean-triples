@@ -23,7 +23,7 @@ class InputGroup extends React.Component {
     );
     if (this.props.label) {
       return (
-        <fieldset>
+        <fieldset className="inputGroupContent">
           <legend>{this.props.label}</legend>
           {innerContent}
         </fieldset>
@@ -34,14 +34,11 @@ class InputGroup extends React.Component {
 
   render() {
     return (
-      <div className={"inputGroupRow" + (this.state.isHovered ? " hover" : "")}>
-        <div
-          className="inputGroupCell"
-          onMouseOver={this.invokeHoverCallback.bind(this, true)}
-          onMouseOut={this.invokeHoverCallback.bind(this, false)}
-        >
-          {this.renderInnerContent()}
-        </div>
+      <div className={"inputGroup" + (this.state.isHovered ? " hover" : "")}
+        onMouseOver={this.invokeHoverCallback.bind(this, true)}
+        onMouseOut={this.invokeHoverCallback.bind(this, false)}
+      >
+        {this.renderInnerContent()}
       </div>
     );
   }

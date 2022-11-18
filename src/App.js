@@ -61,12 +61,16 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <h1 id="title">Lego Right Triangle Calculator</h1>
-        <ThemeProvider theme={darkTheme}>
-          <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
-          {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
-          {this.renderZoomedGroup()}
-        </ThemeProvider>
+        <div className="content">
+          <h1 id="title">Lego Right Triangle Calculator</h1>
+          <ThemeProvider theme={darkTheme}>
+            <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
+            <div className="tripleGroups">
+              {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
+              {this.renderZoomedGroup()}
+            </div>
+          </ThemeProvider>
+        </div>
       </div>
     );
   }

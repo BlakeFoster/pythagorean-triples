@@ -1,11 +1,46 @@
 .app {
+  max-width: calc(100vw - (100vw - 100%));
   width: 1024px;
   margin-left: auto;
   margin-right: auto;
   background-color: #333;
   min-height: 100vh;
-  padding: 10px;
   color: white;
+  padding: 0;
+}
+
+.content {
+  padding: 10px;
+}
+
+@media only screen and (min-width: 1024px) {
+  .tripleGroupDisplay.parity1 {
+    float: right;
+  }
+  .tripleGroupDisplay.parity0 {
+    float: left;
+  }
+}
+
+@media only screen and (max-width: 970px) {
+  #diagram {
+    display: none;
+  }
+  #title {
+    font-size: 16pt;
+  }
+}
+
+@media only screen and (min-width: 970px) {
+  #diagram {
+    display: block;
+  }
+}
+
+#title {
+  text-align: center;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 #title {
@@ -16,21 +51,32 @@ body {
   background: #222;
 }
 
-.inputs {
+.inputs, .tripleGroups {
   text-align: left;
   position: relative;
+  display: block;
+  width: 100%;
 }
 
-.inputGroupRow {
-  display: table-row;
+.inputGroup, .tripleGroupDisplay, #diagram {
   margin-top: 10px;
   position: relative;
   padding: 0;
+  max-width: calc(100vw - (100vw - 100%));
+  min-width: 300px;
+  width: 490px;
 }
 
-.inputGroupCell {
-  display: table-cell;
-  padding: 10px;
+.inputValue {
+  float: left;
+  position: relative;
+}
+
+.inputSettings {
+  position: absolute;
+  right: 10px;
+  background-color: #333;
+  padding-left: 10px;
 }
 
 .studPlateSwitch {
@@ -40,21 +86,8 @@ body {
 }
 
 .helpMessage {
-  margin-top: 10px;
+  margin-top: 20px;
   opacity: 50%;
-}
-
-.angleControls {
-  display: table;
-}
-
-.angleControls > div {
-  display: table-row;
-}
-
-.angleControlGroup {
-  display: table-cell;
-  position: relative;
 }
 
 .degreeOverlay {
@@ -63,7 +96,7 @@ body {
   bottom: 0;
 }
 
-fieldset {
+fieldset.inputGroupContent {
   border-color: #505055;
   border-width: 2px;
   border-radius: 10px;
@@ -82,7 +115,6 @@ legend {
   position: absolute;
   top: 0;
   right: 12px;
-  display: block;
 }
 
 #diagram .label {
@@ -91,44 +123,40 @@ legend {
 }
 
 .label.a {
-  bottom: 50px;
+  bottom: -30px;
   left: 50%;
   text-align: center;
 }
 
 .label.b {
-  right: 15px;
+  right: 30px;
   top: 50%;
   height: 100%;
   line-height: 0;
 }
 
 .label.c {
-  top: 170px;
+  top: 90px;
   left: 50%;
 }
 
 .tripleGroupDisplay {
+  aspect-ratio: 1 / 1;
   color: black;
   border-radius: 20px;
   border: 2px solid #111;
   background: #666;
-  display: inline-block;
-  margin: 0;
+  display: block;
   color: black;
-  display: inline-block;
-  margin: 12px;
   position: relative;
 }
 
-.tripleGroupDisplay.normal, #diagram {
-  width: 480px;
-  height: 480px;
-}
-
 .tripleGroupDisplay.zoomed {
-  width: 1200px;
-  height: 1200px;
+  width: 95vw;
+  height: 95vw;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
 }
 
 .zoomWrapper {
@@ -146,10 +174,6 @@ legend {
 @keyframes fadeInZoom {
   0% { opacity: 0; }
   100% { opacity: 1; }
-}
-
-.tripleGroupDisplay.normal.parity1 {
-  float: right;
 }
 
 .tripleGroupHeading {
@@ -170,11 +194,19 @@ legend {
 }
 
 .tripleGroupDisplay .drawingWrapper {
-  margin-left: auto;
-  margin-right: auto;
   position: absolute;
   bottom: 15px;
   left: 15px;
+  right: 15px;
+  top: 80px;
+}
+
+#diagram {
+  height: 300px;
+}
+
+#diagram .drawingWrapper {
+  height: 100%;
 }
 
 .zoomCloseButton {

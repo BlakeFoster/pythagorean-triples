@@ -13,9 +13,11 @@ import { STUDS } from "../../model/Unit"
 
 const DRAWING_WIDTH = 450;
 const DRAWING_HEIGHT = 400;
+const ASPECT_RATIO = DRAWING_WIDTH / DRAWING_HEIGHT;
 const DRAWING_MARGIN = 10;
 const ANGLE_LABEL_FONT_SIZE = 15;
 const ANGLE_COLOR = "lightgrey";
+const BOX_PADDING = 15;
 
 class TripleGroupDisplay extends React.Component {
   constructor(props) {
@@ -40,10 +42,6 @@ class TripleGroupDisplay extends React.Component {
     return "normal";
   }
 
-  getDrawingWidth() {
-    return DRAWING_WIDTH;
-  }
-
   getDrawingHeight() {
     return DRAWING_HEIGHT;
   }
@@ -61,20 +59,11 @@ class TripleGroupDisplay extends React.Component {
   }
 
   render() {
-    const drawingWidth = this.getDrawingWidth();
-    const drawingHeight = this.getDrawingHeight();
-    const zoomScale = drawingWidth / DRAWING_WIDTH;
-    const drawingMargin = DRAWING_MARGIN * zoomScale;
-
     const variantLabelId = "variantLabel" + this.props.index;
     const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
 
-    const angleFontSize = ANGLE_LABEL_FONT_SIZE * zoomScale;
-
     return (
-      <div
-        className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}
-      >
+      <div className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}>
         <h1 className="tripleGroupHeading">
           {this.props.index + 1}.
         </h1>
@@ -104,10 +93,7 @@ class TripleGroupDisplay extends React.Component {
           aElement={this.getElement(triple.getA())}
           bElement={this.getElement(triple.getB())}
           cElement={this.getElement(triple.getC())}
-          width={drawingWidth}
-          height={drawingHeight}
-          padding={drawingMargin}
-          angleFontSize={angleFontSize}
+          angleFontSize={ANGLE_LABEL_FONT_SIZE}
           angleColor={ANGLE_COLOR}
           angleLabel={Math.round(triple.getAngle() * 100) / 100 + DEGREES}
         />
