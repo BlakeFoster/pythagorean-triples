@@ -14,8 +14,8 @@ function OverUnderSwitch(props) {
   return (<><Switch size="small" checked={props.isAllowed} onChange={() => {props.callback(!props.isAllowed)}}/> {props.label}</>);
 }
 
-const DIAGRAM_WIDTH = 480;
-const DIAGRAM_HEIGHT = 480;
+const DIAGRAM_WIDTH = 490;
+const DIAGRAM_HEIGHT = 300;
 const DIAGRAM_MARGIN = 50;
 
 const DIAGRAM_A_UNIT = new Unit("A", 4)

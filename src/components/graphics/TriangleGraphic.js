@@ -16,51 +16,36 @@ class TriangleGraphic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {width: 0};
-    this.wrapperRef = React.createRef();
-    this.onResize = this.setDimensions.bind(this)
-  }
-
-  setDimensions() {
-
-    if (this.wrapperRef.current) {
-      const boundingRect = this.wrapperRef.current.getBoundingClientRect();
-      if (boundingRect.width !== this.state.width || boundingRect.height !== this.state.height) {
-        this.setState(
-          {
-            width: boundingRect.width,
-            height: boundingRect.height
-          }
-        );
-        console.log("Updating dimensions to (" + boundingRect.width + ", " + boundingRect.height + ")");
-      }
-    } else {
-      console.log("Cannot update dimensions")
-    }
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.onResize);
-    this.setDimensions();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.onResize);
+    if (this.props.mountCallback) {
+      this.props.mountCallback();
+    }
   }
 
   renderCanvas() {
-    if (!this.state.width || !this.state.height) {
+    if (!this.props.width || !this.props.height) {
       console.log("Not rendering, width and height not set");
       return null;
     }
-    const width = this.state.width;
-    const height = this.state.height;
-    console.log("Rendering with width " + width + " and height " + height)
+    const width = this.props.width;
+    const height = this.props.height;
+
     const zoomScale = width / DRAWING_WIDTH;
     const angleFontSize = this.props.angleFontSize * zoomScale;
     const drawingMargin = DRAWING_MARGIN * zoomScale;
 
     const aRelativeLength = this.props.aElement.LENGTH_UNIT.to(this.props.aLength, RENDER_UNIT);
     const bRelativeLength = this.props.bElement.LENGTH_UNIT.to(this.props.bLength, RENDER_UNIT);
+
+    console.log(
+      "Rendering (" +
+      this.props.aLength + " " + this.props.aElement.LENGTH_UNIT + ", " +
+      this.props.bLength + " " + this.props.bElement.LENGTH_UNIT + ", " +
+      this.props.cLength + " " + this.props.cElement.LENGTH_UNIT +
+      " triangle with width " + width + " and height " + height
+    );
 
     const angle = atan2d(bRelativeLength, aRelativeLength);
     const leftOverhangRelativeLength = sind(angle) * this.props.cElement.getWidth();
@@ -141,7 +126,7 @@ class TriangleGraphic extends React.Component {
     return (
       <div
         className="drawingWrapper"
-        ref={this.wrapperRef}
+        ref={this.props.drawingRef}
       >
         {this.renderCanvas()}
       </div>

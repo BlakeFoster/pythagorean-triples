@@ -16,6 +16,10 @@ class ZoomedTripleGroupDisplay extends TripleGroupDisplay {
     return <CloseIcon/>
   }
 
+  shouldShowButton() {
+    return true;
+  }
+
   render() {
     return (
       <div className="zoomWrapper">
