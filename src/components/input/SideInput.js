@@ -1,11 +1,11 @@
 import React from 'react';
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Switch from "@mui/material/Switch"
 import Tooltip from "@mui/material/Tooltip"
 import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import { STUDS, PLATES } from "../../model/Unit";
-import Switch from "@mui/material/Switch"
 
 const MAX_LENGTH = 100;
 

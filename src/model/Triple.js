@@ -65,26 +65,6 @@ class Triple {
     return minimized.toString();
   }
 
-  static from2Sides(l1Index, l1, l1Unit, l2Index, l2, l2Unit, l3Index, l3Unit) {
-    const dimensions = new Array(3);
-    const l1Dim = new Dimension(l1, l1Unit);
-    const l2Dim = new Dimension(l2, l2Unit);
-    const l3Dim = new Dimension(
-      l3Unit.from(
-        Math.sqrt(
-          (l2Index === 2 ? -1 : 1) * l1Dim ** 2 +
-          (l1Index === 2 ? -1 : 1) * l2Dim ** 2
-        ),
-        INTERNAL
-      ),
-      l3Unit
-    );
-    dimensions[l1Index] = l1Dim;
-    dimensions[l2Index] = l2Dim;
-    dimensions[l3Index] = l3Dim;
-    return new Triple(dimensions);
-  }
-
   getValue(index) {
     return this._dimensions[index];
   }

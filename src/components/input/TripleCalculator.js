@@ -1,30 +1,14 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch"
-import Tooltip from "@mui/material/Tooltip"
 import SideInput from "./SideInput";
-import InputGroup from "./InputGroup";
-import NumericTextField from "./NumericTextField";
-import Triple from "../../model/Triple";
-import { PLATES, STUDS, INTERNAL, Unit } from "../../model/Unit"
-import TriangleGraphic from "../graphics/TriangleGraphic"
-import { DEGREES, THETA } from "../../constants"
-import { plain } from "../graphics/SideElement"
-import Dimension from "../../model/Dimension"
+import AngleInput from "./AngleInput";
+import CalculateButton from "./CalculateButton";
 
-function OverUnderSwitch(props) {
-  return (
-    <>
-      <Tooltip title={props.tooltip}>
-        <Switch
-          size="small"
-          checked={props.isAllowed}
-          onChange={() => {props.callback(!props.isAllowed)}}
-        />
-      </Tooltip> {props.label}
-    </>
-  );
-}
+import { STUDS, Unit } from "../../model/Unit"
+import TriangleGraphic from "../graphics/TriangleGraphic"
+import { THETA } from "../../constants"
+import { plain } from "../graphics/SideElement"
+import calculateTriples from "../../lib/algorithm"
+
 
 const DIAGRAM_WIDTH = 490;
 const DIAGRAM_HEIGHT = 300;
@@ -96,18 +80,14 @@ class TripleCalculator extends React.Component {
       maxLengths: new Array(3).fill(null),
       constrain: new Array(3).fill(true),
       units: new Array(3).fill(STUDS),
-      desiredAngle: null,
-      allowOver: true,
-      allowUnder: true,
-      angleInputLength: 0,
-      angleInputTop: 0,
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
-      angleHighlight: false
+      angleHighlight: false,
+      allowOver: true,
+      allowUnder: true,
+      desiredAngle: null
     };
-    this.angleInputRef = React.createRef();
-    this.angleControlGroupRef = React.createRef();
   }
 
   updateItem(array, index, value) {
@@ -133,6 +113,21 @@ class TripleCalculator extends React.Component {
     console.log("Output unit constraint for " + sideIndex + " set to " + constrain);
   }
 
+  setDesiredAngle(desiredAngle) {
+    this.setState({desiredAngle: desiredAngle});
+    console.log("Desired angle set to " + desiredAngle);
+  }
+
+  setAllowOverUnder(allowOver, allowUnder) {
+    this.setState(
+      {
+        allowUnder: allowUnder,
+        allowOver: allowUnder
+      }
+    );
+    console.log("Allow over set to " + allowOver + " and allow under set to " + allowUnder);
+  }
+
   setAHighlight(highlight) {
     this.setState({aHighlight: highlight})
   }
@@ -147,24 +142,6 @@ class TripleCalculator extends React.Component {
 
   setAngleHighlight(highlight) {
     this.setState({angleHighlight: highlight})
-  }
-
-  setAllowOver(allowOver) {
-    this.setState(
-      {
-        allowUnder: this.state.allowUnder || !allowOver,
-        allowOver: allowOver
-      }
-    );
-  }
-
-  setAllowUnder(allowUnder) {
-    this.setState(
-      {
-        allowUnder: allowUnder,
-        allowOver: this.state.allowOver || !allowUnder
-      }
-    );
   }
 
   renderSideInput(index, sideName, hoverCallback) {
@@ -182,34 +159,6 @@ class TripleCalculator extends React.Component {
     );
   }
 
-  setDesiredAngle(desiredAngle) {
-    const input = this.angleInputRef.current;
-
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const inputStyle = getComputedStyle(input);
-    context.font = inputStyle.font;
-    const width = desiredAngle ? context.measureText(desiredAngle.toString()).width : 0;
-    const padding = inputStyle.getPropertyValue("padding-top")
-
-    const angleInputRect = input.getBoundingClientRect();
-    const angleControlGroupRect = this.angleControlGroupRef.current.getBoundingClientRect();
-    this.setState(
-      {
-        desiredAngle: desiredAngle,
-        angleInputLength: width,
-        angleInputTop: angleInputRect.top - angleControlGroupRect.top,
-        angleInputPadding: padding
-      }
-    );
-  }
-
-  clampAngle() {
-    if (this.state.desiredAngle != null) {
-      this.setDesiredAngle(this.state.desiredAngle % 90);
-    }
-  }
-
   canCalculate() {
     return this.state.desiredAngle && this.state.maxLengths.reduce(
       (accumulator, currentValue) => {
@@ -219,127 +168,22 @@ class TripleCalculator extends React.Component {
     ) >= 2;
   }
 
-  getHelpMessage() {
-    return this.canCalculate() ? (<>&nbsp;</>) : (<>Choose at least 2 side lengths and the desired angle.</>);
-  }
-
-
-  getUnitOut(index, length) {
-    const selectedUnit = this.state.units[index];
-    if (this.state.constrain[index]) {
-      return selectedUnit;
-    } else {
-      const lengthInSelectedUnit = selectedUnit.from(length, INTERNAL);
-      if (lengthInSelectedUnit % 1 === 0) {
-        return this.state.units[index];
-      }
-      const lengthInStuds = STUDS.from(length, INTERNAL);
-      const unit = (lengthInStuds % 1) ? PLATES : STUDS;
-      return unit;
-    }
-  }
-
-  getMaxDimension(index) {
-    const dimension = new Dimension(
-      this.state.maxLengths[index] == null ?
-        this.state.units[index].from(Number.MAX_VALUE - 1, INTERNAL) :
-        this.state.maxLengths[index],
-      this.state.units[index]
-    );
-    return this.state.constrain[index] ? dimension : dimension.to(INTERNAL);
-  }
-
   calculateOnClick() {
     this.props.calculatingCallback();
     setTimeout(this.calculateTriples.bind(this), 200);
   }
 
   calculateTriples() {
-    const maxLengths = this.state.maxLengths;
-    var l1Index = 0;
-    var l2Index = 1;
-    var l3Index = 2;
-
-    if (maxLengths[0] == null) {
-      l1Index = 1;
-      l2Index = 2;
-      l3Index = 0;
-    } else if (maxLengths[1] == null) {
-      l1Index = 0;
-      l2Index = 2;
-      l3Index = 1;
-    }
-
-    const maxDim = new Array(3);
-    for (var i=0; i<3; i++) {
-      maxDim[i] = this.getMaxDimension(i);
-    }
-
-    const dimensions = new Array(3);
-    var tripleGroups = new Map();
-
-    console.log("Max dimensions: (" + new Triple(maxDim).toString() + ")")
-
-    for (var l1=1; l1<=maxDim[l1Index].length; l1++) {
-      const l1Unit = this.getUnitOut(l1Index, l1);
-      const l1Dim = new Dimension(l1Unit.from(l1, maxDim[l1Index].unit), l1Unit);
-      dimensions[l1Index] = l1Dim;
-
-      for (var l2=1; l2<=maxDim[l2Index].length; l2++) {
-        const l2Unit = this.getUnitOut(l2Index, l2);
-        const l2Dim = new Dimension(l2Unit.from(l2, maxDim[l2Index].unit), l2Unit);
-        dimensions[l2Index] = l2Dim
-        const l3 = Math.sqrt(
-          (l2Index === 2 ? -1 : 1) * l1Dim ** 2 +
-          (l1Index === 2 ? -1 : 1) * l2Dim ** 2
-        )
-        const l3Unit = this.getUnitOut(l3Index, l3);
-        const l3Dim = new Dimension(l3Unit.from(l3, INTERNAL), l3Unit);
-
-        dimensions[l3Index] = l3Dim;
-        const triple = new Triple([...dimensions])
-        if (l3Dim > 0 && l3Dim <= maxDim[l3Index] && triple.isPythagorean()) {
-          const angleDifference = triple.getAngle() - this.state.desiredAngle;
-          if ((angleDifference >= 0 || this.state.allowUnder) && (angleDifference <= 0 || this.state.allowOver)) {
-            const key = triple.hashKey();
-            var tripleGroup = tripleGroups.get(key);
-            if (tripleGroup == null) {
-              tripleGroup = new Map();
-              tripleGroups.set(key, tripleGroup);
-            }
-            tripleGroup.set(triple.to(INTERNAL).getGCD(), triple);
-          }
-        }
-      }
-    }
-    var sortedGroups = [];
-    for (let tripleGroup of tripleGroups.values()) {
-      var gcds = Array.from(tripleGroup.keys());
-      gcds.sort();
-      sortedGroups.push(
-        gcds.map(
-          (key) => {return tripleGroup.get(key)}
-        )
-      );
-    }
-    sortedGroups.sort(
-      (a, b) => {
-        return a[0].compareTo(b[0], this.state.desiredAngle)
-      }
+    this.props.setTripleGroups(
+      calculateTriples(
+        this.state.maxLengths,
+        this.state.desiredAngle,
+        this.state.allowOver,
+        this.state.allowUnder,
+        this.state.units,
+        this.state.constrain
+      )
     );
-    if (sortedGroups.length > 10) {
-      console.log("Truncating to top 10")
-      sortedGroups = sortedGroups.slice(0, 10);
-    }
-    sortedGroups.forEach(
-      (tripleGroup) => {
-        console.log("Found triple group with angle " + tripleGroup[0].getAngle())
-        tripleGroup.forEach(
-          (triple) => {console.log("  Found triple " + triple.toString())}
-        )
-      }
-    )
-    this.props.setTripleGroups(sortedGroups);
   }
 
   render() {
@@ -348,51 +192,18 @@ class TripleCalculator extends React.Component {
         {this.renderSideInput(A, "A", this.setAHighlight.bind(this))}
         {this.renderSideInput(B, "B", this.setBHighlight.bind(this))}
         {this.renderSideInput(C, "C", this.setCHighlight.bind(this))}
-        <InputGroup label="Desired Angle" hoverCallback={this.setAngleHighlight.bind(this)}>
-          <div className="inputValue" ref={this.angleControlGroupRef}>
-            <div
-              className="degreeOverlay"
-              style={
-                this.state.angleInputLength ? {
-                  left: this.state.angleInputLength + "px",
-                  top: this.state.angleInputTop + "px",
-                  paddingTop: this.state.angleInputPadding
-                } : {display: "none"}}
-            >{DEGREES}</div>
-            <NumericTextField
-              label={THETA}
-              value={this.state.desiredAngle}
-              onChange={this.setDesiredAngle.bind(this)}
-              onBlur={this.clampAngle.bind(this)}
-              inputRef={this.angleInputRef}
-            />
-          </div>
-          <div className="inputSettings">
-            <OverUnderSwitch
-              isAllowed={this.state.allowOver}
-              label="Allow Over" callback={this.setAllowOver.bind(this)}
-              tooltip="Include angles larger than the requested angle."
-            />
-            <br/>
-            <OverUnderSwitch
-              isAllowed={this.state.allowUnder}
-              label="Allow Under"
-              callback={this.setAllowUnder.bind(this)}
-              tooltip="Include angles smaller than the requested angle."
-            />
-          </div>
-        </InputGroup>
-        <InputGroup>
-          <div className="inputGroupContent">
-            <Button
-              variant="contained"
-              color="warning"
-              disabled={!this.canCalculate()}
-              onClick={this.calculateOnClick.bind(this)}
-            >Calculate</Button>
-            <div className="helpMessage">{this.getHelpMessage()}</div>
-          </div>
-        </InputGroup>
+        <AngleInput
+          desiredAngle={this.state.desiredAngle}
+          desiredAngleCallback={this.setDesiredAngle.bind(this)}
+          allowOver={this.state.allowOver}
+          allowUnder={this.state.allowUnder}
+          allowOverUnderCallback={this.setAllowOverUnder.bind(this)}
+          hoverCallback={this.setAngleHighlight.bind(this)}
+        />
+        <CalculateButton
+          enabled={this.canCalculate()}
+          onClick={this.calculateOnClick.bind(this)}
+        />
         <Diagram
           aHighlight={this.state.aHighlight}
           bHighlight={this.state.bHighlight}
