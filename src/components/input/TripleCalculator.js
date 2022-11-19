@@ -86,8 +86,7 @@ class TripleCalculator extends React.Component {
     };
   }
 
-  updateSideConfig(updatedSide, updateFunction, newValue) {
-    const newConfig = updateFunction(this.state.sideConfigs[updatedSide], newValue)
+  updateSideConfig(updatedSide, newConfig) {
     console.log("Config for side " + updatedSide + " changed to " + newConfig)
     this.setState(
       {
@@ -98,30 +97,6 @@ class TripleCalculator extends React.Component {
         )
       }
     );
-  }
-
-  setMaxLength(sideIndex, maxLength) {
-    this.updateSideConfig(
-      sideIndex,
-      this.state.sideConfigs[sideIndex].updateMaxLength(maxLength)
-    )
-    console.log("Max side " + sideIndex + " set to " + maxLength);
-  }
-
-  setUnits(sideIndex, unit) {
-    this.updateSideConfig(
-      sideIndex,
-      this.state.sideConfigs[sideIndex].updateUnits(unit)
-    )
-    console.log("Units for side " + sideIndex + " set to " + unit.toString());
-  }
-
-  setConstrain(sideIndex, constrain) {
-    this.updateSideConfig(
-      sideIndex,
-      this.state.sideConfigs[sideIndex].updateConstrain(constrain)
-    )
-    console.log("Output unit constraint for " + sideIndex + " set to " + constrain);
   }
 
   setDesiredAngle(desiredAngle) {
@@ -159,12 +134,8 @@ class TripleCalculator extends React.Component {
     return (
       <SideInput
         sideName={sideName}
-        maxLength={this.state.sideConfigs[index].maxLength}
-        unit={this.state.sideConfigs[index].unit}
-        constrainOutput={this.state.sideConfigs[index].constrain}
-        maxLengthCallback={this.updateSideConfig.bind(this, index, (s, l) => {return s.updateMaxLength(l)})}
-        unitCallback={this.updateSideConfig.bind(this, index, (s, u) => {return s.updateUnit(u)})}
-        constrainCallback={this.updateSideConfig.bind(this, index, (s, c) => {return s.updateConstrain(c)})}
+        config={this.state.sideConfigs[index]}
+        updateConfig={this.updateSideConfig.bind(this, index)}
         hoverCallback={hoverCallback}
       />
     );

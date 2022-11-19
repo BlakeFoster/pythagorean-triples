@@ -13,16 +13,18 @@ class SideInput extends React.Component {
   renderUnitButton(unit) {
     return (
       <ToggleButton
-        selected={this.props.unit === unit}
-        onClick={() => {this.props.unitCallback(unit)}}
+        selected={this.props.config.requestedUnit === unit}
+        onClick={() => {this.props.updateConfig(this.props.config.updateRequestedUnit(unit))}}
         value={unit.toString()}
       >{unit.toString()}</ToggleButton>
     );
   }
 
+  updateMaxLength
+
   clampLength() {
-    if (this.props.maxLength != null && this.props.maxLength > MAX_LENGTH) {
-      this.props.maxLengthCallback(MAX_LENGTH);
+    if (this.props.sideConfig.maxLength != null && this.props.maxLength > MAX_LENGTH) {
+      this.props.updateConfig(this.props.sideConfig.updateMaxLength(MAX_LENGTH));
     }
   }
 
@@ -35,8 +37,8 @@ class SideInput extends React.Component {
       >
         <div className="inputValue">
           <NumericTextField
-            value={this.props.maxLength}
-            onChange={this.props.maxLengthCallback}
+            value={this.props.config.maxLength}
+            onChange={(l) => {this.props.updateConfig(this.props.config.updateMaxLength(l))}}
             onBlur={this.clampLength.bind(this)}
             label="Max length"
           />
@@ -51,8 +53,8 @@ class SideInput extends React.Component {
             <Tooltip title="Turn on to only generate triangles which use the unit selected to the left on this side.">
               <Switch
                 size="small"
-                checked={this.props.constrainOutput}
-                onChange={this.props.constrainCallback.bind(this, !this.props.constrainOutput)}
+                checked={this.props.config.constrain}
+                onChange={() => {this.props.updateConfig(this.props.config.toggleConstrain())}}
               />
             </Tooltip>
           </div>

@@ -44,6 +44,10 @@ class SideConfig {
     )
   }
 
+  toggleConstrain() {
+    return this.updateConstrain(!this.constrain)
+  }
+
   _getMaxDim() {
     const dimension = new Dimension(
       this.maxLength == null ?
