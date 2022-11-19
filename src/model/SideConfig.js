@@ -17,6 +17,33 @@ class SideConfig {
     this.maxDim = this._getMaxDim();
   }
 
+  updateMaxLength(maxLength) {
+    return new SideConfig(
+      this.index,
+      maxLength,
+      this.requestedUnit,
+      this.constrain
+    )
+  }
+
+  updateRequestedUnit(requestedUnit) {
+    return new SideConfig(
+      this.index,
+      this.maxLength,
+      requestedUnit,
+      this.constrain
+    )
+  }
+
+  updateConstrain(constrain) {
+    return new SideConfig(
+      this.index,
+      this.maxLength,
+      this.requestedUnit,
+      constrain
+    )
+  }
+
   _getMaxDim() {
     const dimension = new Dimension(
       this.maxLength == null ?
@@ -43,6 +70,10 @@ class SideConfig {
   getDimension(length) {
     const unit = this.getUnitOut(length);
     return new Dimension(unit.from(length, this.maxDim.unit), unit);
+  }
+
+  toString() {
+    return "maxLength=" + this.maxLength + ", requestedUnit=" + this.requestedUnit + ", constrain=" + this.constrain
   }
 }
 

@@ -3,11 +3,12 @@ import SideInput from "./SideInput";
 import AngleInput from "./AngleInput";
 import CalculateButton from "./CalculateButton";
 
-import { STUDS, Unit } from "../../model/Unit"
-import TriangleGraphic from "../graphics/TriangleGraphic"
-import { THETA, A, B, C } from "../../constants"
-import { plain } from "../graphics/SideElement"
-import calculateTriples from "../../lib/algorithm"
+import { STUDS, Unit } from "../../model/Unit";
+import TriangleGraphic from "../graphics/TriangleGraphic";
+import { THETA, A, B, C, SIDES } from "../../constants";
+import { plain } from "../graphics/SideElement";
+import calculateTriples from "../../lib/algorithm";
+import SideConfig from "../../model/SideConfig";
 
 
 const DIAGRAM_WIDTH = 490;
@@ -74,9 +75,7 @@ class TripleCalculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      maxLengths: new Array(3).fill(null),
-      constrain: new Array(3).fill(true),
-      units: new Array(3).fill(STUDS),
+      sideConfigs: SIDES.map((i) => {return new SideConfig(i)}),
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
@@ -87,26 +86,41 @@ class TripleCalculator extends React.Component {
     };
   }
 
-  updateItem(array, index, value) {
-    var newArray = new Array(array.length);
-    for (var i=0; i<array.length; i++) {
-      newArray[i] = i === index ? value : array[i];
-    }
-    return newArray;
+  updateSideConfig(updatedSide, updateFunction, newValue) {
+    const newConfig = updateFunction(this.state.sideConfigs[updatedSide], newValue)
+    console.log("Config for side " + updatedSide + " changed to " + newConfig)
+    this.setState(
+      {
+        sideConfigs: SIDES.map(
+          (i) => {
+            return i == updatedSide ? newConfig : this.state.sideConfigs[i];
+          }
+        )
+      }
+    );
   }
 
   setMaxLength(sideIndex, maxLength) {
-    this.setState({maxLengths: this.updateItem(this.state.maxLengths, sideIndex, maxLength)})
+    this.updateSideConfig(
+      sideIndex,
+      this.state.sideConfigs[sideIndex].updateMaxLength(maxLength)
+    )
     console.log("Max side " + sideIndex + " set to " + maxLength);
   }
 
   setUnits(sideIndex, unit) {
-    this.setState({units: this.updateItem(this.state.units, sideIndex, unit)});
+    this.updateSideConfig(
+      sideIndex,
+      this.state.sideConfigs[sideIndex].updateUnits(unit)
+    )
     console.log("Units for side " + sideIndex + " set to " + unit.toString());
   }
 
   setConstrain(sideIndex, constrain) {
-    this.setState({constrain: this.updateItem(this.state.constrain, sideIndex, constrain)});
+    this.updateSideConfig(
+      sideIndex,
+      this.state.sideConfigs[sideIndex].updateConstrain(constrain)
+    )
     console.log("Output unit constraint for " + sideIndex + " set to " + constrain);
   }
 
@@ -145,21 +159,21 @@ class TripleCalculator extends React.Component {
     return (
       <SideInput
         sideName={sideName}
-        maxLength={this.state.maxLengths[index]}
-        unit={this.state.units[index]}
-        maxLengthCallback={this.setMaxLength.bind(this, index)}
-        unitCallback={this.setUnits.bind(this, index)}
+        maxLength={this.state.sideConfigs[index].maxLength}
+        unit={this.state.sideConfigs[index].unit}
+        constrainOutput={this.state.sideConfigs[index].constrain}
+        maxLengthCallback={this.updateSideConfig.bind(this, index, (s, l) => {return s.updateMaxLength(l)})}
+        unitCallback={this.updateSideConfig.bind(this, index, (s, u) => {return s.updateUnit(u)})}
+        constrainCallback={this.updateSideConfig.bind(this, index, (s, c) => {return s.updateConstrain(c)})}
         hoverCallback={hoverCallback}
-        constrainOutput={this.state.constrain[index]}
-        constrainCallback={this.setConstrain.bind(this, index)}
       />
     );
   }
 
   canCalculate() {
-    return this.state.desiredAngle && this.state.maxLengths.reduce(
+    return this.state.desiredAngle && this.state.sideConfigs.reduce(
       (accumulator, currentValue) => {
-        return accumulator + (currentValue == null ? 0 : 1);
+        return accumulator + (currentValue.maxLength == null ? 0 : 1);
       },
       0
     ) >= 2;
@@ -173,12 +187,10 @@ class TripleCalculator extends React.Component {
   calculateTriples() {
     this.props.setTripleGroups(
       calculateTriples(
-        this.state.maxLengths,
+        this.state.sideConfigs,
         this.state.desiredAngle,
         this.state.allowOver,
-        this.state.allowUnder,
-        this.state.units,
-        this.state.constrain
+        this.state.allowUnder
       )
     );
   }
