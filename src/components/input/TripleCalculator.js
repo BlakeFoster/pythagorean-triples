@@ -230,7 +230,7 @@ class TripleCalculator extends React.Component {
       return selectedUnit;
     } else {
       const lengthInSelectedUnit = selectedUnit.from(length, INTERNAL);
-      if (lengthInSelectedUnit % 1 == 0) {
+      if (lengthInSelectedUnit % 1 === 0) {
         return this.state.units[index];
       }
       const lengthInStuds = STUDS.from(length, INTERNAL);
@@ -312,8 +312,8 @@ class TripleCalculator extends React.Component {
         }
       }
     }
-    var sortedGroups = new Array();
-    for (let [key, tripleGroup] of tripleGroups.entries()) {
+    var sortedGroups = [];
+    for (let tripleGroup of tripleGroups.values()) {
       var gcds = Array.from(tripleGroup.keys());
       gcds.sort();
       sortedGroups.push(
