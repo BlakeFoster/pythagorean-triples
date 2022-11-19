@@ -251,7 +251,7 @@ class TripleCalculator extends React.Component {
 
   calculateOnClick() {
     this.props.calculatingCallback();
-    setTimeout(this.calculateTriples.bind(this), 100);
+    setTimeout(this.calculateTriples.bind(this), 200);
   }
 
   calculateTriples() {
