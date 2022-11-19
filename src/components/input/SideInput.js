@@ -48,7 +48,7 @@ class SideInput extends React.Component {
           </ToggleButtonGroup>
           <div className="constrainedSwitch">
             Constrain<br/>output<br/>
-            <Tooltip title="If checked, all triangles generated will use the selected unit for this side.">
+            <Tooltip title="Turn on to only generate triangles which use the unit selected to the left on this side.">
               <Switch
                 size="small"
                 checked={this.props.constrainOutput}
