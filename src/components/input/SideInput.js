@@ -1,9 +1,11 @@
 import React from 'react';
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Tooltip from "@mui/material/Tooltip"
 import InputGroup from "./InputGroup";
 import NumericTextField from "./NumericTextField";
 import { STUDS, PLATES } from "../../model/Unit";
+import Switch from "@mui/material/Switch"
 
 const MAX_LENGTH = 100;
 
@@ -44,6 +46,16 @@ class SideInput extends React.Component {
             {this.renderUnitButton(STUDS)}
             {this.renderUnitButton(PLATES)}
           </ToggleButtonGroup>
+          <div className="constrainedSwitch">
+            Constrain<br/>output<br/>
+            <Tooltip title="If checked, all triangles generated will use the selected unit for this side.">
+              <Switch
+                size="small"
+                checked={this.props.constrainOutput}
+                onChange={this.props.constrainCallback.bind(this, !this.props.constrainOutput)}
+              />
+            </Tooltip>
+          </div>
         </div>
       </InputGroup>
     );

@@ -218,3 +218,10 @@ legend {
   display: inline;
   margin-left: 0.5em;
 }
+
+.constrainedSwitch {
+  float: right;
+  margin-left: 5px;
+  font-size: 8pt;
+  text-align: center;
+}

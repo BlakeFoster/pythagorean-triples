@@ -33,14 +33,15 @@ class Triple {
     return this._angle;
   }
 
-  getMinimized() {
+  _getMinimized() {
     if (this._minimized == null) {
-      if (this.getGCD() === 1) {
-        this._minimized = this;
+      var internal = this.to(INTERNAL);
+      if (internal.getGCD() === 1) {
+        this._minimized = internal;
       } else {
         this._minimized = new Triple(
-          this._dimensions.map(
-            (d) => {return new Dimension(d.length / this.getGCD(), d.unit)}
+          internal._dimensions.map(
+            (d) => {return new Dimension(d.length / internal.getGCD(), INTERNAL)}
           )
         )
       }
@@ -55,8 +56,12 @@ class Triple {
     return this._gcd;
   }
 
+  to(unit) {
+    return new Triple(this._dimensions.map((d) => d.to(unit)));
+  }
+
   hashKey() {
-    const minimized = this.getMinimized();
+    const minimized = this._getMinimized();
     return minimized.toString();
   }
 

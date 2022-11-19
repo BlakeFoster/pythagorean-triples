@@ -33,7 +33,6 @@ class TriangleGraphic extends React.Component {
     const height = this.props.height;
 
     const zoomScale = width / DRAWING_WIDTH;
-    const angleFontSize = this.props.angleFontSize * zoomScale;
     const drawingMargin = DRAWING_MARGIN * zoomScale;
 
     const aRelativeLength = this.props.aElement.LENGTH_UNIT.to(this.props.aLength, RENDER_UNIT);
@@ -68,8 +67,11 @@ class TriangleGraphic extends React.Component {
     const vertexX = (width - diagramWidth) / 2 + leftOverhangLength;
     const vertexY = height - (height - diagramHeight) / 2 - bottomOverhangHeight;
 
-    const arcRadius = aRelativeLength * scale / 5;
-    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
+    const bigAngleThreshold = 80;
+    const bigAngleScaleFactor = Math.min(90 - angle, 90 - bigAngleThreshold) / (90 - bigAngleThreshold);
+    const arcRadius = bigAngleScaleFactor * aRelativeLength * scale / 5;
+    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE * bigAngleScaleFactor;
+    const angleFontSize = this.props.angleFontSize * zoomScale * bigAngleScaleFactor;
 
     return (
       <Stage width={width} height={height}>

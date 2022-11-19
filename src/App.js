@@ -1,5 +1,6 @@
 import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Alert from "@mui/material/Alert";
 import "./App.css";
 import TripleCalculator from "./components/input/TripleCalculator";
 import TripleGroupDisplay from "./components/output/TripleGroupDisplay";
@@ -19,6 +20,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       tripleGroups: [],
+      errorMessage: null,
       zoomedGroupIndex: null,
       drawing1Width: 0,
       drawing1Height: 0,
@@ -35,7 +37,8 @@ class App extends React.Component {
     this.setState(
       {
         tripleGroups: tripleGroups,
-        zoomedGroupIndex: null
+        zoomedGroupIndex: null,
+        errorMessage: tripleGroups.length ? null : "No triples found, try adjusting the parameters!"
       }
     );
   }
@@ -97,6 +100,9 @@ class App extends React.Component {
     } else if (this.state.canZoom !== nextState.canZoom) {
       console.log("Zoom enabled changed");
       return true
+    } else if (this.state.errorMessage !== nextState.errorMessage) {
+      console.log("Error message changed");
+      return true;
     } else {
       return false;
     }
@@ -140,6 +146,10 @@ class App extends React.Component {
     window.removeEventListener("resize", this.onResize);
   }
 
+  renderErrorMessage() {
+    return this.state.errorMessage? (<Alert severity="warning">{this.state.errorMessage}</Alert>) : null;
+  }
+
   render() {
     return (
       <div className="app">
@@ -149,6 +159,7 @@ class App extends React.Component {
             <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
             <div className="tripleGroups">
               {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
+              {this.renderErrorMessage()}
               {this.renderZoomedGroup()}
             </div>
           </ThemeProvider>

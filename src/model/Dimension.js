@@ -21,6 +21,10 @@ class Dimension {
     return this.length % 1 === 0;
   }
 
+  to(unit) {
+    return new Dimension(unit.from(this.length, this.unit), unit);
+  }
+
   toString() {
     return this.length.toString() + " " + this.unit;
   }
