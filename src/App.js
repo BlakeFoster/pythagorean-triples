@@ -154,12 +154,17 @@ class App extends React.Component {
   }
 
   renderErrorMessage() {
-    return this.state.errorMessage? (<Alert severity="warning">{this.state.errorMessage}</Alert>) : null;
+    return this.state.errorMessage ? (<Alert severity="warning">{this.state.errorMessage}</Alert>) : null;
   }
 
   showSpinner() {
     console.log("Show spinner");
-    this.setState({showSpinner: true});
+    this.setState(
+      {
+        showSpinner: true,
+        errorMessage: null
+      }
+    );
   }
 
   render() {
