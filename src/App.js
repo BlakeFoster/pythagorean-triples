@@ -1,6 +1,8 @@
 import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Alert from "@mui/material/Alert";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import "./App.css";
 import TripleCalculator from "./components/input/TripleCalculator";
 import TripleGroupDisplay from "./components/output/TripleGroupDisplay";
@@ -26,7 +28,8 @@ class App extends React.Component {
       drawing1Height: 0,
       drawingZoomedWidth: 0,
       drawingZoomedHeight: 0,
-      canZoom: this.isWideEnoughForZoom()
+      canZoom: this.isWideEnoughForZoom(),
+      showSpinner: false
     }
     this.drawing1Ref = React.createRef();
     this.drawingZoomedRef = React.createRef();
@@ -34,11 +37,13 @@ class App extends React.Component {
   }
 
   setTripleGroups(tripleGroups) {
+    console.log("Received triple groups")
     this.setState(
       {
         tripleGroups: tripleGroups,
         zoomedGroupIndex: null,
-        errorMessage: tripleGroups.length ? null : "No triples found, try adjusting the parameters!"
+        errorMessage: tripleGroups.length ? null : "No triples found, try adjusting the parameters!",
+        showSpinner: false
       }
     );
   }
@@ -77,7 +82,6 @@ class App extends React.Component {
         height={this.state.drawingZoomedHeight}
         drawingRef={this.drawingZoomedRef}
         mountCallback={this.setDimensions.bind(this)}
-
      />);
   }
 
@@ -102,6 +106,9 @@ class App extends React.Component {
       return true
     } else if (this.state.errorMessage !== nextState.errorMessage) {
       console.log("Error message changed");
+      return true;
+    } else if (this.state.showSpinner !== nextState.showSpinner) {
+      console.log("Spinner status changed");
       return true;
     } else {
       return false;
@@ -150,18 +157,30 @@ class App extends React.Component {
     return this.state.errorMessage? (<Alert severity="warning">{this.state.errorMessage}</Alert>) : null;
   }
 
+  showSpinner() {
+    console.log("Show spinner");
+    this.setState({showSpinner: true});
+  }
+
   render() {
+    console.log("Rendering app.")
     return (
       <div className="app">
         <div className="content">
           <h1 id="title">Lego Right Triangle Calculator</h1>
           <ThemeProvider theme={darkTheme}>
-            <TripleCalculator setTripleGroups={this.setTripleGroups.bind(this)}/>
+            <TripleCalculator
+              setTripleGroups={this.setTripleGroups.bind(this)}
+              calculatingCallback={this.showSpinner.bind(this)}
+            />
             <div className="tripleGroups">
               {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}
               {this.renderErrorMessage()}
               {this.renderZoomedGroup()}
             </div>
+            <Backdrop open={this.state.showSpinner}>
+              <CircularProgress/>
+            </Backdrop>
           </ThemeProvider>
         </div>
       </div>

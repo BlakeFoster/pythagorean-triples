@@ -249,6 +249,11 @@ class TripleCalculator extends React.Component {
     return this.state.constrain[index] ? dimension : dimension.to(INTERNAL);
   }
 
+  calculateOnClick() {
+    this.props.calculatingCallback();
+    setTimeout(this.calculateTriples.bind(this), 100);
+  }
+
   calculateTriples() {
     const maxLengths = this.state.maxLengths;
     var l1Index = 0;
@@ -307,10 +312,6 @@ class TripleCalculator extends React.Component {
         }
       }
     }
-    return this.sortTriples(tripleGroups);
-  }
-
-  sortTriples(tripleGroups) {
     var sortedGroups = new Array();
     for (let [key, tripleGroup] of tripleGroups.entries()) {
       var gcds = Array.from(tripleGroup.keys());
@@ -387,7 +388,7 @@ class TripleCalculator extends React.Component {
               variant="contained"
               color="warning"
               disabled={!this.canCalculate()}
-              onClick={this.calculateTriples.bind(this)}
+              onClick={this.calculateOnClick.bind(this)}
             >Calculate</Button>
             <div className="helpMessage">{this.getHelpMessage()}</div>
           </div>

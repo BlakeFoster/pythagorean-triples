@@ -68,8 +68,10 @@ class TriangleGraphic extends React.Component {
     const vertexY = height - (height - diagramHeight) / 2 - bottomOverhangHeight;
 
     const bigAngleThreshold = 80;
+    const smallAngleThreshold = 10;
+    const smallAngleScaleFactor = Math.min(angle, smallAngleThreshold) / smallAngleThreshold;
     const bigAngleScaleFactor = Math.min(90 - angle, 90 - bigAngleThreshold) / (90 - bigAngleThreshold);
-    const arcRadius = bigAngleScaleFactor * aRelativeLength * scale / 5;
+    const arcRadius = bigAngleScaleFactor * aRelativeLength * scale / (5 * smallAngleScaleFactor);
     const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE * bigAngleScaleFactor;
     const angleFontSize = this.props.angleFontSize * zoomScale * bigAngleScaleFactor;
 
