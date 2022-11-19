@@ -5,7 +5,7 @@ import CalculateButton from "./CalculateButton";
 
 import { STUDS, Unit } from "../../model/Unit"
 import TriangleGraphic from "../graphics/TriangleGraphic"
-import { THETA } from "../../constants"
+import { THETA, A, B, C } from "../../constants"
 import { plain } from "../graphics/SideElement"
 import calculateTriples from "../../lib/algorithm"
 
@@ -24,9 +24,6 @@ const DIAGRAM_NORMAL_COLOR = "lightgrey"
 
 const ANGLE_FONT_SIZE = 30;
 
-const A = 0;
-const B = 1;
-const C = 2;
 
 class Diagram extends React.Component {
 
