@@ -2,7 +2,7 @@ import Dimension from "../model/Dimension"
 import Triple from "../model/Triple"
 import { STUDS, PLATES, INTERNAL } from "../model/Unit"
 import SideConfig from "../model/SideConfig"
-import { A, B, C } from "../constants"
+import { A, B, C, SIDES } from "../constants"
 
 
 function getPermutation(maxLengths) {
@@ -53,10 +53,7 @@ function calculateTriples(maxLengths, desiredAngle, allowOver, allowUnder, reque
 
   const permutation = getPermutation(maxLengths)
 
-  const config = new Array(3);
-  for (var i=0; i<3; i++) {
-    config[i] = new SideConfig(maxLengths[i], requestedUnits[i], constrain[i], i);
-  }
+  const config = SIDES.map((i) => {return new SideConfig(i, maxLengths[i], requestedUnits[i], constrain[i])});
 
   const dimensions = new Array(3);
   var tripleGroups = new Map();
