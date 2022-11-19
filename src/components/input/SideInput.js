@@ -47,7 +47,7 @@ class SideInput extends React.Component {
             {this.renderUnitButton(PLATES)}
           </ToggleButtonGroup>
           <div className="constrainedSwitch">
-            Constrain<br/>output<br/>
+            Constrain<br/>Unit<br/>
             <Tooltip title="Turn on to only generate triangles which use the unit selected to the left on this side.">
               <Switch
                 size="small"
