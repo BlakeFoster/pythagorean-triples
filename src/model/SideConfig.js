@@ -35,17 +35,13 @@ class SideConfig {
     )
   }
 
-  updateConstrain(constrain) {
+  toggleConstrain() {
     return new SideConfig(
       this.index,
       this.maxLength,
       this.requestedUnit,
-      constrain
+      !this.constrain
     )
-  }
-
-  toggleConstrain() {
-    return this.updateConstrain(!this.constrain)
   }
 
   _getMaxDim() {

@@ -59,21 +59,7 @@ class AngleInput extends React.Component {
         angleInputPadding: padding
       }
     );
-    this.props.desiredAngleCallback(desiredAngle);
-  }
-
-  setAllowOver(allowOver) {
-    this.setState(
-      allowOver,
-      this.props.allowUnder || !allowOver
-    );
-  }
-
-  setAllowUnder(allowUnder) {
-    this.props.allowOverUnderCallback(
-      this.props.allowOver || !allowUnder,
-      allowUnder
-    );
+    this.props.updateConfig(this.props.config.updateDesiredAngle(desiredAngle));
   }
 
   render() {
@@ -91,7 +77,7 @@ class AngleInput extends React.Component {
           >{DEGREES}</div>
           <NumericTextField
             label={THETA}
-            value={this.props.desiredAngle}
+            value={this.props.config.desiredAngle}
             onChange={this.setDesiredAngle.bind(this)}
             onBlur={this.clampAngle.bind(this)}
             inputRef={this.angleInputRef}
@@ -99,16 +85,16 @@ class AngleInput extends React.Component {
         </div>
         <div className="inputSettings">
           <OverUnderSwitch
-            isAllowed={this.props.allowOver}
+            isAllowed={this.props.config.allowOver}
             label="Allow Over"
-            callback={this.setAllowOver.bind(this)}
+            callback={() => {this.props.updateConfig(this.props.config.toggleAllowOver())}}
             tooltip="Include angles larger than the requested angle."
           />
           <br/>
           <OverUnderSwitch
-            isAllowed={this.props.allowUnder}
+            isAllowed={this.props.config.allowUnder}
             label="Allow Under"
-            callback={this.setAllowUnder.bind(this)}
+            callback={() => {this.props.updateConfig(this.props.config.toggleAllowUnder())}}
             tooltip="Include angles smaller than the requested angle."
           />
         </div>

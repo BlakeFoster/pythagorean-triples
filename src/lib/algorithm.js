@@ -48,7 +48,7 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
 }
 
 
-function calculateTriples(sideConfigs, desiredAngle, allowOver, allowUnder) {
+function calculateTriples(sideConfigs, angleConfig) {
 
   const permutation = getPermutation(sideConfigs)
 
@@ -75,8 +75,7 @@ function calculateTriples(sideConfigs, desiredAngle, allowOver, allowUnder) {
       const triple = new Triple([...dimensions])
       console.log("Checking " + triple.toString())
       if (l2Dim > 0 && l2Dim <= sideConfigs[permutation[2]].maxDim && triple.isPythagorean()) {
-        const angleDifference = triple.getAngle() - desiredAngle;
-        if ((angleDifference >= 0 || allowUnder) && (angleDifference <= 0 || allowOver)) {
+        if (angleConfig.isAngleOk(triple.getAngle())) {
           const key = triple.hashKey();
           var tripleGroup = tripleGroups.get(key);
           if (tripleGroup == null) {
@@ -88,7 +87,7 @@ function calculateTriples(sideConfigs, desiredAngle, allowOver, allowUnder) {
       }
     }
   }
-  return sortTripleGroups(tripleGroups, desiredAngle);
+  return sortTripleGroups(tripleGroups, angleConfig.desiredAngle);
 }
 
 export default calculateTriples;

@@ -9,6 +9,7 @@ import { THETA, A, B, C, SIDES } from "../../constants";
 import { plain } from "../graphics/SideElement";
 import calculateTriples from "../../lib/algorithm";
 import SideConfig from "../../model/SideConfig";
+import AngleConfig from "../../model/AngleConfig"
 
 
 const DIAGRAM_WIDTH = 490;
@@ -76,13 +77,11 @@ class TripleCalculator extends React.Component {
     super(props);
     this.state = {
       sideConfigs: SIDES.map((i) => {return new SideConfig(i)}),
+      angleConfig: new AngleConfig(),
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
       angleHighlight: false,
-      allowOver: true,
-      allowUnder: true,
-      desiredAngle: null
     };
   }
 
@@ -99,19 +98,9 @@ class TripleCalculator extends React.Component {
     );
   }
 
-  setDesiredAngle(desiredAngle) {
-    this.setState({desiredAngle: desiredAngle});
-    console.log("Desired angle set to " + desiredAngle);
-  }
-
-  setAllowOverUnder(allowOver, allowUnder) {
-    this.setState(
-      {
-        allowUnder: allowUnder,
-        allowOver: allowUnder
-      }
-    );
-    console.log("Allow over set to " + allowOver + " and allow under set to " + allowUnder);
+  updateAngleConfig(newConfig) {
+    console.log("Config for desired angle changed to " + newConfig)
+    this.setState({angleConfig: newConfig});
   }
 
   setAHighlight(highlight) {
@@ -142,7 +131,7 @@ class TripleCalculator extends React.Component {
   }
 
   canCalculate() {
-    return this.state.desiredAngle && this.state.sideConfigs.reduce(
+    return this.state.angleConfig.desiredAngle && this.state.sideConfigs.reduce(
       (accumulator, currentValue) => {
         return accumulator + (currentValue.maxLength == null ? 0 : 1);
       },
@@ -159,9 +148,7 @@ class TripleCalculator extends React.Component {
     this.props.setTripleGroups(
       calculateTriples(
         this.state.sideConfigs,
-        this.state.desiredAngle,
-        this.state.allowOver,
-        this.state.allowUnder
+        this.state.angleConfig,
       )
     );
   }
@@ -173,11 +160,8 @@ class TripleCalculator extends React.Component {
         {this.renderSideInput(B, "B", this.setBHighlight.bind(this))}
         {this.renderSideInput(C, "C", this.setCHighlight.bind(this))}
         <AngleInput
-          desiredAngle={this.state.desiredAngle}
-          desiredAngleCallback={this.setDesiredAngle.bind(this)}
-          allowOver={this.state.allowOver}
-          allowUnder={this.state.allowUnder}
-          allowOverUnderCallback={this.setAllowOverUnder.bind(this)}
+          config={this.state.angleConfig}
+          updateConfig={this.updateAngleConfig.bind(this)}
           hoverCallback={this.setAngleHighlight.bind(this)}
         />
         <CalculateButton
