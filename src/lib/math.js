@@ -33,3 +33,17 @@ export function atan2d(b, a) {
   /* arctan with angle in degrees */
   return Math.atan2(b, a) / _DEG_TO_RAD;
 }
+
+export function applyPermutation(a1, p) {
+  /* return a new array a2 such that a2[i] = a1[p[i]] for all i */
+  var a2 = new Array(a1.length);
+  p.forEach((fro, to) => {a2[to] = a1[fro]});
+  return a2;
+}
+
+export function reversePermutation(a1, p) {
+  /* return a new array a2 such that a2[p[i]] = a1[i] for all i */
+  var a2 = new Array(a1.length);
+  p.forEach((fro, to) => {a2[fro] = a1[to]});
+  return a2;
+}

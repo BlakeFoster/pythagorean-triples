@@ -2,6 +2,7 @@ import Dimension from "../model/Dimension"
 import Triple from "../model/Triple"
 import { STUDS, PLATES, INTERNAL } from "../model/Unit"
 import { A, B, C, SIDES } from "../constants"
+import { applyPermutation, reversePermutation } from "../lib/math"
 
 
 function getPermutation(sideConfigs) {
@@ -48,42 +49,43 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
 }
 
 
+function getDimension2(dimension0, dimension1, sideConfigs) {
+  const length2 = Math.sqrt(
+    -sideConfigs[2].sign * (
+      sideConfigs[0].sign * dimension0 ** 2 +
+      sideConfigs[1].sign * dimension1 ** 2
+    )
+  )
+  const unit2 = sideConfigs[2].getUnitOut(length2)
+  return new Dimension(unit2.from(length2, INTERNAL), unit2);
+}
+
+
 function calculateTriples(sideConfigs, angleConfig) {
 
   const permutation = getPermutation(sideConfigs)
 
+  sideConfigs = applyPermutation(sideConfigs, permutation)
+
   const dimensions = new Array(3);
   var tripleGroups = new Map();
 
-  for (var l0=1; l0<=sideConfigs[permutation[0]].maxDim.length; l0++) {
-    const l0Dim = sideConfigs[permutation[0]].getDimension(l0);
-    dimensions[permutation[0]] = l0Dim;
+  for (var l0=1; l0<=sideConfigs[0].maxDim.length; l0++) {
+    dimensions[0] = sideConfigs[0].getDimension(l0);
+    for (var l1=1; l1<=sideConfigs[1].maxDim.length; l1++) {
+      dimensions[1] = sideConfigs[1].getDimension(l1);
+      dimensions[2] = getDimension2(dimensions[0], dimensions[1], sideConfigs);
 
-    for (var l1=1; l1<=sideConfigs[permutation[1]].maxDim.length; l1++) {
-      const l1Dim = sideConfigs[permutation[1]].getDimension(l1)
-      dimensions[permutation[1]] = l1Dim
-      const l2 = Math.sqrt(
-        sideConfigs[permutation[0]].sign * l0Dim ** 2 +
-        sideConfigs[permutation[1]].sign * l1Dim ** 2
-      )
-      const l2Unit = sideConfigs[permutation[2]].getUnitOut(l2)
-      const l2Dim = new Dimension(l2Unit.from(l2, INTERNAL), l2Unit);
-      dimensions[permutation[2]] = l2Dim;
-
-      console.log("l0 = " + l0 + " l1 = " + l1 + " l2 = " + l2)
-
-      const triple = new Triple([...dimensions])
+      const triple = new Triple(reversePermutation(dimensions, permutation));
       console.log("Checking " + triple.toString())
-      if (l2Dim > 0 && l2Dim <= sideConfigs[permutation[2]].maxDim && triple.isPythagorean()) {
-        if (angleConfig.isAngleOk(triple.getAngle())) {
-          const key = triple.hashKey();
-          var tripleGroup = tripleGroups.get(key);
-          if (tripleGroup == null) {
-            tripleGroup = new Map();
-            tripleGroups.set(key, tripleGroup);
-          }
-          tripleGroup.set(triple.to(INTERNAL).getGCD(), triple);
+      if (sideConfigs[2].isOk(dimensions[2]) && angleConfig.isOk(triple.getAngle()) && triple.isPythagorean()) {
+        const key = triple.hashKey();
+        var tripleGroup = tripleGroups.get(key);
+        if (tripleGroup == null) {
+          tripleGroup = new Map();
+          tripleGroups.set(key, tripleGroup);
         }
+        tripleGroup.set(triple.to(INTERNAL).getGCD(), triple);
       }
     }
   }

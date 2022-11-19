@@ -29,7 +29,7 @@ class AngleConfig {
     );
   }
 
-  isAngleOk(angle) {
+  isOk(angle) {
     const angleDifference = angle - this.desiredAngle;
     return (angleDifference >= 0 || this.allowUnder) && (angleDifference <= 0 || this.allowOver);
   }

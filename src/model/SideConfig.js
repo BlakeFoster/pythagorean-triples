@@ -15,6 +15,7 @@ class SideConfig {
     this.constrain = constrain;
     this.sign = index == C ? -1 : 1;
     this.maxDim = this._getMaxDim();
+    this.index = index;
   }
 
   updateMaxLength(maxLength) {
@@ -42,6 +43,10 @@ class SideConfig {
       this.requestedUnit,
       !this.constrain
     )
+  }
+
+  isOk(dimension) {
+    return dimension > 0 && dimension <= this.maxDim
   }
 
   _getMaxDim() {
