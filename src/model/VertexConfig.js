@@ -30,5 +30,5 @@ export const HINGE_PLATE = new VertexConfig(
 export const SINGLE_STUD = new VertexConfig(
   "Single Stud",
   new Dimension(1, STUDS),
-  STUDS
+  null
 )

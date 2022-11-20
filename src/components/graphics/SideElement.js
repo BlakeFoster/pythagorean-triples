@@ -42,7 +42,7 @@ class _LegoElement extends _SideElment {
           height={this.constructor.getWidth()}
           stroke="black"
           strokeWidth={this.getStrokeWidth()}
-          fill="orange"
+          fill={this.props.color}
         />
         {this.renderDetail()}
       </>
@@ -70,7 +70,7 @@ export class PlateSide extends _LegoElement {
         width={this.getStudHeight() + this.getStrokeWidth()}
         height={2 * this.getStudRadius()}
         stroke="black"
-        fill="orange"
+        fill={this.props.color}
         strokeWidth={this.getStrokeWidth()}
       />
     )

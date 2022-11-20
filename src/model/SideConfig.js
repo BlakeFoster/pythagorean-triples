@@ -2,6 +2,8 @@ import Dimension from "./Dimension"
 import { STUDS, PLATES, INTERNAL } from "./Unit"
 import { C } from "../constants"
 
+const MIN_INTERNAL_LENGTH = INTERNAL.from(1, STUDS);
+
 
 class SideConfig {
    /* maxLength: the maximum length in the requested unit.
@@ -55,12 +57,12 @@ class SideConfig {
 
   isOk(internalLength, internalOverhang) {
     return (
-      internalLength > 0 &&
+      internalLength >= MIN_INTERNAL_LENGTH &&
       (
         this.maxLength == null ||
         internalLength <= INTERNAL.from(this.maxLength, this.requestedUnit)
       ) &&
-      this.getUnitOut(internalLength, internalOverhang) != null
+      this.getUnitOut(internalLength + internalOverhang) != null
     );
   }
 

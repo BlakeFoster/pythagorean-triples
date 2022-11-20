@@ -7,8 +7,9 @@ class Side extends React.Component {
   renderSegments() {
     var segments = new Array(this.props.length);
 
-    const lOffset = this.props.lOffset * this.props.displayElement.getLength()
-    const wOffset = this.props.wOffset * this.props.displayElement.getWidth()
+    const lOffset = this.props.lOffset
+    const wOffset = this.props.wOffset
+    const { color = "orange" } = this.props;
 
     for (var i=0; i<this.props.length; i+=1) {
       segments[this.props.length - i - 1] = (
@@ -16,6 +17,7 @@ class Side extends React.Component {
           x={lOffset + i * this.props.displayElement.getLength()}
           y={wOffset}
           key={i}
+          color={color}
         />
       );
     }
