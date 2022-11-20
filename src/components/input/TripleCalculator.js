@@ -3,7 +3,7 @@ import SideInput from "./SideInput";
 import AngleInput from "./AngleInput";
 import CalculateButton from "./CalculateButton";
 
-import { STUDS, Unit } from "../../model/Unit";
+import { Unit } from "../../model/Unit";
 import TriangleGraphic from "../graphics/TriangleGraphic";
 import { THETA, A, B, C, SIDES } from "../../constants";
 import { plain } from "../graphics/SideElement";
@@ -90,9 +90,7 @@ class TripleCalculator extends React.Component {
     this.setState(
       {
         sideConfigs: SIDES.map(
-          (i) => {
-            return i == updatedSide ? newConfig : this.state.sideConfigs[i];
-          }
+          (i) => i === updatedSide ? newConfig : this.state.sideConfigs[i]
         )
       }
     );
