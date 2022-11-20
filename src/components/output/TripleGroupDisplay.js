@@ -93,9 +93,12 @@ class TripleGroupDisplay extends React.Component {
           width={this.props.width}
           height={this.props.height}
           mountCallback={this.props.mountCallback}
-          aLength={triple.getA().length}
-          bLength={triple.getB().length}
-          cLength={triple.getC().length}
+          aOverhang={triple.getA().overhang}
+          bOverhang={triple.getB().overhang}
+          cOverhang={triple.getC().overhang}
+          aLength={triple.getA().sideLength}
+          bLength={triple.getB().sideLength}
+          cLength={triple.getC().sideLength}
           aElement={this.getElement(triple.getA())}
           bElement={this.getElement(triple.getB())}
           cElement={this.getElement(triple.getC())}

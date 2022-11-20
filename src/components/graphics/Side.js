@@ -7,11 +7,14 @@ class Side extends React.Component {
   renderSegments() {
     var segments = new Array(this.props.length);
 
+    const lOffset = this.props.lOffset * this.props.displayElement.getLength()
+    const wOffset = this.props.wOffset * this.props.displayElement.getWidth()
+
     for (var i=0; i<this.props.length; i+=1) {
       segments[this.props.length - i - 1] = (
         <this.props.displayElement
-          x={i * this.props.displayElement.getLength()}
-          y={0}
+          x={lOffset + i * this.props.displayElement.getLength()}
+          y={wOffset}
           key={i}
         />
       );

@@ -58,9 +58,9 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
   var tripleGroups = new Map();
 
   for (let l0 of sideConfigs[0]) {
-    if (sideConfigs[0].isOk(l0)) {
+    if (sideConfigs[0].isOk(l0, overhang)) {
       for (let l1 of sideConfigs[1]) {
-        if (sideConfigs[1].isOk(l1)) {
+        if (sideConfigs[1].isOk(l1, overhang)) {
           const l2 = Math.sqrt(
             -sideConfigs[2].sign * (
               sideConfigs[0].sign * l0 ** 2 +
@@ -69,9 +69,9 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
           )
           const sides = reversePermutation([l0, l1, l2], permutation);
           const angle = atan2d(sides[B], sides[A]);
-          if (sideConfigs[2].isOk(l2) && angleConfig.isOk(angle)) {
+          if (sideConfigs[2].isOk(l2, overhang) && angleConfig.isOk(angle)) {
             const triple = new Triple(
-              sides.map((l, i) => sideConfigs[i].getDimension(l)),
+              sides.map((l, i) => sideConfigs[i].getDimension(l, overhang)),
               angle
             );
             const key = triple.hashKey();

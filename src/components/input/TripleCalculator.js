@@ -149,7 +149,7 @@ class TripleCalculator extends React.Component {
         config={this.state.sideConfigs[index]}
         updateConfig={this.updateSideConfig.bind(this, index)}
         hoverCallback={hoverCallback}
-        enableUnit={this.state.vertexConfig.requiredUnit != null}
+        enableUnit={this.state.vertexConfig.requiredUnit == null}
       />
     );
   }

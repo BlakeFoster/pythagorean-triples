@@ -24,7 +24,7 @@ class SideConfig {
       maxLength,
       this.requestedUnit,
       this.constrain
-    )
+    );
   }
 
   updateRequestedUnit(requestedUnit) {
@@ -33,55 +33,53 @@ class SideConfig {
       this.maxLength,
       requestedUnit,
       this.constrain
-    )
+    );
   }
 
-  toggleConstrain() {
+  updateConstrain(constrain) {
     return new SideConfig(
       this.index,
       this.maxLength,
       this.requestedUnit,
-      !this.constrain
-    )
+      constrain
+    );
+  }
+
+  toggleConstrain() {
+    return this.updateConstrain(!this.constrain);
   }
 
   getPossibleUnits() {
     return this.constrain ? [this.requestedUnit] : [STUDS, PLATES]
   }
 
-  isOk(internalLength) {
+  isOk(internalLength, internalOverhang) {
     return (
       internalLength > 0 &&
       (
         this.maxLength == null ||
         internalLength <= INTERNAL.from(this.maxLength, this.requestedUnit)
       ) &&
-      this.getUnitOut(internalLength) != null
+      this.getUnitOut(internalLength, internalOverhang) != null
     );
   }
 
-  _getMaxDim() {
-    const dimension = new Dimension(
-      this.maxLength == null ?
-        this.requestedUnit.from(Number.MAX_VALUE - 1, INTERNAL) :
-        this.maxLength,
-      this.requestedUnit
-    );
-    return this.constrain ? dimension : dimension.to(INTERNAL);
-  }
-
-  getUnitOut(internalLength) {
+  getUnitOut(totalInternalLength) {
     for (let unit of this.getPossibleUnits()) {
-      if (!(unit.from(internalLength, INTERNAL) % 1)) {
+      if (!(unit.from(totalInternalLength, INTERNAL) % 1)) {
         return unit;
       }
     }
     return null
   }
 
-  getDimension(internalLength) {
-    const unit = this.getUnitOut(internalLength);
-    return new Dimension(unit.from(internalLength, INTERNAL), unit);
+  getDimension(internalLength, internalOverhang) {
+    const unit = this.getUnitOut(internalLength + internalOverhang);
+    return new Dimension(
+      unit.from(internalLength, INTERNAL),
+      unit,
+      unit.from(internalOverhang, INTERNAL)
+    );
   }
 
   toString() {
@@ -94,10 +92,7 @@ class SideConfig {
     var internalLength = 0;
     return {
       next: () => {
-        do {
-          // skip over numbers that can't be created with just plates or just studs.
-          internalLength += step;
-        } while (!this.isOk(internalLength) && internalLength < maxInternalLength)
+        internalLength += step;
         return {
           value: internalLength,
           done: internalLength > maxInternalLength

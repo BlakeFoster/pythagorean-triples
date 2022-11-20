@@ -1,6 +1,6 @@
 import React from "react";
 import Side from "./Side";
-import { Stage, Layer, Text, Arc } from 'react-konva';
+import { Stage, Layer, Text, Arc, Circle } from 'react-konva';
 
 import { RENDER_UNIT } from "./SideElement"
 import { sind, cosd, atan2d } from "../../lib/math"
@@ -45,6 +45,8 @@ class TriangleGraphic extends React.Component {
       this.props.cLength + " " + this.props.cElement.LENGTH_UNIT +
       " triangle with width " + width + " and height " + height
     );
+
+    const { aOverhang = 0, bOverhang = 0, cOverhang = 0 } = this.props;
 
     const angle = atan2d(bRelativeLength, aRelativeLength);
     const leftOverhangRelativeLength = sind(angle) * this.props.cElement.getWidth();
@@ -102,7 +104,9 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={0}
             angle={180}
-            length={this.props.aLength}
+            length={this.props.aLength + aOverhang}
+            lOffset={-aOverhang / 2}
+            wOffset={-aOverhang / 2}
             displayElement={this.props.aElement}
           />
           {/* side B */}
@@ -110,7 +114,10 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={bRelativeLength}
             angle={-90}
-            length={this.props.bLength}
+            length={this.props.bLength + bOverhang}
+            lOffset={0}
+            wOffset={-bOverhang / 2}
+            lOffset={-bOverhang / 2}
             displayElement={this.props.bElement}
           />
           {/* side C */}
@@ -118,8 +125,31 @@ class TriangleGraphic extends React.Component {
             x={0}
             y={0}
             angle={angle}
-            length={this.props.cLength}
+            length={this.props.cLength + cOverhang}
+            wOffset={-cOverhang / 2}
+            lOffset={-cOverhang / 2}
             displayElement={this.props.cElement}
+          />
+          <Circle
+            radius={0.3}
+            stroke="blue"
+            strokeWidth={0.3}
+            x={0}
+            y={0}
+          />
+          <Circle
+            radius={0.3}
+            stroke="blue"
+            strokeWidth={0.3}
+            x={aRelativeLength}
+            y={bRelativeLength}
+          />
+          <Circle
+            radius={0.3}
+            stroke="blue"
+            strokeWidth={0.3}
+            x={aRelativeLength}
+            y={0}
           />
         </Layer>
       </Stage>

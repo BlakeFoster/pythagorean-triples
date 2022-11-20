@@ -26,7 +26,11 @@ class Triple {
       } else {
         this._minimized = new Triple(
           internal._dimensions.map(
-            (d) => {return new Dimension(d.length / internal.getGCD(), INTERNAL)}
+            (d) => new Dimension(
+                    d.sideLength / internal.getGCD(),
+                    INTERNAL,
+                    d.overhang
+                  )
           ),
           this._angle
         )
@@ -38,9 +42,9 @@ class Triple {
   getGCD() {
     if (this._gcd == null) {
       this._gcd = gcd(
-        this.getA().length,
-        this.getB().length,
-        this.getC().length
+        this.getA().sideLength,
+        this.getB().sideLength,
+        this.getC().sideLength
       );
     }
     return this._gcd;
