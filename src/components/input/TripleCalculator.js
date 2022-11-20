@@ -39,10 +39,10 @@ class Diagram extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     return (
-      nextProps.aHighlight !== this.props.aHighlight ||
-      nextProps.bHighlight !== this.props.bHighlight ||
-      nextProps.cHighlight !== this.props.cHighlight ||
-      nextProps.angleHighlight !== this.props.angleHighlight
+      this.props.sideHighlight.reduce(
+        (acc, current, index) => {return acc || (current !== nextProps.sideHighlight[index])},
+        false
+      ) || nextProps.angleHighlight !== this.props.angleHighlight
     )
   }
 
@@ -62,9 +62,9 @@ class Diagram extends React.Component {
           angleFontSize={ANGLE_FONT_SIZE}
           angleColor={this.getDiagramColor(this.props.angleHighlight)}
           angleLabel={THETA}
-          aElement={this.sideElement(DIAGRAM_A_UNIT, this.props.aHighlight)}
-          bElement={this.sideElement(DIAGRAM_B_UNIT, this.props.bHighlight)}
-          cElement={this.sideElement(DIAGRAM_C_UNIT, this.props.cHighlight)}
+          aElement={this.sideElement(DIAGRAM_A_UNIT, this.props.sideHighlight[A])}
+          bElement={this.sideElement(DIAGRAM_B_UNIT, this.props.sideHighlight[B])}
+          cElement={this.sideElement(DIAGRAM_C_UNIT, this.props.sideHighlight[C])}
         />
       </div>
     );
@@ -78,9 +78,7 @@ class TripleCalculator extends React.Component {
     this.state = {
       sideConfigs: SIDES.map((i) => {return new SideConfig(i)}),
       angleConfig: new AngleConfig(),
-      aHighlight: false,
-      bHighlight: false,
-      cHighlight: false,
+      sideHighlight: new Array(3).fill(false),
       angleHighlight: false,
     };
   }
@@ -103,16 +101,14 @@ class TripleCalculator extends React.Component {
     this.setState({angleConfig: newConfig});
   }
 
-  setAHighlight(highlight) {
-    this.setState({aHighlight: highlight})
-  }
-
-  setBHighlight(highlight) {
-    this.setState({bHighlight: highlight})
-  }
-
-  setCHighlight(highlight) {
-    this.setState({cHighlight: highlight})
+  setSideHighlight(index, highlight) {
+    this.setState(
+      {
+        sideHighlight: this.state.sideHighlight.map(
+          (h, i) => {return i == index ? highlight : h}
+        )
+      }
+    )
   }
 
   setAngleHighlight(highlight) {
@@ -125,7 +121,7 @@ class TripleCalculator extends React.Component {
         sideName={sideName}
         config={this.state.sideConfigs[index]}
         updateConfig={this.updateSideConfig.bind(this, index)}
-        hoverCallback={hoverCallback}
+        hoverCallback={this.setSideHighlight.bind(this, index)}
       />
     );
   }
@@ -156,9 +152,9 @@ class TripleCalculator extends React.Component {
   render() {
     return (
       <div className="inputs">
-        {this.renderSideInput(A, "A", this.setAHighlight.bind(this))}
-        {this.renderSideInput(B, "B", this.setBHighlight.bind(this))}
-        {this.renderSideInput(C, "C", this.setCHighlight.bind(this))}
+        {this.renderSideInput(A, "A")}
+        {this.renderSideInput(B, "B")}
+        {this.renderSideInput(C, "C")}
         <AngleInput
           config={this.state.angleConfig}
           updateConfig={this.updateAngleConfig.bind(this)}
@@ -169,9 +165,7 @@ class TripleCalculator extends React.Component {
           onClick={this.calculateOnClick.bind(this)}
         />
         <Diagram
-          aHighlight={this.state.aHighlight}
-          bHighlight={this.state.bHighlight}
-          cHighlight={this.state.cHighlight}
+          sideHighlight={this.state.sideHighlight}
           angleHighlight={this.state.angleHighlight}
         />
         <hr/>
