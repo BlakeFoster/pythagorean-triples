@@ -20,11 +20,9 @@ class SideInput extends React.Component {
     );
   }
 
-  updateMaxLength
-
   clampLength() {
-    if (this.props.sideConfig.maxLength != null && this.props.maxLength > MAX_LENGTH) {
-      this.props.updateConfig(this.props.sideConfig.updateMaxLength(MAX_LENGTH));
+    if (this.props.config.maxLength != null && this.props.config.maxLength > MAX_LENGTH) {
+      this.props.updateConfig(this.props.config.updateMaxLength(MAX_LENGTH));
     }
   }
 

@@ -77,7 +77,6 @@ function calculateTriples(sideConfigs, angleConfig) {
       dimensions[2] = getDimension2(dimensions[0], dimensions[1], sideConfigs);
 
       const triple = new Triple(reversePermutation(dimensions, permutation));
-      console.log("Checking " + triple.toString())
       if (sideConfigs[2].isOk(dimensions[2]) && angleConfig.isOk(triple.getAngle()) && triple.isPythagorean()) {
         const key = triple.hashKey();
         var tripleGroup = tripleGroups.get(key);

@@ -25,7 +25,8 @@ class NumericTextField extends React.Component {
         label={this.props.label}
         inputRef={this.props.inputRef}
         variant="standard"
-      />);
+      />
+    );
   }
 }
 
