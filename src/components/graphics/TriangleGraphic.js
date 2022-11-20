@@ -47,6 +47,20 @@ class TriangleGraphic extends React.Component {
       " triangle with width " + width + " and height " + height
     );
 
+    const { aOverhang = 0, bOverhang = 0, cOverhang = 0 } = this.props;
+    console.log("aOverhang=" + aOverhang + " " + " bOverhang=" + bOverhang + " cOverhang=" + cOverhang)
+
+    const aOverhangR = RENDER_UNIT.from(aOverhang, this.props.aElement.LENGTH_UNIT)
+    const bOverhangR = RENDER_UNIT.from(bOverhang, this.props.bElement.LENGTH_UNIT)
+    const cOverhangR = RENDER_UNIT.from(cOverhang, this.props.cElement.LENGTH_UNIT)
+
+    const aLOffset = (-2*aOverhangR + cOverhangR) / 2;
+    const aWOffset = -cOverhangR / 2;
+    const bLOffset = -cOverhangR / 2;
+    const bWOffset = -cOverhangR / 2;
+    const cLOffset = -cOverhangR / 2;
+    const cWOffset = -cOverhangR / 2;
+
     const angle = atan2d(bRelativeLength, aRelativeLength);
     const leftOverhangRelativeLength = sind(angle) * this.props.cElement.getWidth();
     const rightOverhangRelativeLength = this.props.bElement.getWidth();
@@ -79,15 +93,6 @@ class TriangleGraphic extends React.Component {
     const bToA = this.props.aElement.getLength() / this.props.bElement.getLength();
     const aToB = 1 / bToA;
 
-    const { aOverhang = 0, bOverhang = 0, cOverhang = 0 } = this.props;
-    console.log("aOverhang=" + aOverhang + " " + " bOverhang=" + bOverhang + " cOverhang=" + cOverhang)
-
-    const aOffset = RENDER_UNIT.from(aOverhang, this.props.aElement.LENGTH_UNIT)
-    const bOffset = RENDER_UNIT.from(bOverhang, this.props.bElement.LENGTH_UNIT)
-    const cOffset = RENDER_UNIT.from(cOverhang, this.props.cElement.LENGTH_UNIT)
-
-
-
     return (
       <Stage width={width} height={height}>
         <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
@@ -116,8 +121,8 @@ class TriangleGraphic extends React.Component {
             y={0}
             angle={180}
             length={this.props.aLength + aOverhang}
-            lOffset={(bOffset - aOffset) / 2}
-            wOffset={(-bOffset - aOffset) / 2}
+            lOffset={aLOffset}
+            wOffset={aWOffset}
             displayElement={this.props.aElement}
           />
           {/* side B */}
@@ -127,8 +132,8 @@ class TriangleGraphic extends React.Component {
             angle={-90}
             length={this.props.bLength + bOverhang}
             lOffset={0}
-            wOffset={(-aOffset - bOffset) / 2}
-            lOffset={(-aOffset - bOffset) / 2}
+            lOffset={bLOffset}
+            wOffset={bWOffset}
             displayElement={this.props.bElement}
           />
           {/* side C */}
@@ -137,8 +142,8 @@ class TriangleGraphic extends React.Component {
             y={0}
             angle={angle}
             length={this.props.cLength + cOverhang}
-            wOffset={-cOffset / 2}
-            lOffset={-cOffset / 2}
+            wOffset={cWOffset}
+            lOffset={cLOffset}
             displayElement={this.props.cElement}
           />
           <Circle

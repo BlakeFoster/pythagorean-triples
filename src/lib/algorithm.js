@@ -55,7 +55,9 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
   sideConfigs = applyPermutation(sideConfigs, permutation)
   const overhang = vertexConfig.overhang.to(INTERNAL);
   const overhangCombinations = overhang ? [
+    [0, 0, overhang],
     [overhang, 0, overhang],
+    [0, overhang, overhang],
     [0, overhang, overhang]
   ] : [[0, 0, 0]]
 
