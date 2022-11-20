@@ -77,12 +77,10 @@ class Triple {
 
 
   compareTo(other, desiredAngle) {
-    const thisAngle = this.getAngle();
-    const otherAngle = other.getAngle();
-    var angleDiffThis = Math.abs(thisAngle - desiredAngle);
-    var angleDiffOther = Math.abs(otherAngle - desiredAngle);
+    var angleDiffThis = Math.abs(this._angle - desiredAngle);
+    var angleDiffOther = Math.abs(other._angle - desiredAngle);
     if (almostEqual(angleDiffThis, angleDiffOther)) {
-      return thisAngle < otherAngle ? -1 : thisAngle > otherAngle ? 1 : 0;
+      return this._angle < other._angle ? -1 : this._angle > other._angle ? 1 : 0;
     } else if (angleDiffThis < angleDiffOther) {
       return -1;
     } else if (angleDiffThis > angleDiffOther) {

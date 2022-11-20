@@ -28,6 +28,10 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
       return a[0].compareTo(b[0], desiredAngle)
     }
   );
+  console.log(desiredAngle)
+  console.log(
+    sortedGroups.map((g) => g[0].getAngle())
+  )
   if (sortedGroups.length > 10) {
     console.log("Truncating to top 10")
     sortedGroups = sortedGroups.slice(0, 10);
@@ -60,13 +64,11 @@ function calculateTriples(sideConfigs, angleConfig) {
           sideConfigs[1].sign * l1 ** 2
         )
       )
-      const angle = atan2d(l1, l0);
+      const sides = reversePermutation([l0, l1, l2], permutation);
+      const angle = atan2d(sides[B], sides[A]);
       if (sideConfigs[2].isOk(l2) && angleConfig.isOk(angle)) {
         const triple = new Triple(
-          reversePermutation(
-            [l0, l1, l2].map((l, i) => sideConfigs[i].getDimension(l)),
-            permutation
-          ),
+          sides.map((l, i) => sideConfigs[i].getDimension(l)),
           angle
         );
         const key = triple.hashKey();
@@ -74,6 +76,7 @@ function calculateTriples(sideConfigs, angleConfig) {
         if (tripleGroup == null) {
           tripleGroup = new Map();
           tripleGroups.set(key, tripleGroup);
+          console.log("Found new triple group with angle " + angle);
         }
         tripleGroup.set(l0, triple);
       }
