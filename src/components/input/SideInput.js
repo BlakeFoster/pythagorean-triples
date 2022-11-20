@@ -22,7 +22,9 @@ class SideInput extends React.Component {
 
   clampLength() {
     if (this.props.config.maxLength != null && this.props.config.maxLength > MAX_LENGTH) {
-      this.props.updateConfig(this.props.config.updateMaxLength(MAX_LENGTH));
+      this.props.updateConfig(
+        this.props.config.updateMaxLength(MAX_LENGTH).updateConstrain(true)
+      );
     }
   }
 
@@ -42,7 +44,7 @@ class SideInput extends React.Component {
           />
         </div>
         <div className="inputSettings">
-          <ToggleButtonGroup exlusive="true" color="warning">
+          <ToggleButtonGroup exlusive="true" color="warning" disabled={!this.props.enableUnit}>
             {this.renderUnitButton(STUDS)}
             {this.renderUnitButton(PLATES)}
           </ToggleButtonGroup>
@@ -53,6 +55,7 @@ class SideInput extends React.Component {
                 size="small"
                 checked={this.props.config.constrain}
                 onChange={() => {this.props.updateConfig(this.props.config.toggleConstrain())}}
+                disabled={!this.props.enableUnit}
               />
             </Tooltip>
           </div>

@@ -2,6 +2,7 @@ import Triple from "../model/Triple"
 import { A, B, C } from "../constants"
 import { applyPermutation, reversePermutation } from "../lib/math"
 import { atan2d } from "../lib/math"
+import { INTERNAL } from "../model/Unit"
 
 
 function getPermutation(sideConfigs) {
@@ -48,37 +49,41 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
 }
 
 
-function calculateTriples(sideConfigs, angleConfig) {
+function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
 
   const permutation = getPermutation(sideConfigs)
-
   sideConfigs = applyPermutation(sideConfigs, permutation)
+  const overhang = vertexConfig.overhang.to(INTERNAL);
 
   var tripleGroups = new Map();
 
   for (let l0 of sideConfigs[0]) {
-    for (let l1 of sideConfigs[1]) {
-      const l2 = Math.sqrt(
-        -sideConfigs[2].sign * (
-          sideConfigs[0].sign * l0 ** 2 +
-          sideConfigs[1].sign * l1 ** 2
-        )
-      )
-      const sides = reversePermutation([l0, l1, l2], permutation);
-      const angle = atan2d(sides[B], sides[A]);
-      if (sideConfigs[2].isOk(l2) && angleConfig.isOk(angle)) {
-        const triple = new Triple(
-          sides.map((l, i) => sideConfigs[i].getDimension(l)),
-          angle
-        );
-        const key = triple.hashKey();
-        var tripleGroup = tripleGroups.get(key);
-        if (tripleGroup == null) {
-          tripleGroup = new Map();
-          tripleGroups.set(key, tripleGroup);
-          console.log("Found new triple group with angle " + angle);
+    if (sideConfigs[0].isOk(l0)) {
+      for (let l1 of sideConfigs[1]) {
+        if (sideConfigs[1].isOk(l1)) {
+          const l2 = Math.sqrt(
+            -sideConfigs[2].sign * (
+              sideConfigs[0].sign * l0 ** 2 +
+              sideConfigs[1].sign * l1 ** 2
+            )
+          )
+          const sides = reversePermutation([l0, l1, l2], permutation);
+          const angle = atan2d(sides[B], sides[A]);
+          if (sideConfigs[2].isOk(l2) && angleConfig.isOk(angle)) {
+            const triple = new Triple(
+              sides.map((l, i) => sideConfigs[i].getDimension(l)),
+              angle
+            );
+            const key = triple.hashKey();
+            var tripleGroup = tripleGroups.get(key);
+            if (tripleGroup == null) {
+              tripleGroup = new Map();
+              tripleGroups.set(key, tripleGroup);
+              console.log("Found new triple group with angle " + angle);
+            }
+            tripleGroup.set(l0, triple);
+          }
         }
-        tripleGroup.set(l0, triple);
       }
     }
   }

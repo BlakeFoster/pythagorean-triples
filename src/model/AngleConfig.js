@@ -13,7 +13,7 @@ class AngleConfig {
     );
   }
 
-  toggleAllowOver(allowOver) {
+  toggleAllowOver() {
     return new AngleConfig(
       this.desiredAngle,
       !this.allowOver,
@@ -21,7 +21,7 @@ class AngleConfig {
     );
   }
 
-  toggleAllowUnder(allowUnder) {
+  toggleAllowUnder() {
     return new AngleConfig(
       this.desiredAngle,
       this.allowOver || this.allowUnder,

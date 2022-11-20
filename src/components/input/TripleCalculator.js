@@ -2,14 +2,15 @@ import React from "react";
 import SideInput from "./SideInput";
 import AngleInput from "./AngleInput";
 import CalculateButton from "./CalculateButton";
-
 import { Unit } from "../../model/Unit";
+import VertexTypeControl from "./VertexTypeControl"
 import TriangleGraphic from "../graphics/TriangleGraphic";
 import { THETA, A, B, C, SIDES } from "../../constants";
 import { plain } from "../graphics/SideElement";
 import calculateTriples from "../../lib/algorithm";
 import SideConfig from "../../model/SideConfig";
 import AngleConfig from "../../model/AngleConfig"
+import { HINGE_PLATE }  from "../../model/VertexConfig"
 
 
 const DIAGRAM_WIDTH = 490;
@@ -43,7 +44,7 @@ class Diagram extends React.Component {
       nextProps.bHighlight !== this.props.bHighlight ||
       nextProps.cHighlight !== this.props.cHighlight ||
       nextProps.angleHighlight !== this.props.angleHighlight
-    )
+    );
   }
 
   render() {
@@ -78,10 +79,11 @@ class TripleCalculator extends React.Component {
     this.state = {
       sideConfigs: SIDES.map((i) => {return new SideConfig(i)}),
       angleConfig: new AngleConfig(),
+      vertexConfig: HINGE_PLATE,
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
-      angleHighlight: false,
+      angleHighlight: false
     };
   }
 
@@ -99,6 +101,29 @@ class TripleCalculator extends React.Component {
   updateAngleConfig(newConfig) {
     console.log("Config for desired angle changed to " + newConfig)
     this.setState({angleConfig: newConfig});
+  }
+
+  setVertexConfig(vertexConfig) {
+    console.log("Vertex type set to " + vertexConfig);
+    this.setState({vertexConfig: vertexConfig})
+    if (vertexConfig.requiredUnit) {
+      const newSideConfigs = SIDES.map(
+        (i) => {
+          return this.state.sideConfigs[i].updateRequestedUnit(vertexConfig.requiredUnit).updateConstrain(true)
+        }
+      )
+      console.log(
+        "Updating all side configs." +
+        "\nA: " + newSideConfigs[A].toString() +
+        "\nB: " + newSideConfigs[B].toString() +
+        "\nC: " + newSideConfigs[C].toString()
+      );
+      this.setState(
+        {
+          sideConfigs: newSideConfigs
+        }
+      );
+    }
   }
 
   setAHighlight(highlight) {
@@ -124,6 +149,7 @@ class TripleCalculator extends React.Component {
         config={this.state.sideConfigs[index]}
         updateConfig={this.updateSideConfig.bind(this, index)}
         hoverCallback={hoverCallback}
+        enableUnit={this.state.vertexConfig.requiredUnit != null}
       />
     );
   }
@@ -147,6 +173,7 @@ class TripleCalculator extends React.Component {
       calculateTriples(
         this.state.sideConfigs,
         this.state.angleConfig,
+        this.state.vertexConfig
       )
     );
   }
@@ -161,6 +188,10 @@ class TripleCalculator extends React.Component {
           config={this.state.angleConfig}
           updateConfig={this.updateAngleConfig.bind(this)}
           hoverCallback={this.setAngleHighlight.bind(this)}
+        />
+        <VertexTypeControl
+          vertexConfig={this.state.vertexConfig}
+          setVertexConfig={this.setVertexConfig.bind(this)}
         />
         <CalculateButton
           enabled={this.canCalculate()}

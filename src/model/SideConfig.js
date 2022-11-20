@@ -4,17 +4,17 @@ import { C } from "../constants"
 
 
 class SideConfig {
-   /* maxDim: the maximum length as a Dimension object.
+   /* maxLength: the maximum length in the requested unit.
     * requestedUnit: the unit that is preferred for this side.
     * constrain: True if only the requested unit should be used for this side.
     * sign: the sign si for this side in the equation s0 * l0^2 + s1 * l1^2 + s2 * l2^2 = 0
+    * index: the side index, A=0, B=1, C=2
     */
   constructor(index, maxLength = null, requestedUnit = STUDS, constrain = true) {
     this.maxLength = maxLength;
     this.requestedUnit = requestedUnit;
     this.constrain = constrain;
     this.sign = index === C ? -1 : 1;
-    this.maxDim = this._getMaxDim();
     this.index = index;
   }
 
