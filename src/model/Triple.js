@@ -1,35 +1,20 @@
 import Dimension from "./Dimension"
 import { INTERNAL } from "./Unit"
-import { atan2d, gcd, almostEqual } from "../lib/math"
+import { gcd, almostEqual } from "../lib/math"
+import { A, B, C } from "../constants"
 
-const SIDE_A = 0;
-const SIDE_B = 1;
-const SIDE_C = 2;
 
 class Triple {
-  constructor(dimensions) {
+  constructor(dimensions, angle) {
+    angle.toString()
     this._dimensions = dimensions;
-
+    this._angle = angle;
     this._gcd = null;
     this._minimized = null;
-    this._angle = null;
     this._isPythagorean = null;
   }
 
-  isPythagorean() {
-    if (this._isPythagorean == null) {
-      this._isPythagorean = this._dimensions.reduce(
-        (accumulator, value) => {return accumulator && value.isInteger && value.length !== 0},
-        true
-      ) && this.getA() ** 2 + this.getB() ** 2 === this.getC() ** 2;
-    }
-    return this._isPythagorean;
-  }
-
   getAngle() {
-    if (this._angle == null) {
-      this._angle = atan2d(this.getB(), this.getA());
-    }
     return this._angle;
   }
 
@@ -42,7 +27,8 @@ class Triple {
         this._minimized = new Triple(
           internal._dimensions.map(
             (d) => {return new Dimension(d.length / internal.getGCD(), INTERNAL)}
-          )
+          ),
+          this._angle
         )
       }
     }
@@ -51,13 +37,17 @@ class Triple {
 
   getGCD() {
     if (this._gcd == null) {
-      this._gcd = this.isPythagorean() ? gcd(this.getA().length, this.getB().length, this.getC().length) : 1;
+      this._gcd = gcd(
+        this.getA().length,
+        this.getB().length,
+        this.getC().length
+      );
     }
     return this._gcd;
   }
 
   to(unit) {
-    return new Triple(this._dimensions.map((d) => d.to(unit)));
+    return new Triple(this._dimensions.map((d) => d.to(unit)), this._angle);
   }
 
   hashKey() {
@@ -74,15 +64,15 @@ class Triple {
   }
 
   getA() {
-    return this._dimensions[SIDE_A];
+    return this._dimensions[A];
   }
 
   getB() {
-    return this._dimensions[SIDE_B];
+    return this._dimensions[B];
   }
 
   getC() {
-    return this._dimensions[SIDE_C];
+    return this._dimensions[C];
   }
 
 

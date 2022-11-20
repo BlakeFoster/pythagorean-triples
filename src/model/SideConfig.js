@@ -13,7 +13,7 @@ class SideConfig {
     this.maxLength = maxLength;
     this.requestedUnit = requestedUnit;
     this.constrain = constrain;
-    this.sign = index == C ? -1 : 1;
+    this.sign = index === C ? -1 : 1;
     this.maxDim = this._getMaxDim();
     this.index = index;
   }
@@ -45,8 +45,19 @@ class SideConfig {
     )
   }
 
-  isOk(dimension) {
-    return dimension > 0 && dimension <= this.maxDim
+  getPossibleUnits() {
+    return this.constrain ? [this.requestedUnit] : [STUDS, PLATES]
+  }
+
+  isOk(internalLength) {
+    return (
+      internalLength > 0 &&
+      (
+        this.maxLength == null ||
+        internalLength <= INTERNAL.from(this.maxLength, this.requestedUnit)
+      ) &&
+      this.getUnitOut(internalLength) != null
+    );
   }
 
   _getMaxDim() {
@@ -59,27 +70,42 @@ class SideConfig {
     return this.constrain ? dimension : dimension.to(INTERNAL);
   }
 
-  getUnitOut(length) {
-    if (this.constrain) {
-      return this.requestedUnit;
-    } else {
-      const lengthInRequestUnit = this.requestedUnit.from(length, INTERNAL);
-      if (lengthInRequestUnit % 1 === 0) {
-        return this.requestedUnit;
+  getUnitOut(internalLength) {
+    for (let unit of this.getPossibleUnits()) {
+      if (!(unit.from(internalLength, INTERNAL) % 1)) {
+        return unit;
       }
-      const lengthInStuds = STUDS.from(length, INTERNAL);
-      return (lengthInStuds % 1) ? PLATES : STUDS;
     }
+    return null
   }
 
-  getDimension(length) {
-    const unit = this.getUnitOut(length);
-    return new Dimension(unit.from(length, this.maxDim.unit), unit);
+  getDimension(internalLength) {
+    const unit = this.getUnitOut(internalLength);
+    return new Dimension(unit.from(internalLength, INTERNAL), unit);
   }
 
   toString() {
     return "maxLength=" + this.maxLength + ", requestedUnit=" + this.requestedUnit + ", constrain=" + this.constrain
   }
+
+  [Symbol.iterator]() {
+    var step = this.constrain ? INTERNAL.from(1, this.requestedUnit) : 1;
+    var maxInternalLength = INTERNAL.from(this.maxLength, this.requestedUnit);
+    var internalLength = 0;
+    return {
+      next: () => {
+        do {
+          // skip over numbers that can't be created with just plates or just studs.
+          internalLength += step;
+        } while (!this.isOk(internalLength) && internalLength < maxInternalLength)
+        return {
+          value: internalLength,
+          done: internalLength > maxInternalLength
+        }
+      }
+    };
+  };
 }
+
 
 export default SideConfig;
