@@ -29,20 +29,13 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
       return a[0].compareTo(b[0], desiredAngle)
     }
   );
-  console.log(desiredAngle)
-  console.log(
-    sortedGroups.map((g) => g[0].getAngle())
-  )
   if (sortedGroups.length > 10) {
     console.log("Truncating to top 10")
     sortedGroups = sortedGroups.slice(0, 10);
   }
   sortedGroups.forEach(
     (tripleGroup) => {
-      console.log("Found triple group with angle " + tripleGroup[0].getAngle())
-      tripleGroup.forEach(
-        (triple) => {console.log("  Found triple " + triple.toString())}
-      )
+      console.log("Found triple group with angle " + tripleGroup[0].getAngle());
     }
   )
   return sortedGroups;
@@ -55,9 +48,9 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
   sideConfigs = applyPermutation(sideConfigs, permutation)
   const overhang = vertexConfig.overhang.to(INTERNAL);
   const overhangCombinations = overhang ? [
+    [0, 0, 0],
     [0, 0, overhang],
     [overhang, 0, overhang],
-    [0, overhang, overhang],
     [0, overhang, overhang]
   ] : [[0, 0, 0]]
 
@@ -76,11 +69,6 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
               )
             )
             const sides = reversePermutation([l0, l1, l2], permutation);
-//            console.log(
-//              "a=" + sides[0] + "+" + orderedOverhangs[0] + " " +
-//              "b=" + sides[1] + "+" + orderedOverhangs[0] + " " +
-//              "c=" + sides[2] + "+" + orderedOverhangs[0]
-//            )
             const angle = atan2d(sides[B], sides[A]);
             if (sideConfigs[2].isOk(l2, orderedOverhangs[2]) && angleConfig.isOk(angle)) {
               const triple = new Triple(
@@ -92,15 +80,18 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
                 ),
                 angle
               );
-              console.log(triple)
               const key = triple.hashKey();
               var tripleGroup = tripleGroups.get(key);
               if (tripleGroup == null) {
                 tripleGroup = new Map();
                 tripleGroups.set(key, tripleGroup);
-                console.log("Found new triple group with angle " + angle);
               }
-              tripleGroup.set(l0, triple);
+              const cPhysicalDimension = triple.getCPhysicalDimension();
+              const cSideDimension = triple.getC();
+              const rank = cPhysicalDimension * 10 + (
+                cPhysicalDimension.sideLength === cSideDimension.sideLength ? 0 : 1
+              );
+              tripleGroup.set(rank, triple);
             }
           }
         }

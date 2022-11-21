@@ -56,7 +56,10 @@ class Triple {
 
   hashKey() {
     const minimized = this._getMinimized();
-    return minimized.toString();
+    return minimized._dimensions.reduce(
+      (acc, d) => d.sideLength + d.unit.name + acc,
+      "."
+    )
   }
 
   getValue(index) {
@@ -64,7 +67,11 @@ class Triple {
   }
 
   toString() {
-    return this.getA().toString() + ", " + this.getB().toString() + ", " + this.getC().toString();
+    return (
+      this.getAPhysicalDimension().toString() + ", " +
+      this.getBPhysicalDimension().toString() + ", " +
+      this.getCPhysicalDimension().toString()
+    );
   }
 
   getA() {
@@ -79,6 +86,30 @@ class Triple {
     return this._dimensions[C];
   }
 
+  _getPhysicalDimension(sideIndex, adjacentIndex) {
+    return new Dimension(
+      this._dimensions[sideIndex].physicalLength + (
+        adjacentIndex == null  ? 0 : this._dimensions[sideIndex].unit.from(
+          this._dimensions[adjacentIndex].overhang,
+          this._dimensions[adjacentIndex].unit
+        )
+      ),
+      this._dimensions[sideIndex].unit,
+      0
+    );
+  }
+
+  getAPhysicalDimension() {
+    return this._getPhysicalDimension(A, B);
+  }
+
+  getBPhysicalDimension() {
+    return this._getPhysicalDimension(B, A);
+  }
+
+  getCPhysicalDimension() {
+    return this._getPhysicalDimension(C, null);
+  }
 
   compareTo(other, desiredAngle) {
     var angleDiffThis = Math.abs(this._angle - desiredAngle);

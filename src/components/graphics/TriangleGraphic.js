@@ -1,6 +1,6 @@
 import React from "react";
 import Side from "./Side";
-import { Stage, Layer, Text, Arc, Circle } from 'react-konva';
+import { Stage, Layer, Text, Arc, Circle, Rect } from 'react-konva';
 
 import { RENDER_UNIT } from "./SideElement"
 import { INTERNAL } from "../../model/Unit"
@@ -10,6 +10,43 @@ const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
 const DRAWING_WIDTH = 450;
 const DRAWING_MARGIN = 10;
+
+
+function matrixMult2x2(x, y, rotationMatrix) {
+  return [
+    rotationMatrix[0] * x + rotationMatrix[1] * y,
+    rotationMatrix[2] * x + rotationMatrix[3] * y
+  ]
+}
+
+function getCRotationMatrix(angle) {
+  const cos = cosd(angle)
+  const sin = sind(angle)
+  return [cos, -sin, sin, cos]
+}
+
+
+function getBoundingBox(angle, lOffset, wOffset, sideWidth, sideLength, overhang) {
+
+  const rotationMatrix = getCRotationMatrix(angle);
+
+  const leftShiftX = lOffset;
+  const bottomShiftY = wOffset;
+  const rightShiftX = sideLength - lOffset;
+  const topShiftY = sideWidth + wOffset;
+
+  const bottomLeft = matrixMult2x2(leftShiftX, bottomShiftY, rotationMatrix)
+  const bottomRight = matrixMult2x2(rightShiftX, bottomShiftY, rotationMatrix)
+  const topLeft = matrixMult2x2(leftShiftX, topShiftY, rotationMatrix)
+  const topRight = matrixMult2x2(rightShiftX, topShiftY, rotationMatrix)
+
+  return {
+    left: Math.min(topLeft[0], bottomRight[0]),
+    bottom: Math.min(bottomLeft[1], topRight[1]),
+    right: Math.max(topLeft[0], bottomRight[0]),
+    top: Math.max(topLeft[1], topRight[1])
+  }
+}
 
 
 class TriangleGraphic extends React.Component {
@@ -38,6 +75,7 @@ class TriangleGraphic extends React.Component {
 
     const aRelativeLength = this.props.aElement.LENGTH_UNIT.to(this.props.aLength, RENDER_UNIT);
     const bRelativeLength = this.props.bElement.LENGTH_UNIT.to(this.props.bLength, RENDER_UNIT);
+    const cRelativeLength = this.props.cElement.LENGTH_UNIT.to(this.props.cLength, RENDER_UNIT);
 
     console.log(
       "Rendering (" +
@@ -48,7 +86,6 @@ class TriangleGraphic extends React.Component {
     );
 
     const { aOverhang = 0, bOverhang = 0, cOverhang = 0 } = this.props;
-    console.log("aOverhang=" + aOverhang + " " + " bOverhang=" + bOverhang + " cOverhang=" + cOverhang)
 
     const aOverhangR = RENDER_UNIT.from(aOverhang, this.props.aElement.LENGTH_UNIT)
     const bOverhangR = RENDER_UNIT.from(bOverhang, this.props.bElement.LENGTH_UNIT)
@@ -62,25 +99,34 @@ class TriangleGraphic extends React.Component {
     const cWOffset = -cOverhangR / 2;
 
     const angle = atan2d(bRelativeLength, aRelativeLength);
-    const leftOverhangRelativeLength = sind(angle) * this.props.cElement.getWidth();
-    const rightOverhangRelativeLength = this.props.bElement.getWidth();
-    const topOverhangeRelativeHeight = cosd(angle) * this.props.cElement.getWidth();
-    const bottomOverhangRelativeHeight = this.props.aElement.getWidth();
 
-    const diagramRelativeWidth = aRelativeLength + rightOverhangRelativeLength + leftOverhangRelativeLength;
-    const diagramRelativeHeight = bRelativeLength + bottomOverhangRelativeHeight + topOverhangeRelativeHeight;
+    const cBoundIngBox = getBoundingBox(
+      angle,
+      cLOffset,
+      cWOffset,
+      this.props.cElement.getWidth(),
+      //cRelativeLength
+      this.props.cElement.getLength() * this.props.cLength
+    )
 
-    const maxHorizontalScale = (width - 2 * drawingMargin) / diagramRelativeWidth;
-    const maxVerticalScale = (height - 2 * drawingMargin) / diagramRelativeHeight;
+    const boundingBoxLeft = cBoundIngBox.left;
+    const boundingBoxRight = Math.max(cBoundIngBox.right, aRelativeLength + this.props.bElement.getWidth() + bWOffset);
+    const boundingBoxTop = cBoundIngBox.top;
+    const boundingBoxBottom = Math.min(cBoundIngBox.bottom, -this.props.aElement.getWidth() - aWOffset);
+    const boundingBoxWidth = boundingBoxRight - boundingBoxLeft;
+    const boundingBoxHeight = boundingBoxTop - boundingBoxBottom;
+
+    const maxHorizontalScale = (width - 2 * drawingMargin) / boundingBoxWidth;
+    const maxVerticalScale = (height - 2 * drawingMargin) / boundingBoxHeight;
     const scale = Math.min(maxHorizontalScale, maxVerticalScale);
 
-    const diagramWidth = diagramRelativeWidth * scale;
-    const diagramHeight = diagramRelativeHeight * scale;
-    const leftOverhangLength = leftOverhangRelativeLength * scale;
-    const bottomOverhangHeight = bottomOverhangRelativeHeight * scale
+    const diagramLeft = boundingBoxLeft * scale;
+    const diagramBottom = boundingBoxBottom * scale;
+    const diagramWidth = boundingBoxWidth * scale;
+    const diagramHeight = boundingBoxHeight * scale;
 
-    const vertexX = (width - diagramWidth) / 2 + leftOverhangLength;
-    const vertexY = height - (height - diagramHeight) / 2 - bottomOverhangHeight;
+    const vertexX = (width - diagramWidth) / 2 - diagramLeft;
+    const vertexY = height - (height - diagramHeight) / 2 + diagramBottom;
 
     const bigAngleThreshold = 80;
     const smallAngleThreshold = 10;
@@ -90,9 +136,14 @@ class TriangleGraphic extends React.Component {
     const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE * bigAngleScaleFactor;
     const angleFontSize = this.props.angleFontSize * zoomScale * bigAngleScaleFactor;
 
-    const bToA = this.props.aElement.getLength() / this.props.bElement.getLength();
-    const aToB = 1 / bToA;
-
+    console.log(
+      "aLOffset=" + aLOffset + " " +
+      "aWOffset=" + aWOffset + " " +
+      "bLOffset=" + bLOffset + " " +
+      "bWOffset=" + bWOffset + " " +
+      "cLOffset=" + cLOffset + " " +
+      "cWOffset=" + cWOffset
+    );
     return (
       <Stage width={width} height={height}>
         <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
@@ -142,8 +193,8 @@ class TriangleGraphic extends React.Component {
             y={0}
             angle={angle}
             length={this.props.cLength + cOverhang}
-            wOffset={cWOffset}
             lOffset={cLOffset}
+            wOffset={cWOffset}
             displayElement={this.props.cElement}
           />
           <Circle
@@ -167,6 +218,14 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={0}
           />
+          {/*<Rect
+            x={diagramLeft / scale}
+            y={diagramBottom / scale}
+            width={diagramWidth / scale}
+            height={diagramHeight / scale}
+            stroke={"red"}
+            strokeWidth={0.1}
+          />*/}
         </Layer>
       </Stage>
     );

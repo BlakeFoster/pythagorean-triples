@@ -25,7 +25,12 @@ class TripleGroupDisplay extends React.Component {
     return (
       <MenuItem
         value={index}
-        key={item.toString()}
+        key={
+          [item.getA(), item.getB(), item.getC()].reduce(
+            (acc, d) => d.physicalLength + d.unit.name + acc,
+            "."
+          )
+        }
       >{item.toString()}</MenuItem>
     );
   }
