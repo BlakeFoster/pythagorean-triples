@@ -71,6 +71,11 @@ class TripleGroupDisplay extends React.Component {
     const variantLabelId = "variantLabel" + this.props.index;
     const triple = this.props.tripleGroup[this.state.selectedTripleIndex];
 
+    if (!triple) {
+      console.log("ERROR: triple is not set: " + triple);
+      return null;
+    }
+
     return (
       <div className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}>
         <h1 className="tripleGroupHeading">
@@ -109,7 +114,6 @@ class TripleGroupDisplay extends React.Component {
           cElement={this.getElement(triple.getC())}
           angleFontSize={ANGLE_LABEL_FONT_SIZE}
           angleColor={ANGLE_COLOR}
-          angleLabel={Math.round(triple.getAngle() * 100) / 100 + DEGREES}
         />
       </div>
     );

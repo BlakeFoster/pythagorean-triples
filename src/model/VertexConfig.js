@@ -1,10 +1,9 @@
 import { STUDS, INTERNAL } from "./Unit"
 import Dimension from "./Dimension"
 
-class VertexConfig {
+class VertexLocation {
   /* name: user-facing label
    * overhang: the additional length beyond the vertices for sides with this config
-   * requiredUnit: a unit that this config must use, or null if there is no requirement
    */
   constructor(name, overhang, requiredUnit) {
     this.name = name;
@@ -21,14 +20,50 @@ class VertexConfig {
   }
 }
 
-export const HINGE_PLATE = new VertexConfig(
-  "Hinge Plates",
-  new Dimension(0, INTERNAL),
-  null
+export const CORNER = new VertexLocation(
+  "Corner",
+  new Dimension(0, INTERNAL)
 )
 
-export const SINGLE_STUD = new VertexConfig(
-  "Single Stud",
-  new Dimension(1, STUDS),
-  null
+export const CENTER = new VertexLocation(
+  "Stud Center",
+  new Dimension(1, STUDS)
 )
+
+class VertexConfig {
+  constructor(enableCorner = true, enableCenter = false) {
+    this.enableCorner = enableCorner;
+    this.enableCenter = enableCenter;
+  }
+
+  getVertexLocations() {
+    var locations = []
+    if (this.enableCorner) {
+      locations.push(CORNER)
+    }
+    if (this.enableCenter) {
+      locations.push(CENTER)
+    }
+    return locations;
+  }
+
+  toggleCorner() {
+    return new VertexConfig(
+      !this.enableCorner,
+      this.enableCorner || this.enableCenter
+    )
+  }
+
+  toggleCenter() {
+    return new VertexConfig(
+      this.enableCorner || this.enableCenter,
+      !this.enableCenter
+    )
+  }
+
+  toString() {
+    return "enableCorner=" + this.enableCorner + " enableCenter=" + this.enableCenter;
+  }
+}
+
+export default VertexConfig;

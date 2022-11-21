@@ -225,3 +225,8 @@ legend {
   font-size: 8pt;
   text-align: center;
 }
+
+
+.vertexLocationButton {
+  display: inline;
+}

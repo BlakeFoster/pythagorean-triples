@@ -44,7 +44,7 @@ class SideInput extends React.Component {
           />
         </div>
         <div className="inputSettings">
-          <ToggleButtonGroup exlusive="true" color="warning" disabled={!this.props.enableUnit}>
+          <ToggleButtonGroup exlusive="true" color="warning">
             {this.renderUnitButton(STUDS)}
             {this.renderUnitButton(PLATES)}
           </ToggleButtonGroup>
@@ -55,7 +55,6 @@ class SideInput extends React.Component {
                 size="small"
                 checked={this.props.config.constrain}
                 onChange={() => {this.props.updateConfig(this.props.config.toggleConstrain())}}
-                disabled={!this.props.enableUnit}
               />
             </Tooltip>
           </div>

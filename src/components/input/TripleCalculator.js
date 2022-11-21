@@ -3,14 +3,14 @@ import SideInput from "./SideInput";
 import AngleInput from "./AngleInput";
 import CalculateButton from "./CalculateButton";
 import { Unit } from "../../model/Unit";
-import VertexTypeControl from "./VertexTypeControl"
+import VertexControl from "./VertexControl"
 import TriangleGraphic from "../graphics/TriangleGraphic";
 import { THETA, A, B, C, SIDES } from "../../constants";
 import { plain } from "../graphics/SideElement";
 import calculateTriples from "../../lib/algorithm";
 import SideConfig from "../../model/SideConfig";
 import AngleConfig from "../../model/AngleConfig"
-import { HINGE_PLATE }  from "../../model/VertexConfig"
+import VertexConfig  from "../../model/VertexConfig"
 
 
 const DIAGRAM_WIDTH = 490;
@@ -79,7 +79,7 @@ class TripleCalculator extends React.Component {
     this.state = {
       sideConfigs: SIDES.map((i) => {return new SideConfig(i)}),
       angleConfig: new AngleConfig(),
-      vertexConfig: HINGE_PLATE,
+      vertexConfig: new VertexConfig(),
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
@@ -105,25 +105,7 @@ class TripleCalculator extends React.Component {
 
   setVertexConfig(vertexConfig) {
     console.log("Vertex type set to " + vertexConfig);
-    this.setState({vertexConfig: vertexConfig})
-    if (vertexConfig.requiredUnit) {
-      const newSideConfigs = SIDES.map(
-        (i) => {
-          return this.state.sideConfigs[i].updateRequestedUnit(vertexConfig.requiredUnit).updateConstrain(true)
-        }
-      )
-      console.log(
-        "Updating all side configs." +
-        "\nA: " + newSideConfigs[A].toString() +
-        "\nB: " + newSideConfigs[B].toString() +
-        "\nC: " + newSideConfigs[C].toString()
-      );
-      this.setState(
-        {
-          sideConfigs: newSideConfigs
-        }
-      );
-    }
+    this.setState({vertexConfig: vertexConfig});
   }
 
   setAHighlight(highlight) {
@@ -149,7 +131,6 @@ class TripleCalculator extends React.Component {
         config={this.state.sideConfigs[index]}
         updateConfig={this.updateSideConfig.bind(this, index)}
         hoverCallback={hoverCallback}
-        enableUnit={this.state.vertexConfig.requiredUnit == null}
       />
     );
   }
@@ -189,7 +170,7 @@ class TripleCalculator extends React.Component {
           updateConfig={this.updateAngleConfig.bind(this)}
           hoverCallback={this.setAngleHighlight.bind(this)}
         />
-        <VertexTypeControl
+        <VertexControl
           vertexConfig={this.state.vertexConfig}
           setVertexConfig={this.setVertexConfig.bind(this)}
         />

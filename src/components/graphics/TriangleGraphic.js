@@ -9,7 +9,7 @@ import { sind, cosd, atan2d } from "../../lib/math"
 const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
 const DRAWING_WIDTH = 450;
-const DRAWING_MARGIN = 10;
+const DRAWING_MARGIN = 20;
 
 
 function matrixMult2x2(x, y, rotationMatrix) {
@@ -91,12 +91,20 @@ class TriangleGraphic extends React.Component {
     const bOverhangR = RENDER_UNIT.from(bOverhang, this.props.bElement.LENGTH_UNIT)
     const cOverhangR = RENDER_UNIT.from(cOverhang, this.props.cElement.LENGTH_UNIT)
 
-    const aLOffset = (-2*aOverhangR + cOverhangR) / 2;
-    const aWOffset = -cOverhangR / 2;
-    const bLOffset = -cOverhangR / 2;
-    const bWOffset = -cOverhangR / 2;
-    const cLOffset = -cOverhangR / 2;
-    const cWOffset = -cOverhangR / 2;
+    // Flip the stud direction for side A if it would overlap with side B. I have no idea why these formulas work.
+    const defaultOffset = -cOverhangR / 2;
+    const aReverseOffset = (-2 * aOverhangR + cOverhangR) / 2;
+    const reverseA = bOverhangR == 0;
+
+    const aX = reverseA ? aRelativeLength : 0;
+    const aY = reverseA ? 0 : -this.props.aElement.getWidth() - 2 * defaultOffset;
+    const aRotation = reverseA ? 180 : 0;
+    const aLOffset = reverseA ? aReverseOffset : defaultOffset;
+    const aWOffset = defaultOffset;
+    const bLOffset = defaultOffset;
+    const bWOffset = defaultOffset;
+    const cLOffset = defaultOffset;
+    const cWOffset = defaultOffset;
 
     const angle = atan2d(bRelativeLength, aRelativeLength);
 
@@ -105,8 +113,8 @@ class TriangleGraphic extends React.Component {
       cLOffset,
       cWOffset,
       this.props.cElement.getWidth(),
-      //cRelativeLength
-      this.props.cElement.getLength() * this.props.cLength
+      cRelativeLength
+      //this.props.cElement.getLength() * this.props.cLength
     )
 
     const boundingBoxLeft = cBoundIngBox.left;
@@ -128,24 +136,12 @@ class TriangleGraphic extends React.Component {
     const vertexX = (width - diagramWidth) / 2 - diagramLeft;
     const vertexY = height - (height - diagramHeight) / 2 + diagramBottom;
 
-    const bigAngleThreshold = 80;
-    const smallAngleThreshold = 10;
-    const smallAngleScaleFactor = Math.min(angle, smallAngleThreshold) / smallAngleThreshold;
-    const bigAngleScaleFactor = Math.min(90 - angle, 90 - bigAngleThreshold) / (90 - bigAngleThreshold);
-    const arcRadius = bigAngleScaleFactor * aRelativeLength * scale / (5 * smallAngleScaleFactor);
-    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE * bigAngleScaleFactor;
-    const angleFontSize = this.props.angleFontSize * zoomScale * bigAngleScaleFactor;
+    const arcRadius = aRelativeLength * scale / 5;
+    const angleLabelRadius = arcRadius + ANGLE_LABEL_DISTANCE;
+    const angleFontSize = this.props.angleFontSize * zoomScale;
 
-    console.log(
-      "aLOffset=" + aLOffset + " " +
-      "aWOffset=" + aWOffset + " " +
-      "bLOffset=" + bLOffset + " " +
-      "bWOffset=" + bWOffset + " " +
-      "cLOffset=" + cLOffset + " " +
-      "cWOffset=" + cWOffset
-    );
-    return (
-      <Stage width={width} height={height}>
+    const arc = this.props.angleLabel ? (
+      <>
         <Layer x={vertexX} y={vertexY} scaleX={1} scaleY={1}>
           <Text
             text={this.props.angleLabel}
@@ -165,12 +161,18 @@ class TriangleGraphic extends React.Component {
             fill={this.props.angleColor}
           />
         </Layer>
+      </>
+    ) : null;
+
+    return (
+      <Stage width={width} height={height}>
+        {arc}
         <Layer x={vertexX} y={vertexY} scaleX={scale} scaleY={-scale}>
           {/* side A */}
           <Side
-            x={aRelativeLength}
-            y={0}
-            angle={180}
+            x={aX}
+            y={aY}
+            angle={aRotation}
             length={this.props.aLength + aOverhang}
             lOffset={aLOffset}
             wOffset={aWOffset}
@@ -197,7 +199,7 @@ class TriangleGraphic extends React.Component {
             wOffset={cWOffset}
             displayElement={this.props.cElement}
           />
-          <Circle
+          {/*<Circle
             radius={0.3}
             stroke="blue"
             strokeWidth={0.3}
@@ -218,7 +220,7 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={0}
           />
-          {/*<Rect
+          <Rect
             x={diagramLeft / scale}
             y={diagramBottom / scale}
             width={diagramWidth / scale}
