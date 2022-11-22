@@ -3,11 +3,11 @@ import Dimension from "./Dimension"
 
 class VertexLocation {
   /* name: user-facing label
-   * overhang: the additional length beyond the vertices for sides with this config
+   * overhangCombinations: a nested array of possible overhangs--that is the additional length beyond the vertices for
+   * sides with this config--that are possible. Each item in the array has the overhang for sides A, B, and C in order.
    */
   constructor(name, overhang, overhangCombinations) {
     this.name = name;
-    this.overhang = overhang;
     const nullOverhang = new Dimension(0, overhang.unit);
     this.overhangCombinations = overhangCombinations.map(
       (oc) => oc.map((o) => o ? overhang : nullOverhang)
@@ -33,7 +33,7 @@ export const CENTER = new VertexLocation(
   "Stud Center",
   new Dimension(1, STUDS),
   [
-      [false, false, true], // one side c has an overhang; this is the configuration without a stud at the A/B vertex.
+      [false, false, true], // only side c has an overhang; this is the configuration without a stud at the A/B vertex.
       [true, false, true], // sides a and c have overhangs; the A/B vertex is occupied by side A
       [false, true, true] // sides b and c have overhangs; the A/B vertex is occupied by side C.
       // note: [true, true, true is not possible because the A/B vertex can't be occupied by both A and B at once.
