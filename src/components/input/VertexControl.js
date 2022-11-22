@@ -2,11 +2,13 @@ import React from "react";
 import Switch from "@mui/material/Switch"
 import Tooltip from "@mui/material/Tooltip"
 import FormControlLabel from "@mui/material/FormControlLabel";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import ToggleButton from "@mui/material/ToggleButton";
 import InputGroup from "./InputGroup"
 import { CORNER, CENTER } from "../../model/VertexConfig";
 
-class VertexControl extends React.Component {
 
+class VertexControl extends React.Component {
   renderButton(vertexLocation, checked, onClick, tooltip) {
     return (
       <div className="vertexLocationButton">
@@ -45,6 +47,17 @@ class VertexControl extends React.Component {
             "limit on side length you may want to subtract 1 from each max to compensate."
           )
         }
+        <div id="showVerticesButton">
+            <ToggleButton
+              size="small"
+              variant="contained"
+              selected={this.props.showVertices && this.props.hasTripleGroups}
+              disabled={!this.props.hasTripleGroups}
+              onClick={() => this.props.setShowVertices(!this.props.showVertices)}
+            >
+              <RemoveRedEyeIcon/>&nbsp;&nbsp;Show Vertices
+            </ToggleButton>
+        </div>
       </InputGroup>
     )
   }

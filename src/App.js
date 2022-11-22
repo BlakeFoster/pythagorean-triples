@@ -29,23 +29,36 @@ class App extends React.Component {
       drawingZoomedWidth: 0,
       drawingZoomedHeight: 0,
       canZoom: this.isWideEnoughForZoom(),
-      showSpinner: false
+      showSpinner: false,
+      desiredAngle: null,
+      showVertices: false
     }
     this.drawing1Ref = React.createRef();
     this.drawingZoomedRef = React.createRef();
     this.onResize = this.setDimensions.bind(this);
   }
 
-  setTripleGroups(tripleGroups) {
-    console.log("Received triple groups")
-    this.setState(
-      {
-        tripleGroups: tripleGroups,
-        zoomedGroupIndex: null,
-        errorMessage: tripleGroups.length ? null : "No triples found, try adjusting the parameters!",
-        showSpinner: false
-      }
-    );
+  setTripleGroups(tripleGroups, desiredAngle) {
+    if (tripleGroups == null) {
+      console.log("Triple groups cleared.")
+      this.setState(
+        {
+          tripleGroups: [],
+          zoomedGroupIndex: null
+        }
+      );
+    } else {
+      console.log("Received triple groups")
+      this.setState(
+        {
+          tripleGroups: tripleGroups,
+          zoomedGroupIndex: null,
+          errorMessage: tripleGroups.length ? null : "No triples found, try adjusting the parameters!",
+          showSpinner: false,
+          desiredAngle: desiredAngle
+        }
+      );
+    }
   }
 
   renderTripleGroup(tripleGroup, index) {
@@ -60,6 +73,8 @@ class App extends React.Component {
         height={this.state.drawing1Height}
         mountCallback={this.setDimensions.bind(this)}
         canZoom={this.state.canZoom}
+        desiredAngle={this.state.desiredAngle}
+        showVertices={this.state.showVertices}
       />);
   }
 
@@ -82,6 +97,8 @@ class App extends React.Component {
         height={this.state.drawingZoomedHeight}
         drawingRef={this.drawingZoomedRef}
         mountCallback={this.setDimensions.bind(this)}
+        desiredAngle={this.state.desiredAngle}
+        showVertices={this.state.showVertices}
      />);
   }
 
@@ -109,6 +126,9 @@ class App extends React.Component {
       return true;
     } else if (this.state.showSpinner !== nextState.showSpinner) {
       console.log("Spinner status changed");
+      return true;
+    } else if (this.state.showVertices !== nextState.showVertices) {
+      console.log("Show vertices changes")
       return true;
     } else {
       return false;
@@ -167,6 +187,11 @@ class App extends React.Component {
     );
   }
 
+  setShowVertices(showVertices) {
+    console.log("Setting showVertices to " + showVertices)
+    this.setState({showVertices: showVertices})
+  }
+
   render() {
     console.log("Rendering app.")
     return (
@@ -177,6 +202,9 @@ class App extends React.Component {
             <TripleCalculator
               setTripleGroups={this.setTripleGroups.bind(this)}
               calculatingCallback={this.showSpinner.bind(this)}
+              hasTripleGroups={this.state.tripleGroups != null && this.state.tripleGroups.length > 0}
+              showVertices={this.state.showVertices}
+              setShowVertices={this.setShowVertices.bind(this)}
             />
             <div className="tripleGroups">
               {this.state.tripleGroups.map(this.renderTripleGroup.bind(this))}

@@ -154,6 +154,7 @@ legend {
   display: block;
   color: black;
   position: relative;
+  overflow:hidden;
 }
 
 .tripleGroupDisplay.zoomed {
@@ -184,10 +185,44 @@ legend {
 .tripleGroupHeading {
   position: absolute;
   color: #ddd;
-  top: 20px;
+  top: 15px;
   left: 20px;
-  margin: 0;
+  width: calc(100% - 40px);
   padding: 0;
+  text-align: left;
+}
+
+.tripleGroupHeading h1 {
+  display: inline;
+}
+
+.tripleGroupHeading .angleLabel {
+  display: inline-block;
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 5px;
+}
+
+.tripleGroupHeading .angleLabelValue {
+  color: #ddd;
+  text-decoration: underline;
+  font-size: 15px
+}
+
+.tripleGroupHeading .angleLabelDiff {
+  font-size: 12px;
+}
+
+.angleLabel .angleLabelDiff.over {
+  color: #5b5;
+}
+
+.angleLabel .angleLabelDiff.under {
+  color: #f55;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  width: 100%;
+
 }
 
 .tripleGroupControls {
@@ -229,4 +264,12 @@ legend {
 
 .vertexLocationButton {
   display: inline;
+}
+
+#showVerticesButton {
+  float:right;
+}
+
+.showVerticesButtonSelected {
+  background: white;
 }

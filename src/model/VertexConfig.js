@@ -5,10 +5,9 @@ class VertexLocation {
   /* name: user-facing label
    * overhang: the additional length beyond the vertices for sides with this config
    */
-  constructor(name, overhang, requiredUnit) {
+  constructor(name, overhang) {
     this.name = name;
     this.overhang = overhang;
-    this.requiredUnit = requiredUnit;
   }
 
   toString() {

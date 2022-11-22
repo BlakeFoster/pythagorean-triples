@@ -1,10 +1,11 @@
 import React from "react";
 import Side from "./Side";
-import { Stage, Layer, Text, Arc, Circle, Rect } from 'react-konva';
+import { Stage, Layer, Text, Arc } from 'react-konva';
 
-import { RENDER_UNIT } from "./SideElement"
-import { INTERNAL } from "../../model/Unit"
+import { RENDER_UNIT } from "../../model/Unit"
 import { sind, cosd, atan2d } from "../../lib/math"
+import { VERTEX_COLOR } from "../../constants"
+import Stud from "./Stud"
 
 const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
@@ -48,7 +49,6 @@ function getBoundingBox(angle, lOffset, wOffset, sideWidth, sideLength, overhang
   }
 }
 
-
 class TriangleGraphic extends React.Component {
 
   constructor(props) {
@@ -60,6 +60,28 @@ class TriangleGraphic extends React.Component {
     if (this.props.mountCallback) {
       this.props.mountCallback();
     }
+  }
+
+  renderVertices(bTopX, bTopY) {
+    return this.props.showVertices ? (
+      <>
+        <Stud
+          x={0}
+          y={0}
+          color={VERTEX_COLOR}
+        />
+        <Stud
+          x={bTopX}
+          y={bTopY}
+          color={VERTEX_COLOR}
+        />
+        <Stud
+          x={bTopX}
+          y={0}
+          color={VERTEX_COLOR}
+        />
+      </>
+    ) : null;
   }
 
   renderCanvas() {
@@ -94,7 +116,7 @@ class TriangleGraphic extends React.Component {
     // Flip the stud direction for side A if it would overlap with side B. I have no idea why these formulas work.
     const defaultOffset = -cOverhangR / 2;
     const aReverseOffset = (-2 * aOverhangR + cOverhangR) / 2;
-    const reverseA = bOverhangR == 0;
+    const reverseA = bOverhangR === 0;
 
     const aX = reverseA ? aRelativeLength : 0;
     const aY = reverseA ? 0 : -this.props.aElement.getWidth() - 2 * defaultOffset;
@@ -184,7 +206,6 @@ class TriangleGraphic extends React.Component {
             y={bRelativeLength}
             angle={-90}
             length={this.props.bLength + bOverhang}
-            lOffset={0}
             lOffset={bLOffset}
             wOffset={bWOffset}
             displayElement={this.props.bElement}
@@ -199,35 +220,7 @@ class TriangleGraphic extends React.Component {
             wOffset={cWOffset}
             displayElement={this.props.cElement}
           />
-          {/*<Circle
-            radius={0.3}
-            stroke="blue"
-            strokeWidth={0.3}
-            x={0}
-            y={0}
-          />
-          <Circle
-            radius={0.3}
-            stroke="blue"
-            strokeWidth={0.3}
-            x={aRelativeLength}
-            y={bRelativeLength}
-          />
-          <Circle
-            radius={0.3}
-            stroke="blue"
-            strokeWidth={0.3}
-            x={aRelativeLength}
-            y={0}
-          />
-          <Rect
-            x={diagramLeft / scale}
-            y={diagramBottom / scale}
-            width={diagramWidth / scale}
-            height={diagramHeight / scale}
-            stroke={"red"}
-            strokeWidth={0.1}
-          />*/}
+          {this.renderVertices(aRelativeLength, bRelativeLength)}
         </Layer>
       </Stage>
     );

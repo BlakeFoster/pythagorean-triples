@@ -24,6 +24,7 @@ const DIAGRAM_SIDE_LENGTH = 1
 
 const DIAGRAM_HOVER_COLOR = "rgb(255, 190, 70)"
 const DIAGRAM_NORMAL_COLOR = "lightgrey"
+const DIAGRAM_STROKE_WIDTH = 1 / 20;
 
 const ANGLE_FONT_SIZE = 30;
 
@@ -31,7 +32,7 @@ const ANGLE_FONT_SIZE = 30;
 class Diagram extends React.Component {
 
   sideElement(unit, highlight = false) {
-    return plain(unit, this.getDiagramColor(highlight));
+    return plain(unit, this.getDiagramColor(highlight), DIAGRAM_STROKE_WIDTH);
   }
 
   getDiagramColor(highlight) {
@@ -145,6 +146,7 @@ class TripleCalculator extends React.Component {
   }
 
   calculateOnClick() {
+    this.props.setTripleGroups(null);
     this.props.calculatingCallback();
     setTimeout(this.calculateTriples.bind(this), 200);
   }
@@ -155,7 +157,8 @@ class TripleCalculator extends React.Component {
         this.state.sideConfigs,
         this.state.angleConfig,
         this.state.vertexConfig
-      )
+      ),
+     this.state.angleConfig.desiredAngle
     );
   }
 
@@ -173,6 +176,9 @@ class TripleCalculator extends React.Component {
         <VertexControl
           vertexConfig={this.state.vertexConfig}
           setVertexConfig={this.setVertexConfig.bind(this)}
+          hasTripleGroups={this.props.hasTripleGroups}
+          showVertices={this.props.showVertices}
+          setShowVertices={this.props.setShowVertices}
         />
         <CalculateButton
           enabled={this.canCalculate()}

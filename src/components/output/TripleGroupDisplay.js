@@ -76,11 +76,19 @@ class TripleGroupDisplay extends React.Component {
       return null;
     }
 
+    const angleDiff = Math.round(Math.abs(this.props.desiredAngle - triple.getAngle()) * 100) / 100;
+    const angleDiffSign = this.props.desiredAngle > triple.getAngle() ? "+" : "-"
+    const angleDiffClass = this.props.desiredAngle > triple.getAngle() ? "over" : "under";
+
     return (
       <div className={"tripleGroupDisplay " + this.cssClass() + " parity" + this.props.index % 2}>
-        <h1 className="tripleGroupHeading">
-          {this.props.index + 1}.
-        </h1>
+        <div className="tripleGroupHeading">
+          <h1>{this.props.index + 1}.</h1>
+          <div className="angleLabel">
+            <div className="angleLabelValue">&#x2220; {Math.round(triple.getAngle() * 100) / 100}{DEGREES}</div>
+            <div className={"angleLabelDiff " + angleDiffClass}>({angleDiffSign}{angleDiff})</div>
+          </div>
+        </div>
         <div className="tripleGroupControls">
           <FormControl size="small">
           <InputLabel id={variantLabelId}>Variant</InputLabel>
@@ -114,6 +122,7 @@ class TripleGroupDisplay extends React.Component {
           cElement={this.getElement(triple.getC())}
           angleFontSize={ANGLE_LABEL_FONT_SIZE}
           angleColor={ANGLE_COLOR}
+          showVertices={this.props.showVertices}
         />
       </div>
     );

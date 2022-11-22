@@ -1,19 +1,10 @@
 import React from "react";
-import { Circle, Line } from "react-konva";
+import { Line } from "react-konva";
 
-import { STUDS, PLATES, INTERNAL, Unit } from "../../model/Unit"
-import BorderedRect from "./BorderedRect"
-
-const BRICK_WIDTH_MM = 7.91;
-const STUD_WIDTH_MM = 4.91;
-const STUD_HEIGHT_MM = 1.75;
-
-export const RENDER_UNIT = INTERNAL;
-
-const STUD_RADIUS_RATIO = STUD_WIDTH_MM / (2 * BRICK_WIDTH_MM) ;
-const STUD_HEIGHT_RATIO = STUD_HEIGHT_MM / BRICK_WIDTH_MM;
-
-const STROKE_WIDTH = 1 / 20;
+import { STUDS, PLATES, RENDER_UNIT, Unit } from "../../model/Unit"
+import BorderedRect from "./BorderedRect";
+import { STUD_RADIUS, STUD_HEIGHT, BRICK_STROKE_WIDTH, BRICK_STROKE_COLOR, BRICK_COLOR } from "../../constants";
+import Stud from "./Stud"
 
 
 class _SideElment extends React.Component {
@@ -23,10 +14,6 @@ class _SideElment extends React.Component {
 
   static getWidth() {
     return this.WIDTH_UNIT.to(1, RENDER_UNIT);
-  }
-
-  getStrokeWidth() {
-    return this.constructor.STROKE_WIDTH_RATIO * this.constructor.getWidth();
   }
 }
 
@@ -40,24 +27,14 @@ class _LegoElement extends _SideElment {
           y={this.props.y}
           width={this.constructor.getLength()}
           height={this.constructor.getWidth()}
-          stroke="black"
-          strokeWidth={this.getStrokeWidth()}
-          fill={this.props.color}
+          stroke={BRICK_STROKE_COLOR}
+          strokeWidth={BRICK_STROKE_WIDTH}
+          fill={BRICK_COLOR}
         />
         {this.renderDetail()}
       </>
     )
   }
-
-  getStudRadius() {
-    return this.constructor.getWidth() * STUD_RADIUS_RATIO;
-  }
-
-  getStudHeight() {
-    return this.constructor.getWidth() * STUD_HEIGHT_RATIO;
-  }
-
-  static STROKE_WIDTH_RATIO = STROKE_WIDTH;
 }
 
 
@@ -65,13 +42,13 @@ export class PlateSide extends _LegoElement {
   renderDetail() {
     return (
       <BorderedRect
-        x={this.props.x - this.getStudHeight()}
-        y={this.props.y + 0.5 * this.constructor.getWidth() - this.getStudRadius()}
-        width={this.getStudHeight() + this.getStrokeWidth()}
-        height={2 * this.getStudRadius()}
-        stroke="black"
-        fill={this.props.color}
-        strokeWidth={this.getStrokeWidth()}
+        x={this.props.x - STUD_HEIGHT}
+        y={this.props.y + 0.5 * this.constructor.getWidth() - STUD_RADIUS}
+        width={STUD_HEIGHT + BRICK_STROKE_WIDTH}
+        height={2 * STUD_RADIUS}
+        stroke={BRICK_STROKE_COLOR}
+        fill={BRICK_COLOR}
+        strokeWidth={BRICK_STROKE_WIDTH}
       />
     )
   }
@@ -84,12 +61,11 @@ export class PlateSide extends _LegoElement {
 export class PlateTop extends _LegoElement {
   renderDetail() {
     return (
-      <Circle
+      <Stud
         x={this.props.x + 0.5 * this.constructor.getWidth()}
         y={this.props.y + 0.5 * this.constructor.getWidth()}
-        stroke="black"
-        strokeWidth={this.getStrokeWidth()}
-        radius={this.getStudRadius()}
+        color={BRICK_STROKE_COLOR}
+        strokeWidth={BRICK_STROKE_WIDTH}
       />
     );
   }
@@ -99,7 +75,7 @@ export class PlateTop extends _LegoElement {
 }
 
 
-export function plain (unit, color, label) {
+export function plain (unit, color, stroke_width) {
   class Plain extends _SideElment {
     render() {
       return (
@@ -113,14 +89,13 @@ export function plain (unit, color, label) {
             ]
           }
           stroke={color}
-          strokeWidth={this.getStrokeWidth()}
+          strokeWidth={stroke_width}
         />
       )
     }
 
     static LENGTH_UNIT = unit;
-    static WIDTH_UNIT = new Unit("line", STROKE_WIDTH);
-    static STROKE_WIDTH_RATIO = 1;
+    static WIDTH_UNIT = new Unit("line", stroke_width);
   }
 
   return Plain;
