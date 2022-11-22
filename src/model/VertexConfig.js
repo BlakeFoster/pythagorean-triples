@@ -5,9 +5,13 @@ class VertexLocation {
   /* name: user-facing label
    * overhang: the additional length beyond the vertices for sides with this config
    */
-  constructor(name, overhang) {
+  constructor(name, overhang, overhangCombinations) {
     this.name = name;
     this.overhang = overhang;
+    const nullOverhang = new Dimension(0, overhang.unit);
+    this.overhangCombinations = overhangCombinations.map(
+      (oc) => oc.map((o) => o ? overhang : nullOverhang)
+    )
   }
 
   toString() {
@@ -21,12 +25,19 @@ class VertexLocation {
 
 export const CORNER = new VertexLocation(
   "Corner",
-  new Dimension(0, INTERNAL)
+  new Dimension(0, INTERNAL),
+  [[false, false, false]] // triangle side length always equals brick length.
 )
 
 export const CENTER = new VertexLocation(
   "Stud Center",
-  new Dimension(1, STUDS)
+  new Dimension(1, STUDS),
+  [
+      [false, false, true], // one side c has an overhang; this is the configuration without a stud at the A/B vertex.
+      [true, false, true], // sides a and c have overhangs; the A/B vertex is occupied by side A
+      [false, true, true] // sides b and c have overhangs; the A/B vertex is occupied by side C.
+      // note: [true, true, true is not possible because the A/B vertex can't be occupied by both A and B at once.
+  ]
 )
 
 class VertexConfig {
@@ -57,6 +68,13 @@ class VertexConfig {
     return new VertexConfig(
       this.enableCorner || this.enableCenter,
       !this.enableCenter
+    )
+  }
+
+  getOverhangCombinations() {
+    return this.getVertexLocations().reduce(
+      (acc, l) => acc.concat(l.overhangCombinations),
+      []
     )
   }
 
