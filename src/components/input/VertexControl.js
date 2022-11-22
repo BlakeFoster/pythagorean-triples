@@ -54,6 +54,7 @@ class VertexControl extends React.Component {
               selected={this.props.showVertices && this.props.hasTripleGroups}
               disabled={!this.props.hasTripleGroups}
               onClick={() => this.props.setShowVertices(!this.props.showVertices)}
+              value="showVertices"
             >
               <RemoveRedEyeIcon/>&nbsp;&nbsp;Show Vertices
             </ToggleButton>
