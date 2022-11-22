@@ -152,14 +152,15 @@ class TripleCalculator extends React.Component {
   }
 
   calculateTriples() {
-    this.props.setTripleGroups(
-      calculateTriples(
-        this.state.sideConfigs,
-        this.state.angleConfig,
-        this.state.vertexConfig
-      ),
-     this.state.angleConfig.desiredAngle
-    );
+    const start = Date.now();
+    const tripleGroups = calculateTriples(
+      this.state.sideConfigs,
+      this.state.angleConfig,
+      this.state.vertexConfig
+    )
+    const end = Date.now();
+    console.log("Completed in " + (end - start) + "ms")
+    this.props.setTripleGroups(tripleGroups, this.state.angleConfig.desiredAngle);
   }
 
   render() {

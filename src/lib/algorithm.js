@@ -47,21 +47,23 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
 
   var tripleGroups = new Map();
 
-  for (let overhangCombination of vertexConfig.getOverhangCombinations()) {
-    const orderedOverhangs = applyPermutation(overhangCombination, permutation);
-    for (let l0 of sideConfigs[0]) {
-      if (sideConfigs[0].isOk(l0, orderedOverhangs[0])) {
-        for (let l1 of sideConfigs[1]) {
-          if (sideConfigs[1].isOk(l1, orderedOverhangs[1])) {
-            const l2 = Math.sqrt(
-              -sideConfigs[2].sign * (
-                sideConfigs[0].sign * l0 ** 2 +
-                sideConfigs[1].sign * l1 ** 2
-              )
-            )
-            const sides = reversePermutation([l0, l1, l2], permutation);
-            const angle = atan2d(sides[B], sides[A]);
-            if (sideConfigs[2].isOk(l2, orderedOverhangs[2]) && angleConfig.isOk(angle)) {
+  for (let l0 of sideConfigs[0]) {
+    for (let l1 of sideConfigs[1]) {
+      const l2 = Math.sqrt(
+        -sideConfigs[2].sign * (
+          sideConfigs[0].sign * l0 ** 2 +
+          sideConfigs[1].sign * l1 ** 2
+        )
+      )
+      if (l2 % 1 == 0) {
+        const sides = reversePermutation([l0, l1, l2], permutation);
+        const angle = atan2d(sides[B], sides[A]);
+        if (angleConfig.isOk(angle)) {
+          for (let overhangCombination of vertexConfig.getOverhangCombinations()) {
+            if (sides.reduce(
+              (acc, l, i) => acc & sideConfigs[i].isOk(l, overhangCombination[i]),
+              true
+            )) {
               const triple = new Triple(
                 sides.map(
                   (l, i) => sideConfigs[i].getDimension(
