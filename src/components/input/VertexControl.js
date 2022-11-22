@@ -48,6 +48,7 @@ class VertexControl extends React.Component {
           )
         }
         <div id="showVerticesButton">
+          <Tooltip title="Show vertices">
             <ToggleButton
               size="small"
               variant="contained"
@@ -56,8 +57,9 @@ class VertexControl extends React.Component {
               onClick={() => this.props.setShowVertices(!this.props.showVertices)}
               value="showVertices"
             >
-              <RemoveRedEyeIcon/>&nbsp;&nbsp;Show Vertices
+              <RemoveRedEyeIcon/>
             </ToggleButton>
+          </Tooltip>
         </div>
       </InputGroup>
     )
