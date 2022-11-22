@@ -55,7 +55,7 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
           sideConfigs[1].sign * l1 ** 2
         )
       )
-      if (l2 % 1 == 0) {
+      if (l2 % 1 === 0) {
         const sides = reversePermutation([l0, l1, l2], permutation);
         const angle = atan2d(sides[B], sides[A]);
         if (angleConfig.isOk(angle)) {
