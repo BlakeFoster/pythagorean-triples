@@ -203,6 +203,10 @@ legend {
   padding: 5px;
 }
 
+.tripleGroupControls * {
+  max-width: 55vw;
+}
+
 .tripleGroupHeading .angleLabelValue {
   color: #ddd;
   text-decoration: underline;
