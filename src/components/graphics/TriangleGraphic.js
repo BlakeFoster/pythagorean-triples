@@ -4,7 +4,7 @@ import { Stage, Layer, Text, Arc } from 'react-konva';
 
 import { RENDER_UNIT } from "../../model/Unit"
 import { sind, cosd, atan2d } from "../../lib/math"
-import { VERTEX_COLOR } from "../../constants"
+import { VERTEX_COLOR, VERTEX_STROKE_SCALE } from "../../constants"
 import Stud from "./Stud"
 
 const ANGLE_LABEL_DISTANCE = 12;
@@ -62,24 +62,23 @@ class TriangleGraphic extends React.Component {
     }
   }
 
+  renderVertex(x, y) {
+    return (
+      <Stud
+        x={x}
+        y={y}
+        color={VERTEX_COLOR}
+        strokeScale={VERTEX_STROKE_SCALE}
+      />
+    );
+  }
+
   renderVertices(bTopX, bTopY) {
     return this.props.showVertices ? (
       <>
-        <Stud
-          x={0}
-          y={0}
-          color={VERTEX_COLOR}
-        />
-        <Stud
-          x={bTopX}
-          y={bTopY}
-          color={VERTEX_COLOR}
-        />
-        <Stud
-          x={bTopX}
-          y={0}
-          color={VERTEX_COLOR}
-        />
+        {this.renderVertex(0, 0)}
+        {this.renderVertex(bTopX, bTopY)}
+        {this.renderVertex(bTopX, 0)}
       </>
     ) : null;
   }
@@ -136,7 +135,6 @@ class TriangleGraphic extends React.Component {
       cWOffset,
       this.props.cElement.getWidth(),
       cRelativeLength
-      //this.props.cElement.getLength() * this.props.cLength
     )
 
     const boundingBoxLeft = cBoundIngBox.left;

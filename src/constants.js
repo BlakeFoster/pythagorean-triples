@@ -15,3 +15,4 @@ export const BRICK_STROKE_WIDTH = RENDER_UNIT.from(1 / 20, STUDS);
 export const BRICK_COLOR = "orange"
 export const BRICK_STROKE_COLOR = "black"
 export const VERTEX_COLOR = "red"
+export const VERTEX_STROKE_SCALE = 3
