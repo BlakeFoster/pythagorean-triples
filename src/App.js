@@ -35,7 +35,8 @@ class App extends React.Component {
         tripleGroups: tripleGroups,
         desiredAngle: desiredAngle,
         showVertices: false,
-        showSpinner: false
+        showSpinner: false,
+        page: 0
       }
     );
   }
@@ -49,6 +50,9 @@ class App extends React.Component {
       return true;
     } else if (this.state.showVertices !== nextState.showVertices) {
       console.log("Show vertices changes")
+      return true;
+    } else if (this.state.page !== nextState.page) {
+      console.log("Page changed");
       return true;
     } else {
       return false;
@@ -70,6 +74,11 @@ class App extends React.Component {
     this.setState({showVertices: showVertices})
   }
 
+  setPage(page) {
+    console.log("Gping to page " + page);
+    this.setState({page: page});
+  }
+
   render() {
     console.log("Rendering app.")
     return (
@@ -88,6 +97,8 @@ class App extends React.Component {
               tripleGroups={this.state.tripleGroups}
               desiredAngle={this.state.desiredAngle}
               showVertices={this.state.showVertices}
+              page={this.state.page}
+              setPage={this.setPage.bind(this)}
             />
             <Backdrop open={this.state.showSpinner}>
               <CircularProgress/>

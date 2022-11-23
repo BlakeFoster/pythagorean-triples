@@ -17,4 +17,5 @@ export const BRICK_STROKE_COLOR = "black";
 export const VERTEX_COLOR = "red";
 export const VERTEX_STROKE_SCALE = 3;
 export const ZOOM_MINIMUM_WIDTH = 600;
-export const TRIPLE_GROUPS_PER_PAGE = 4;
+export const TRIPLE_GROUPS_PER_PAGE = 2;
+export const MAX_MENU_ITEM_LENGTH = 30;

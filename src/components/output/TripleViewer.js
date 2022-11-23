@@ -3,7 +3,7 @@ import Alert from "@mui/material/Alert";
 
 import TripleGroupDisplay from "./TripleGroupDisplay";
 import ZoomedTripleGroupDisplay from "./ZoomedTripleGroupDisplay";
-import { ZOOM_MINIMUM_WIDTH } from "../../constants"
+import { ZOOM_MINIMUM_WIDTH, TRIPLE_GROUPS_PER_PAGE } from "../../constants"
 import leftArrow from "../../assets/leftArrow.svg"
 import rightArrow from "../../assets/rightArrow.svg"
 import leftArrowHover from "../../assets/leftArrowHover.svg"
@@ -20,7 +20,12 @@ class ArrowButton extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    return {image: props.enabled ? state.image : props.disabledImage}
+    return {
+      image: props.enabled ? (
+        state.image == props.disabledImage ?
+        props.image : state.image
+      ) : props.disabledImage
+    }
   }
 
   setImage(image) {
@@ -36,7 +41,8 @@ class ArrowButton extends React.Component {
         onMouseLeave={this.setImage.bind(this, this.props.image)}
         onMouseDown={this.setImage.bind(this, this.props.activeImage)}
         onMouseUp={this.setImage.bind(this, this.props.hoverImage)}
-        disabled={false}
+        onClick={this.props.onClick}
+        disabled={!this.props.enabled}
       >
         <div
           className="arrowButtonLabel"
@@ -64,38 +70,9 @@ class TripleViewer extends React.Component {
     this.onResize = this.setDimensions.bind(this);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.tripleGroups !== nextProps.tripleGroups) {
-      console.log("Triple groups changed");
-      return true
-    } else if (this.props.showVertices !== nextProps.showVertices) {
-      console.log("Show vertices changed");
-      return true
-    } else if (this.state.zoomedGroupIndex !== nextState.zoomedGroupIndex) {
-      console.log("Zoomed group changed");
-      return true
-    } else if (this.state.drawing1Width !== nextState.drawing1Width) {
-      console.log("Drawing width changed");
-      return true
-    } else if (this.state.drawingZoomedWidth !== nextState.drawingZoomedWidth) {
-      console.log("Zoomed drawing height changed");
-      return true
-    } else if (this.state.drawingZoomedHeight !== nextState.drawingZoomedHeight) {
-      console.log("Zoomed drawing height changed");
-      return true
-    } else if (this.state.canZoom !== nextState.canZoom) {
-      console.log("Zoom enabled changed");
-      return true
-    } else {
-      return false;
-    }
+  static getDerivedStateFromProps(props, state) {
+     return {page: 0}
   }
-
-//  static getDerivedStateFromProps(props, state) {
-//    if (!props.tripleGroups && state.page != 0) {
-//      return {page: 0}
-//    }
-//  }
 
   renderErrorMessage() {
     return this.props.tripleGroups != null && this.props.tripleGroups.length === 0 ? (
@@ -108,7 +85,7 @@ class TripleViewer extends React.Component {
       <TripleGroupDisplay
         tripleGroup={tripleGroup}
         key={"group" + index + 1}
-        index={index}
+        index={index + this.props.page * TRIPLE_GROUPS_PER_PAGE}
         toggleZoomed={this.setZoomedGroupIndex.bind(this)}
         drawingRef={index === 0 ? this.drawing1Ref : null}
         width={this.state.drawing1Width}
@@ -120,12 +97,22 @@ class TripleViewer extends React.Component {
       />);
   }
 
+  getTripleGroupsOnCurrentPage() {
+    const numGroups = this.state.canZoom ? TRIPLE_GROUPS_PER_PAGE : TRIPLE_GROUPS_PER_PAGE / 2;
+    const start = this.props.page * numGroups;
+    const end = (this.props.page + 1) * numGroups;
+    console.log("Showing triple groups " + (start + 1) + " through " + end + " of " + this.props.tripleGroups.length)
+    return this.props.tripleGroups.slice(
+      start, end
+    )
+  }
+
   renderTripleGroups() {
     return (
       this.props.tripleGroups == null ? null :
       this.props.tripleGroups.length === 0 ?
       this.renderErrorMessage() :
-      this.props.tripleGroups.map(this.renderTripleGroup.bind(this))
+      this.getTripleGroupsOnCurrentPage().map(this.renderTripleGroup.bind(this))
     );
   }
 
@@ -191,9 +178,21 @@ class TripleViewer extends React.Component {
      />);
   }
 
-  render () {
-    return (
-      <div className="tripleGroups">
+  getMaxPage() {
+    return Math.ceil(this.props.tripleGroups.length / TRIPLE_GROUPS_PER_PAGE) - 1;
+  }
+
+  nextPage() {
+    this.props.setPage(this.props.page + 1);
+  }
+
+  prevPage() {
+    Math.max(this.props.setPage(this.props.page - 1), 0);
+  }
+
+  renderPageButtons() {
+    return this.props.tripleGroups ? (
+      <div className="pageButtons">
         <ArrowButton
           label="Previous"
           image={leftArrow}
@@ -201,7 +200,8 @@ class TripleViewer extends React.Component {
           disabledImage={leftArrowDisabled}
           activeImage={leftArrowActive}
           className="previous"
-          enabled={true}
+          enabled={this.props.page > 0}
+          onClick={this.prevPage.bind(this)}
         />
         <ArrowButton
           label="Next"
@@ -210,8 +210,18 @@ class TripleViewer extends React.Component {
           disabledImage={rightArrowDisabled}
           activeImage={rightArrowActive}
           className="next"
-          enabled={false}
+          enabled={this.props.page < this.getMaxPage()}
+          onClick={this.nextPage.bind(this)}
+          page={this.props.page}
         />
+      </div>
+    ) : null;
+  }
+
+  render () {
+    return (
+      <div className="tripleGroups">
+        {this.renderPageButtons()}
         {this.renderTripleGroups()}
         {this.renderZoomedGroup()}
       </div>

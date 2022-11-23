@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton"
 import ZoomInTwoTone from "@mui/icons-material/ZoomInTwoTone";
 
 import TriangleGraphic from "../graphics/TriangleGraphic"
-import { DEGREES } from "../../constants"
+import { DEGREES, MAX_MENU_ITEM_LENGTH } from "../../constants"
 import { PlateSide, PlateTop } from "../graphics/SideElement"
 import { STUDS } from "../../model/Unit"
 
@@ -20,8 +20,8 @@ class TripleGroupDisplay extends React.Component {
     super(props);
     this.state = {selectedTripleIndex: 0}
   }
-
   renderTripleGroupMenuItem(item, index) {
+    const label = item.toString()
     return (
       <MenuItem
         value={index}
@@ -31,7 +31,12 @@ class TripleGroupDisplay extends React.Component {
             "."
           )
         }
-      >{item.toString()}</MenuItem>
+      >{(
+          label.length > MAX_MENU_ITEM_LENGTH ?
+          label.substring(0, MAX_MENU_ITEM_LENGTH - 3) + "..." :
+          label
+      )}
+      </MenuItem>
     );
   }
 
