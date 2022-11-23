@@ -25,6 +25,33 @@ class VertexControl extends React.Component {
     );
   }
 
+  addShowVerticesTooltip(button) {
+    return this.enableShowVertices() ? (
+      <Tooltip title="Show vertices">
+        {button}
+      </Tooltip>
+    ) : button;
+  }
+
+  enableShowVertices() {
+    return this.props.hasTripleGroups;
+  }
+
+  renderShowVerticesButton() {
+    return this.addShowVerticesTooltip(
+      <ToggleButton
+        size="small"
+        variant="contained"
+        selected={this.props.showVertices && this.props.hasTripleGroups}
+        disabled={!this.enableShowVertices()}
+        onClick={() => this.props.setShowVertices(!this.props.showVertices)}
+        value="showVertices"
+      >
+        <RemoveRedEyeIcon/>
+      </ToggleButton>
+    );
+  }
+
   render() {
     return (
       <InputGroup label="Vertex Location">
@@ -48,18 +75,7 @@ class VertexControl extends React.Component {
           )
         }
         <div id="showVerticesButton">
-          <Tooltip title="Show vertices">
-            <ToggleButton
-              size="small"
-              variant="contained"
-              selected={this.props.showVertices && this.props.hasTripleGroups}
-              disabled={!this.props.hasTripleGroups}
-              onClick={() => this.props.setShowVertices(!this.props.showVertices)}
-              value="showVertices"
-            >
-              <RemoveRedEyeIcon/>
-            </ToggleButton>
-          </Tooltip>
+          {this.renderShowVerticesButton()}
         </div>
       </InputGroup>
     )

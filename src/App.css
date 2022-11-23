@@ -29,18 +29,8 @@
 }
 
 @media only screen and (max-width: 970px) {
-  #diagram {
-    display: none;
-  }
   #title {
     font-size: 16pt;
-  }
-}
-
-@media only screen and (min-width: 970px) {
-  #diagram {
-    display: block;
-    display: block;
   }
 }
 

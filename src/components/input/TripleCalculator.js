@@ -26,6 +26,8 @@ const DIAGRAM_HOVER_COLOR = "rgb(255, 190, 70)"
 const DIAGRAM_NORMAL_COLOR = "lightgrey"
 const DIAGRAM_STROKE_WIDTH = 1 / 20;
 
+const MIN_WIDTH_FOR_DIAGRAM = 970;
+
 const ANGLE_FONT_SIZE = 30;
 
 
@@ -84,8 +86,10 @@ class TripleCalculator extends React.Component {
       aHighlight: false,
       bHighlight: false,
       cHighlight: false,
-      angleHighlight: false
+      angleHighlight: false,
+      showDiagram: this.isWideEnoughForDiagram()
     };
+    this.onResize = this.setShowDiagram.bind(this);
   }
 
   updateSideConfig(updatedSide, newConfig) {
@@ -110,15 +114,21 @@ class TripleCalculator extends React.Component {
   }
 
   setAHighlight(highlight) {
-    this.setState({aHighlight: highlight})
+    if (highlight !== this.state.aHighlight) {
+      this.setState({aHighlight: highlight})
+    }
   }
 
   setBHighlight(highlight) {
-    this.setState({bHighlight: highlight})
+    if (highlight !== this.state.bHighlight) {
+      this.setState({bHighlight: highlight})
+    }
   }
 
   setCHighlight(highlight) {
-    this.setState({cHighlight: highlight})
+    if (highlight !== this.state.cHighlight)  {
+      this.setState({cHighlight: highlight})
+    }
   }
 
   setAngleHighlight(highlight) {
@@ -131,7 +141,7 @@ class TripleCalculator extends React.Component {
         sideName={sideName}
         config={this.state.sideConfigs[index]}
         updateConfig={this.updateSideConfig.bind(this, index)}
-        hoverCallback={hoverCallback}
+        hoverCallback={this.state.showDiagram ? hoverCallback : null}
       />
     );
   }
@@ -163,6 +173,36 @@ class TripleCalculator extends React.Component {
     this.props.setTripleGroups(tripleGroups, this.state.angleConfig.desiredAngle);
   }
 
+  renderDiagram() {
+    return this.state.showDiagram ? (
+      <Diagram
+        aHighlight={this.state.aHighlight}
+        bHighlight={this.state.bHighlight}
+        cHighlight={this.state.cHighlight}
+        angleHighlight={this.state.angleHighlight}
+      />
+    ) : null;
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.onResize);
+  }
+
+  isWideEnoughForDiagram() {
+    return window.innerWidth >= MIN_WIDTH_FOR_DIAGRAM;
+  }
+
+  setShowDiagram() {
+    const showDiagram = this.isWideEnoughForDiagram()
+    if (showDiagram !== this.state.showDiagram) {
+      this.setState({showDiagram: showDiagram})
+    }
+  }
+
   render() {
     return (
       <div className="inputs">
@@ -172,7 +212,7 @@ class TripleCalculator extends React.Component {
         <AngleInput
           config={this.state.angleConfig}
           updateConfig={this.updateAngleConfig.bind(this)}
-          hoverCallback={this.setAngleHighlight.bind(this)}
+          hoverCallback={this.state.showDiagram ? this.setAngleHighlight.bind(this) : null}
         />
         <VertexControl
           vertexConfig={this.state.vertexConfig}
@@ -185,12 +225,7 @@ class TripleCalculator extends React.Component {
           enabled={this.canCalculate()}
           onClick={this.calculateOnClick.bind(this)}
         />
-        <Diagram
-          aHighlight={this.state.aHighlight}
-          bHighlight={this.state.bHighlight}
-          cHighlight={this.state.cHighlight}
-          angleHighlight={this.state.angleHighlight}
-        />
+        {this.renderDiagram()}
         <hr/>
       </div>
     );
