@@ -28,10 +28,6 @@ function sortTripleGroups(tripleGroups, desiredAngle) {
       return a[0].compareTo(b[0], desiredAngle)
     }
   );
-  if (sortedGroups.length > 10) {
-    console.log("Truncating to top 10")
-    sortedGroups = sortedGroups.slice(0, 10);
-  }
   sortedGroups.forEach(
     (tripleGroup) => {
       console.log("Found triple group with angle " + tripleGroup[0].getAngle());

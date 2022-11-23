@@ -4,6 +4,47 @@ import Alert from "@mui/material/Alert";
 import TripleGroupDisplay from "./TripleGroupDisplay";
 import ZoomedTripleGroupDisplay from "./ZoomedTripleGroupDisplay";
 import { ZOOM_MINIMUM_WIDTH } from "../../constants"
+import leftArrow from "../../assets/leftArrow.svg"
+import rightArrow from "../../assets/rightArrow.svg"
+import leftArrowHover from "../../assets/leftArrowHover.svg"
+import rightArrowHover from "../../assets/rightArrowHover.svg"
+import leftArrowDisabled from "../../assets/leftArrowDisabled.svg"
+import rightArrowDisabled from "../../assets/rightArrowDisabled.svg"
+import leftArrowActive from "../../assets/leftArrowActive.svg"
+import rightArrowActive from "../../assets/rightArrowActive.svg"
+
+class ArrowButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {image: this.props.image};
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    return {image: props.enabled ? state.image : props.disabledImage}
+  }
+
+  setImage(image) {
+    this.setState({image: image});
+  }
+
+  render() {
+    return (
+      <button
+        className={"arrowButton " + this.props.className + (this.props.enabled ? "" : " disabled")}
+        style={{backgroundImage: "url(" + this.state.image + ")"}}
+        onMouseEnter={this.setImage.bind(this, this.props.hoverImage)}
+        onMouseLeave={this.setImage.bind(this, this.props.image)}
+        onMouseDown={this.setImage.bind(this, this.props.activeImage)}
+        onMouseUp={this.setImage.bind(this, this.props.hoverImage)}
+        disabled={false}
+      >
+        <div
+          className="arrowButtonLabel"
+        >{this.props.label}</div>
+      </button>
+    );
+  }
+}
 
 class TripleViewer extends React.Component {
 
@@ -15,7 +56,8 @@ class TripleViewer extends React.Component {
       drawing1Height: 0,
       drawingZoomedWidth: 0,
       drawingZoomedHeight: 0,
-      canZoom: this.isWideEnoughForZoom()
+      canZoom: this.isWideEnoughForZoom(),
+      page: 0
     }
     this.drawing1Ref = React.createRef();
     this.drawingZoomedRef = React.createRef();
@@ -48,6 +90,12 @@ class TripleViewer extends React.Component {
       return false;
     }
   }
+
+//  static getDerivedStateFromProps(props, state) {
+//    if (!props.tripleGroups && state.page != 0) {
+//      return {page: 0}
+//    }
+//  }
 
   renderErrorMessage() {
     return this.props.tripleGroups != null && this.props.tripleGroups.length === 0 ? (
@@ -146,6 +194,24 @@ class TripleViewer extends React.Component {
   render () {
     return (
       <div className="tripleGroups">
+        <ArrowButton
+          label="Previous"
+          image={leftArrow}
+          hoverImage={leftArrowHover}
+          disabledImage={leftArrowDisabled}
+          activeImage={leftArrowActive}
+          className="previous"
+          enabled={true}
+        />
+        <ArrowButton
+          label="Next"
+          image={rightArrow}
+          hoverImage={rightArrowHover}
+          disabledImage={rightArrowDisabled}
+          activeImage={rightArrowActive}
+          className="next"
+          enabled={false}
+        />
         {this.renderTripleGroups()}
         {this.renderZoomedGroup()}
       </div>
