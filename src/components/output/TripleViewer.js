@@ -70,8 +70,13 @@ class TripleViewer extends React.Component {
     this.onResize = this.setDimensions.bind(this);
   }
 
+  isErrorState() {
+    console.log("triplegroups: " + this.props.tripleGroups)
+    return this.props.tripleGroups && (this.props.tripleGroups.length === 0)
+  }
+
   renderErrorMessage() {
-    return this.props.tripleGroups != null && this.props.tripleGroups.length === 0 ? (
+    return this.isErrorState() ? (
       <Alert severity="warning">No triples found, try adjusting the parameters!</Alert>
     ) : null;
   }
@@ -193,7 +198,7 @@ class TripleViewer extends React.Component {
   }
 
   renderPageButtons() {
-    return this.props.tripleGroups ? (
+    return this.props.tripleGroups && !this.isErrorState() ? (
       <div className="pageButtons">
         <ArrowButton
           label="Previous"
