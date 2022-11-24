@@ -2,6 +2,7 @@ import Triple from "../model/Triple"
 import { A, B, C } from "../constants"
 import { applyPermutation, reversePermutation } from "../lib/math"
 import { atan2d } from "../lib/math"
+import { INTERNAL } from "../model/Unit"
 
 
 function getPermutation(sideConfigs) {
@@ -55,8 +56,7 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
         const sides = reversePermutation([l0, l1, l2], permutation);
         const angle = atan2d(sides[B], sides[A]);
         if (angleConfig.isOk(angle)) {
-          for (let overhangCombination of vertexConfig.getOverhangCombinations()) {
-            overhangCombination = overhangCombination.map((o) => o.valueOf())
+          for (let overhangCombination of vertexConfig.getOverhangCombinations(INTERNAL)) {
             if (sides.reduce(
               (acc, l, i) => acc & sideConfigs[i].isOk(l, overhangCombination[i]),
               true

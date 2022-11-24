@@ -6,6 +6,7 @@ import { RENDER_UNIT } from "../../model/Unit"
 import { sind, cosd, atan2d } from "../../lib/math"
 import { VERTEX_COLOR, VERTEX_STROKE_SCALE } from "../../constants"
 import Stud from "./Stud"
+import { ZERO } from "../../model/Overhang"
 
 const ANGLE_LABEL_DISTANCE = 12;
 const ARC_WIDTH = 2;
@@ -27,7 +28,7 @@ function getCRotationMatrix(angle) {
 }
 
 
-function getBoundingBox(angle, lOffset, wOffset, sideWidth, sideLength, overhang) {
+function getBoundingBox(angle, lOffset, wOffset, sideWidth, sideLength) {
 
   const rotationMatrix = getCRotationMatrix(angle);
 
@@ -83,6 +84,10 @@ class TriangleGraphic extends React.Component {
     ) : null;
   }
 
+  overhangToRenderUnit(overhang, element) {
+    return overhang.transform(element.LENGTH_UNIT, RENDER_UNIT)
+  }
+
   renderCanvas() {
     if (!this.props.width || !this.props.height) {
       console.log("Not rendering, width and height not set");
@@ -106,26 +111,38 @@ class TriangleGraphic extends React.Component {
       " triangle with width " + width + " and height " + height
     );
 
-    const { aOverhang = [0, 0], bOverhang = [0, 0], cOverhang = [0, 0] } = this.props;
+    const { aOverhang = ZERO, bOverhang = ZERO, cOverhang = ZERO } = this.props;
 
-    const aOverhangR = RENDER_UNIT.from(aOverhang[0], this.props.aElement.LENGTH_UNIT)
-    const bOverhangR = RENDER_UNIT.from(bOverhang[0], this.props.bElement.LENGTH_UNIT)
-    const cOverhangR = RENDER_UNIT.from(cOverhang[0], this.props.cElement.LENGTH_UNIT)
+    const aOverhangR = this.overhangToRenderUnit(aOverhang, this.props.aElement);
+    const bOverhangR = this.overhangToRenderUnit(bOverhang, this.props.bElement);
+    const cOverhangR = this.overhangToRenderUnit(cOverhang, this.props.cElement);
 
-    // Flip the stud direction for side A if it would overlap with side B. I have no idea why these formulas work.
-    const defaultOffset = -cOverhangR / 2;
-    const aReverseOffset = (-2 * aOverhangR + cOverhangR) / 2;
-    const reverseA = bOverhangR === 0;
+//    const defaultOffset = -cOverhangR / 2;
+//    const aReverseOffset = (-2 * aOverhangR + cOverhangR) / 2;
+//    const reverseA = bOverhangR === 0;
+//
+//    const aX = reverseA ? aRelativeLength : 0;
+//    const aY = reverseA ? 0 : -this.props.aElement.getWidth() - 2 * defaultOffset;
+//    const aRotation = reverseA ? 180 : 0;
+//    const aLOffset = reverseA ? aReverseOffset : defaultOffset;
+//    const aWOffset = defaultOffset;
+//    const bLOffset = defaultOffset;
+//    const bWOffset = defaultOffset;
+//    const cLOffset = defaultOffset;
+//    const cWOffset = defaultOffset;
+
+    const reverseA = false;
 
     const aX = reverseA ? aRelativeLength : 0;
-    const aY = reverseA ? 0 : -this.props.aElement.getWidth() - 2 * defaultOffset;
+    const aY = 0;
+
     const aRotation = reverseA ? 180 : 0;
-    const aLOffset = reverseA ? aReverseOffset : defaultOffset;
-    const aWOffset = defaultOffset;
-    const bLOffset = defaultOffset;
-    const bWOffset = defaultOffset;
-    const cLOffset = defaultOffset;
-    const cWOffset = defaultOffset;
+    const aLOffset = reverseA ? aOverhangR.lShift : -aOverhangR.lShift //+ (reverseA ? -bOverhang.wShift : 0);
+    const aWOffset = -aOverhangR.wShift;
+    const bLOffset = -bOverhangR.lShift;
+    const bWOffset = -bOverhangR.wShift;
+    const cLOffset = -cOverhangR.lShift;
+    const cWOffset = -cOverhangR.wShift;
 
     const angle = atan2d(bRelativeLength, aRelativeLength);
 
@@ -184,6 +201,14 @@ class TriangleGraphic extends React.Component {
       </>
     ) : null;
 
+    const aLength = this.props.aLength + aOverhang.length
+    const bLength = this.props.bLength + bOverhang.length
+    const cLength = this.props.cLength + cOverhang.length
+
+    console.log("Final side length " + aLength + " " + bLength + " " + cLength)
+    console.log("Overhang length " + aOverhang + " " + bOverhang + " " + cOverhang)
+    console.log("Raw side length" + this.props.aLength + " " + this.props.bLength + " " + this.props.cLength)
+
     return (
       <Stage width={width} height={height}>
         {arc}
@@ -193,7 +218,7 @@ class TriangleGraphic extends React.Component {
             x={aX}
             y={aY}
             angle={aRotation}
-            length={this.props.aLength + aOverhang[0]}
+            length={aLength}
             lOffset={aLOffset}
             wOffset={aWOffset}
             displayElement={this.props.aElement}
@@ -203,7 +228,7 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={bRelativeLength}
             angle={-90}
-            length={this.props.bLength + bOverhang[0]}
+            length={bLength}
             lOffset={bLOffset}
             wOffset={bWOffset}
             displayElement={this.props.bElement}
@@ -213,7 +238,7 @@ class TriangleGraphic extends React.Component {
             x={0}
             y={0}
             angle={angle}
-            length={this.props.cLength + cOverhang[0]}
+            length={cLength}
             lOffset={cLOffset}
             wOffset={cWOffset}
             displayElement={this.props.cElement}

@@ -1,5 +1,7 @@
 import { STUDS, INTERNAL, HALF_PLATES, HALF_STUDS } from "./Unit"
 import Dimension from "./Dimension"
+import Overhang, { ZERO } from "./Overhang"
+
 
 class VertexLocation {
   /* name: user-facing label
@@ -8,14 +10,13 @@ class VertexLocation {
    */
   constructor(name, overhangUnit, overhangCombinations) {
     this.name = name;
+    this.overhangUnit = overhangUnit;
     this.overhangCombinations = overhangCombinations.map(
       (oc) => oc.map(
-        (o) => [
-          new Dimension(o[0], overhangUnit, [0, 0]),
-          new Dimension(o[1], overhangUnit, [0, 0])
-        ]
+        (o) => new Overhang(o[0], o[1], o[2])
       )
     )
+    console.log(this.overhangCombinations)
   }
 
   toString() {
@@ -27,19 +28,21 @@ class VertexLocation {
   }
 }
 
+
+
 export const CORNER = new VertexLocation(
   "Corner",
   INTERNAL,
-  [[[0, 0], [0, 0], [0, 0]]] // triangle side length always equals brick length.
+  [[[0, 0, 0], [0, 0, 0], [0, 0, 0]]] // triangle side length always equals brick length.
 )
 
 export const CENTER = new VertexLocation(
   "Stud Center",
   HALF_STUDS,
   [
-      [[0, 0], [0, 0], [2, 1]], // only side c has an overhang; this is the configuration without a stud at the A/B vertex.
-      [[2, 1], [0, 0], [2, 1]], // sides a and c have overhangs; the A/B vertex is occupied by side A
-      [[0, 0], [2, 1], [2, 1]] // sides b and c have overhangs; the A/B vertex is occupied by side C.
+      [[0, 1, 1], [0, 1, 1], [2, 1, 1]], // only side c has an overhang; this is the configuration without a stud at the A/B vertex.
+      [[2, 1, 1], [0, 1, 1], [2, 1, 1]], // sides a and c have overhangs; the A/B vertex is occupied by side A
+      [[0, 1, 1], [2, 1, 1], [2, 1, 1]] // sides b and c have overhangs; the A/B vertex is occupied by side B.
       // note: [1, 1, 1 is not possible because the A/B vertex can't be occupied by both A and B at once.
   ]
 )
@@ -75,9 +78,13 @@ class VertexConfig {
     )
   }
 
-  getOverhangCombinations() {
+  getOverhangCombinations(unit) {
     return this.getVertexLocations().reduce(
-      (acc, l) => acc.concat(l.overhangCombinations),
+      (acc, l) => acc.concat(
+        l.overhangCombinations.map(
+          (oc) => oc.map(o => o.transform(l.overhangUnit, unit))
+        )
+      ),
       []
     )
   }

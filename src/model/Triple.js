@@ -6,7 +6,6 @@ import { A, B, C } from "../constants"
 
 class Triple {
   constructor(dimensions, angle) {
-    angle.toString()
     this._dimensions = dimensions;
     this._angle = angle;
     this._gcd = null;
@@ -90,7 +89,7 @@ class Triple {
     return new Dimension(
       this._dimensions[sideIndex].physicalLength + (
         adjacentIndex == null  ? 0 : this._dimensions[sideIndex].unit.from(
-          this._dimensions[adjacentIndex].overhang,
+          this._dimensions[adjacentIndex].overhang.length,
           this._dimensions[adjacentIndex].unit
         )
       ),

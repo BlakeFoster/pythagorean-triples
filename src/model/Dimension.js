@@ -1,11 +1,10 @@
 import { INTERNAL } from "./Unit"
 
 class Dimension {
-  constructor(length, unit, overhang) {
-    console.log("Making new dimension with length " + length + " unit " + unit + " overhang " + overhang)
+  constructor(length, unit, overhang = 0) {
     this.unit = unit;
     this.sideLength = length;
-    this.physicalLength = length + overhang[0]
+    this.physicalLength = length + overhang.length;
     this.overhang = overhang;
     this._internalLength = INTERNAL.from(length, unit);
   }
@@ -14,7 +13,7 @@ class Dimension {
     return new Dimension(
       unit.from(this.sideLength, this.unit),
       unit,
-      this.overhang.map((o) => unit.from(o, this.unit)),
+      this.overhang.transform(this.unit, unit)
     );
   }
 
