@@ -71,7 +71,6 @@ class TripleViewer extends React.Component {
   }
 
   isErrorState() {
-    console.log("triplegroups: " + this.props.tripleGroups)
     return this.props.tripleGroups && (this.props.tripleGroups.length === 0)
   }
 
