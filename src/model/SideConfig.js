@@ -1,5 +1,5 @@
 import Dimension from "./Dimension"
-import { STUDS, PLATES, INTERNAL } from "./Unit"
+import { STUDS, PLATES, HALF_PLATES, QUARTER_PLATES, INTERNAL } from "./Unit"
 import { C } from "../constants"
 
 const MIN_INTERNAL_LENGTH = INTERNAL.from(1, STUDS);
@@ -61,8 +61,7 @@ class SideConfig {
       (
         this.maxLength == null ||
         internalLength <= INTERNAL.from(this.maxLength, this.requestedUnit)
-      ) &&
-      this.getUnitOut(internalLength + internalOverhang) != null
+      ) && this.getUnitOut(internalLength + internalOverhang[0]) != null
     );
   }
 
@@ -76,11 +75,15 @@ class SideConfig {
   }
 
   getDimension(internalLength, internalOverhang) {
-    const unit = this.getUnitOut(internalLength + internalOverhang);
+    console.log("getting dimension for internal length " + internalLength + " with overhang " + internalOverhang)
+    const unit = this.getUnitOut(internalLength + internalOverhang[0]);
+    console.log("Using unit " + unit)
+    console.log("internal length is " + unit.from(internalLength, INTERNAL))
+    console.log("new oeverhang is " + internalOverhang.map((o) => o.to(unit)))
     return new Dimension(
       unit.from(internalLength, INTERNAL),
       unit,
-      unit.from(internalOverhang, INTERNAL)
+      internalOverhang.map((o) => unit.from(o, INTERNAL))
     );
   }
 
@@ -89,7 +92,7 @@ class SideConfig {
   }
 
   [Symbol.iterator]() {
-    var step = this.constrain ? INTERNAL.from(1, this.requestedUnit) : 1;
+    var step = this.constrain ? HALF_PLATES.from(1, this.requestedUnit) : 1;
     var maxInternalLength = INTERNAL.from(this.maxLength, this.requestedUnit);
     var internalLength = 0;
     return {

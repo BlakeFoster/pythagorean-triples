@@ -1,4 +1,4 @@
-import { STUDS, INTERNAL } from "./Unit"
+import { STUDS, INTERNAL, HALF_PLATES, HALF_STUDS } from "./Unit"
 import Dimension from "./Dimension"
 
 class VertexLocation {
@@ -6,11 +6,15 @@ class VertexLocation {
    * overhangCombinations: a nested array of possible overhangs--that is the additional length beyond the vertices for
    * sides with this config--that are possible. Each item in the array has the overhang for sides A, B, and C in order.
    */
-  constructor(name, overhang, overhangCombinations) {
+  constructor(name, overhangUnit, overhangCombinations) {
     this.name = name;
-    const nullOverhang = new Dimension(0, overhang.unit);
     this.overhangCombinations = overhangCombinations.map(
-      (oc) => oc.map((o) => o ? overhang : nullOverhang)
+      (oc) => oc.map(
+        (o) => [
+          new Dimension(o[0], overhangUnit, [0, 0]),
+          new Dimension(o[1], overhangUnit, [0, 0])
+        ]
+      )
     )
   }
 
@@ -25,18 +29,18 @@ class VertexLocation {
 
 export const CORNER = new VertexLocation(
   "Corner",
-  new Dimension(0, INTERNAL),
-  [[false, false, false]] // triangle side length always equals brick length.
+  INTERNAL,
+  [[[0, 0], [0, 0], [0, 0]]] // triangle side length always equals brick length.
 )
 
 export const CENTER = new VertexLocation(
   "Stud Center",
-  new Dimension(1, STUDS),
+  HALF_STUDS,
   [
-      [false, false, true], // only side c has an overhang; this is the configuration without a stud at the A/B vertex.
-      [true, false, true], // sides a and c have overhangs; the A/B vertex is occupied by side A
-      [false, true, true] // sides b and c have overhangs; the A/B vertex is occupied by side C.
-      // note: [true, true, true is not possible because the A/B vertex can't be occupied by both A and B at once.
+      [[0, 0], [0, 0], [2, 1]], // only side c has an overhang; this is the configuration without a stud at the A/B vertex.
+      [[2, 1], [0, 0], [2, 1]], // sides a and c have overhangs; the A/B vertex is occupied by side A
+      [[0, 0], [2, 1], [2, 1]] // sides b and c have overhangs; the A/B vertex is occupied by side C.
+      // note: [1, 1, 1 is not possible because the A/B vertex can't be occupied by both A and B at once.
   ]
 )
 

@@ -17,7 +17,10 @@ export class Unit {
   }
 }
 
-export const PLATES = new Unit("Plates", 2);
-export const STUDS = new Unit("Studs", 5);
-export const INTERNAL = new Unit("Half Plates", 1);
+export const PLATES = new Unit("Plates", 4);
+export const STUDS = new Unit("Studs", 10);
+export const HALF_PLATES = new Unit("Half Plates", 2);
+export const HALF_STUDS = new Unit("Half Studs", 5);
+export const QUARTER_PLATES = new Unit("Quarter Plates", 1);
+export const INTERNAL = QUARTER_PLATES;
 export const RENDER_UNIT = INTERNAL;

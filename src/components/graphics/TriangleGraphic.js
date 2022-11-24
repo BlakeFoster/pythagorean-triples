@@ -106,11 +106,11 @@ class TriangleGraphic extends React.Component {
       " triangle with width " + width + " and height " + height
     );
 
-    const { aOverhang = 0, bOverhang = 0, cOverhang = 0 } = this.props;
+    const { aOverhang = [0, 0], bOverhang = [0, 0], cOverhang = [0, 0] } = this.props;
 
-    const aOverhangR = RENDER_UNIT.from(aOverhang, this.props.aElement.LENGTH_UNIT)
-    const bOverhangR = RENDER_UNIT.from(bOverhang, this.props.bElement.LENGTH_UNIT)
-    const cOverhangR = RENDER_UNIT.from(cOverhang, this.props.cElement.LENGTH_UNIT)
+    const aOverhangR = RENDER_UNIT.from(aOverhang[0], this.props.aElement.LENGTH_UNIT)
+    const bOverhangR = RENDER_UNIT.from(bOverhang[0], this.props.bElement.LENGTH_UNIT)
+    const cOverhangR = RENDER_UNIT.from(cOverhang[0], this.props.cElement.LENGTH_UNIT)
 
     // Flip the stud direction for side A if it would overlap with side B. I have no idea why these formulas work.
     const defaultOffset = -cOverhangR / 2;
@@ -193,7 +193,7 @@ class TriangleGraphic extends React.Component {
             x={aX}
             y={aY}
             angle={aRotation}
-            length={this.props.aLength + aOverhang}
+            length={this.props.aLength + aOverhang[0]}
             lOffset={aLOffset}
             wOffset={aWOffset}
             displayElement={this.props.aElement}
@@ -203,7 +203,7 @@ class TriangleGraphic extends React.Component {
             x={aRelativeLength}
             y={bRelativeLength}
             angle={-90}
-            length={this.props.bLength + bOverhang}
+            length={this.props.bLength + bOverhang[0]}
             lOffset={bLOffset}
             wOffset={bWOffset}
             displayElement={this.props.bElement}
@@ -213,7 +213,7 @@ class TriangleGraphic extends React.Component {
             x={0}
             y={0}
             angle={angle}
-            length={this.props.cLength + cOverhang}
+            length={this.props.cLength + cOverhang[0]}
             lOffset={cLOffset}
             wOffset={cWOffset}
             displayElement={this.props.cElement}

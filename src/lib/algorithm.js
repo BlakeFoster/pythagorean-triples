@@ -56,6 +56,7 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
         const angle = atan2d(sides[B], sides[A]);
         if (angleConfig.isOk(angle)) {
           for (let overhangCombination of vertexConfig.getOverhangCombinations()) {
+            overhangCombination = overhangCombination.map((o) => o.valueOf())
             if (sides.reduce(
               (acc, l, i) => acc & sideConfigs[i].isOk(l, overhangCombination[i]),
               true
@@ -69,6 +70,7 @@ function calculateTriples(sideConfigs, angleConfig, vertexConfig) {
                 ),
                 angle
               );
+              console.log("Triple " + l0 + ", " + l1 + ", " + l2 + " converted to " + triple)
               const key = triple.hashKey();
               var tripleGroup = tripleGroups.get(key);
               if (tripleGroup == null) {
