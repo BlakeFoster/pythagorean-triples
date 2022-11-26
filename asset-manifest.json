@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/pythagorean-triples/static/css/main.084e7662.css",
+    "main.js": "/pythagorean-triples/static/js/main.2a114ed8.js",
+    "static/js/787.e30aea0c.chunk.js": "/pythagorean-triples/static/js/787.e30aea0c.chunk.js",
+    "static/media/Arista2.0.ttf": "/pythagorean-triples/static/media/Arista2.0.e0b0ba8ae99b41c53e33.ttf",
+    "static/media/rightArrow.svg": "/pythagorean-triples/static/media/rightArrow.cfca8cdf01e6a7f25b602cdf123ff827.svg",
+    "static/media/rightArrowActive.svg": "/pythagorean-triples/static/media/rightArrowActive.52d15cf7e985ec3fe1fa62567944f337.svg",
+    "static/media/rightArrowDisabled.svg": "/pythagorean-triples/static/media/rightArrowDisabled.d9d219dc24ec8d78f1b12ed997c90009.svg",
+    "static/media/rightArrowHover.svg": "/pythagorean-triples/static/media/rightArrowHover.968e5eb2ff591aa3f72df8d8880279da.svg",
+    "static/media/leftArrow.svg": "/pythagorean-triples/static/media/leftArrow.4ab876d2785adf74fb135fa36b74b730.svg",
+    "static/media/leftArrowActive.svg": "/pythagorean-triples/static/media/leftArrowActive.05b4e108d80f86b00ce778940bdc2e26.svg",
+    "static/media/leftArrowDisabled.svg": "/pythagorean-triples/static/media/leftArrowDisabled.db3d1b5f1776fcc752df00bec2a5c482.svg",
+    "static/media/leftArrowHover.svg": "/pythagorean-triples/static/media/leftArrowHover.6feaf9d4a0aa61eff7efaaf543bf0d70.svg",
+    "index.html": "/pythagorean-triples/index.html",
+    "main.084e7662.css.map": "/pythagorean-triples/static/css/main.084e7662.css.map",
+    "main.2a114ed8.js.map": "/pythagorean-triples/static/js/main.2a114ed8.js.map",
+    "787.e30aea0c.chunk.js.map": "/pythagorean-triples/static/js/787.e30aea0c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.084e7662.css",
+    "static/js/main.2a114ed8.js"
+  ]
+}
